@@ -18,8 +18,8 @@ This repository corresponds to the `C:/Users/user/owf-dev/CDSS-SNODAS-Tools/git-
 
 ```
 C:\Users\user\                         (developer home folder)
-  owf-dev\                             (folder where development "projects" live, organization or user preference)
-    CDSS-SNODAS-Tools\                 (developer files folder, recommended)
+  cdss-dev\                            (folder where CDSS development projects live)
+    CDSS-SNODAS-Tools\                 (developer files folder)
       git-repos\                       (Git repositories, may be one or more repositories under here,
         cdss-app-snodas-tools\          all the code that is used by this development project)
 ``` 
