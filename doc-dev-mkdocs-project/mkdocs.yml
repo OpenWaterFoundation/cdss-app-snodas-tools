@@ -1,0 +1,48 @@
+# This is the main configuration file for the MkDocs website.
+# Use hash-comments to comment out pages have not been written
+# Reference: http://www.mkdocs.org/user-guide/configuration/
+#
+site_name: CDSS SNODAS Tools (Developer Manual)
+pages:
+- 'Home': index.md
+- 'Development Environment':
+    - 'Overview': 'dev-env/overview.md'
+    - 'Machine':  'dev-env/machine.md'
+    - 'QGIS and Bundled Python': 'dev-env/qgis.md'
+    - 'TSTool': 'dev-env/tstool.md'
+    - 'Git': 'dev-env/git.md'
+    - 'Python (for MkDocs)': 'dev-env/python.md'
+    - 'pip': 'dev-env/pip.md'
+    - 'MkDocs': 'dev-env/mkdocs.md'
+    - 'pytest': 'dev-env/pytest.md'
+    - 'PyCharm': 'dev-env/pycharm.md'
+- 'Initial Project Setup':
+    - 'Overview': project-init/overview.md
+    - 'Create Development Folder': 'project-init/dev-folder.md'
+# the following may be useful to make sure PyCharm starts with proper Python
+#    - 'Create Script to run PyCharm': 'project-init/pycharm-script.md'
+    - 'GitHub Git Repository': 'project-init/github.md'
+    - 'PyCharm workspace': 'project-init/pycharm-workspace.md'
+    - 'Developer Documentation (MkDocs)': 'project-init/dev-doc.md'
+- 'New Developer Setup':
+    - 'Overview': 'dev-new/overview.md'
+- 'Deployed Environment':
+    - 'Overview': 'deployed-env/overview.md'
+- 'Development Tasks':
+    - 'Overview': 'dev-tasks/overview.md'
+    - 'PyCharm Troubleshooting': 'dev-tasks/pycharm-trouble.md'
+    - 'Git workflow': 'dev-tasks/git.md'
+    - 'Documentation': 'dev-tasks/doc.md'
+    - 'Test': 'dev-tasks/test.md'
+    - 'Build': 'dev-tasks/build.md'
+    - 'Deploy': 'dev-tasks/deploy.md'
+theme: readthedocs
+repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
+site_description: CDSS SNODAS Tools (Developer Manual) 
+site_author: Open Water Foundation
+site_favicon: snodas-tools-favicon.png
+#copyright: TBD
+#extra_css:
+#- css/extra.css
+# Defaults to all JavaScript in the docs folder
+# extra_javascript:

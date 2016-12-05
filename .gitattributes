@@ -1,0 +1,17 @@
+# Configuration properties for this Git repository
+
+# Indicate that text files should be stored in the database with \n end-of-line
+# and when checked out in working files should have the native OS end-of-line.
+
+* text=auto
+
+# Indicate file types, to help ensure that Git makes the proper determination.
+# Indicate text files:
+
+*.md text
+*.py text
+
+# Indicate image files (for example used in documentation):
+
+*.png binary
+*.jpg binary

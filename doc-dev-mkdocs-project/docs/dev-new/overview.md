@@ -1,41 +1,14 @@
-# cdss-app-snodas-tools
-
-**This project is still under initial development - please wait until the initial production version is released
-to attempt using yourself**
-
-Colorado's Decision Support Systems (CDSS) Snow Data Assimilation System (SNODAS) Tools
-
-This repository contains Python code and supporting files for
-CDSS SNODAS tools, which provide the ability to process SNODAS grids into products suitable for water supply decision-making in Colorado.
-
-Refer to the developer manual for information about configuring the development environment
-and performing development tasks.
-
-The following illustrates the recommended organization of repository files for software development environment.
-Additional information is provided to recommend steps for new developers.
-Development environment setup needs to occur before development tasks can be performed.
-This repository corresponds to the `C:/Users/user/owf-dev/CDSS-SNODAS-Tools/git-repos/cdss-app-snodas-tools/` folder.
-
-```
-C:\Users\user\                         (developer home folder)
-  owf-dev\                             (folder where development "projects" live, organization or user preference)
-    CDSS-SNODAS-Tools\                 (developer files folder, recommended)
-      git-repos\                       (Git repositories, may be one or more repositories under here,
-        cdss-app-snodas-tools\          all the code that is used by this development project)
-``` 
-
 # New Developer Setup / Overview
 
-A new developer that will contribute to the SNODAS tools must configure a development environment
+A new developer that will contribute to the SNODAS Tools must configure a development environment
 consistent with the [Initial Project Setup](../project-init/overview/).
 The standard development folder structure should be followed to minimize potential for issues,
 especially given the number of components and setup steps.
 
-The setup involves performing some of the same tasks as the initial project setup, but some tasks do not need to be repeated,
-because the Git repository contains results of the initial project setup.
+The setup involves performing some of the same tasks as the initial project setup.
+However, some tasks do not need to be repeated because the Git repository contains results of the initial project setup.
 
-**Note that the following sections are copied from the New Developer Setup documentation in the MkDocs documentation
-described below.  Refer to the full documentation once MkDocs has been enabled in the development environment.**
+Setup a new development environment by performing the steps in the following sections, in order.
 
 ## Configure Machine for Development
 
@@ -102,3 +75,47 @@ INFO    -  Cleaning site directory
 
 Then view the `localhost:8080` web page in a web browser.
 Follow the instructions in the ***New Developer Setup*** documentation.
+
+## Install Development Software Tools
+
+The following is a summary of new developer setup for all the developer tools,
+with links to other documentation for reference.
+Software installation steps can be skipped if they have already been completed.
+
+1. **Should have been completed above:** [determine Windows 10 64-bit computer](../dev-env/machine/) - this is the target environment
+2. **Should have been completed above:** [Install Git software](../dev-env/git/) - needed to check out repository
+2. **Should have been completed above:** [Install Python](../dev-env/python/) - needed by MkDocs
+2. **Should have been completed above:** [Install `pip`](../dev-env/pip/) - used to install MkDocs
+2. **Should have been completed above:** [Install MkDocs](../dev-env/mkdocs/) - used for documentation
+4. [Install QGIS bundled with QGIS](../dev-env/qgis/) - QGIS/pyQGIS/GDAL/OGR software tools to run SNODAS tools
+4. [Install PyCharm IDE](../dev-env/pycharm/) - IDE used to edit and run SNODAS tools during development
+3. [Install TSTool](../dev-env/tstool/) - needed to create time series products
+3. [Install pytest](../dev-env/pytest/) - needed to run automated Python tests
+
+The remaining steps below refer to other documentation and provides specific direction for new developer project setup.
+
+## Setup PyCharm Workspace
+
+[Create a PyCharm workspace](../project-init/pycharm-workspace/).
+This step is the same as the initial project setup.
+
+**TODO smalers 2016-12-04 Need to document how PyCharm gets setup.**
+
+## Import the Existing Git Repository Folder into PyCharm
+
+**TODO smalers 2016-12-04 Need to complete this assume that PyCharm needs to be told about he Git repository**
+
+## Configure PyCharm to Use QGIS Python
+
+[Configure PyCharm to use QGIS Python](../project-init/pycharm-config-python/).
+
+**TODO smales 2016-12-04 need to document how PyCharm is configured to use QGIS Python - is this configuration stored in the repository?**
+
+## Configure SNODAS Tools
+
+**TODO smalers 2016-12-04 Is any configuration needed to point the software to SNODAS data, etc., output folders, etc?**
+
+## Next Steps - Development
+
+At this point it should be possible to use PyCharm to run and edit the Python programs.
+The development tasks can be followed to do development.

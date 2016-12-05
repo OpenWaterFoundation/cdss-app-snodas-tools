@@ -1,0 +1,9 @@
+# List of files to ignore globally in the repository
+
+# Temporary editor files
+
+*.swp
+*.swo
+
+# Need to list dynamic files here
+
