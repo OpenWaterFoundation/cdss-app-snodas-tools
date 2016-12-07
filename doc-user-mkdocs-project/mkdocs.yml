@@ -1,0 +1,21 @@
+# This is the main configuration file for the MkDocs website.
+# Use hash-comments to comment out pages have not been written
+# Reference: http://www.mkdocs.org/user-guide/configuration/
+#
+site_name: SNODAS Tools (User Manual)
+pages:
+- 'Home': index.md
+- 'SNODAS Analysis Process':
+    - 'Overview': 'process/overview.md'
+- 'Product Description':
+    - 'Overview': products/overview.md
+theme: readthedocs
+repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
+site_description: SNODAS Tools (User Manual) 
+site_author: Open Water Foundation
+site_favicon: snodas-tools-favicon.png
+#copyright: TBD
+#extra_css:
+#- css/extra.css
+# Defaults to all JavaScript in the docs folder
+# extra_javascript:

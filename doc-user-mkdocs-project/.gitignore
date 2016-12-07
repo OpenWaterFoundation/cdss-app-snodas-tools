@@ -1,0 +1,5 @@
+# Ignore the following files (do not commit working files to repository)
+
+# Ignore the site files since they are auto-generated and do not need to be under revision control.
+
+site/
