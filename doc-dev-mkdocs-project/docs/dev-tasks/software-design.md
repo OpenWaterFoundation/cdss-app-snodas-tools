@@ -12,7 +12,8 @@ and areal extent of snow cover (allows color-coded basin maps to be shown).
 * Publish the results to State of Colorado platforms to allow web access for water managers.
 
 The above process is described for SNODAS tool users in the [SNODAS Tools User Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/index.html").
-The following diagram illustrates the overall data flow and technologies that are used:
+The following diagram illustrates the overall data flow and technologies that are used
+(to view the image full size, use the web browser feature to open the image in a new tab - for example, in Chrome right click and ***Open image in new tab***):
 
 ![SNODAS Tools System Diagram](software-design-images/SNODAS-Tools-System-Diagram-v1.png)
 
