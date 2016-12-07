@@ -2,7 +2,7 @@
 # Use hash-comments to comment out pages have not been written
 # Reference: http://www.mkdocs.org/user-guide/configuration/
 #
-site_name: CDSS SNODAS Tools (Developer Manual)
+site_name: SNODAS Tools (Developer Manual)
 pages:
 - 'Home': index.md
 - 'Development Environment':
@@ -24,21 +24,24 @@ pages:
     - 'GitHub Git Repository': 'project-init/github.md'
     - 'PyCharm workspace': 'project-init/pycharm-workspace.md'
     - 'Developer Documentation (MkDocs)': 'project-init/dev-doc.md'
+    - 'User Documentation (MkDocs)': 'project-init/user-doc.md'
+    - 'pytest': 'project-init/pytest.md'
 - 'New Developer Setup':
     - 'Overview': 'dev-new/overview.md'
 - 'Deployed Environment':
     - 'Overview': 'deployed-env/overview.md'
 - 'Development Tasks':
     - 'Overview': 'dev-tasks/overview.md'
+    - 'Software Design':  'dev-tasks/software-design.md'
     - 'PyCharm Troubleshooting': 'dev-tasks/pycharm-trouble.md'
-    - 'Git workflow': 'dev-tasks/git.md'
-    - 'Documentation': 'dev-tasks/doc.md'
-    - 'Test': 'dev-tasks/test.md'
-    - 'Build': 'dev-tasks/build.md'
-    - 'Deploy': 'dev-tasks/deploy.md'
+    - 'Git Workflow': 'dev-tasks/git.md'
+    - 'Documenting': 'dev-tasks/doc.md'
+    - 'Building and Running': 'dev-tasks/build-run.md'
+    - 'Testing': 'dev-tasks/test.md'
+    - 'Deploying': 'dev-tasks/deploy.md'
 theme: readthedocs
 repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
-site_description: CDSS SNODAS Tools (Developer Manual) 
+site_description: SNODAS Tools (Developer Manual) 
 site_author: Open Water Foundation
 site_favicon: snodas-tools-favicon.png
 #copyright: TBD
