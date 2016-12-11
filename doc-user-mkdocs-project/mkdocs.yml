@@ -5,10 +5,12 @@
 site_name: SNODAS Tools (User Manual)
 pages:
 - 'Home': index.md
-- 'SNODAS Analysis Process':
-    - 'Overview': 'process/overview.md'
-- 'Product Description':
-    - 'Overview': products/overview.md
+- 'SNODAS Data':
+  - 'Overview': data/overview.md
+- 'SNODAS Tools Process':
+  - 'Overview': 'process/overview.md'
+- 'SNODAS Tools Products':
+  - 'Overview': products/overview.md
 theme: readthedocs
 repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (User Manual) 

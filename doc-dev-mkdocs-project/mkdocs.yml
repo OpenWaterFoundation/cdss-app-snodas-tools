@@ -30,8 +30,10 @@ pages:
     - 'Overview': 'dev-new/overview.md'
 - 'Deployed Environment':
     - 'Overview': 'deployed-env/overview.md'
+    - 'Troubleshooting': 'deployed-env/troubleshooting.md'
 - 'Development Tasks':
     - 'Overview': 'dev-tasks/overview.md'
+    - 'Previous Tool Version':  'dev-tasks/previous-tool.md'
     - 'Software Design':  'dev-tasks/software-design.md'
     - 'PyCharm Troubleshooting': 'dev-tasks/pycharm-trouble.md'
     - 'Git Workflow': 'dev-tasks/git.md'
@@ -39,6 +41,7 @@ pages:
     - 'Building and Running': 'dev-tasks/build-run.md'
     - 'Testing': 'dev-tasks/test.md'
     - 'Deploying': 'dev-tasks/deploy.md'
+    - 'Future Enhancements': 'dev-tasks/future-enhancements.md'
 theme: readthedocs
 repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (Developer Manual) 
