@@ -37,3 +37,7 @@ In the following `user` is the software developer account.
 # Create folder for development project
 > mkdir CDSS-SNODAS-Tools
 ```
+
+## Next Step
+
+The next step is to configure the Git/GitHub repository so that files can be added to the software project for tracking.

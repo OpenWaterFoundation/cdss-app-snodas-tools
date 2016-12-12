@@ -1,8 +1,12 @@
 # Deployed Environment / Overview
 
-**TODO smalers 2016-12-04 need to insert PowerPoint image summarizing deployed system,
+**TODO smalers 2016-12-04 need to insert PowerPoint image summarizing final deployed system,
 using OWF prototype approach as the starting point so CWCB/DWR/OIT can react.
 Also need to insert images of example products.**
+
+The following system image is from the software design documentation.
+
+![Deployed System](../dev-tasks/software-design-images/SNODAS-Tools-System-Diagram-v1.png)
 
 The deployed system consists of two main components:
 

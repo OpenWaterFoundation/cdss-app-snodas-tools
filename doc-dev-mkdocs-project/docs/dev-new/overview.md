@@ -94,28 +94,25 @@ Software installation steps can be skipped if they have already been completed.
 
 The remaining steps below refer to other documentation and provides specific direction for new developer project setup.
 
-## Setup PyCharm Workspace
+## Setup PyCharm Project
 
-[Create a PyCharm workspace](../project-init/pycharm-workspace/).
-This step is the same as the initial project setup.
-
-**TODO smalers 2016-12-04 Need to document how PyCharm gets setup.**
-
-## Import the Existing Git Repository Folder into PyCharm
-
-**TODO smalers 2016-12-04 Need to complete this assume that PyCharm needs to be told about he Git repository**
+The [initial project setup configured a PyCharm project](../project-init/pycharm-project/) in the following folder:
+`C:\Users\user\cdss-dev\CDSS-SNODAS-Tools\git-repos\cdss-app-snodas-tools\pycharm-project`.
+This folder will have been cloned with other Git files.
 
 ## Configure PyCharm to Use QGIS Python
 
-[Configure PyCharm to use QGIS Python](../project-init/pycharm-config-python/).
+It is recommended that a script be used to run PyCharm consistent with QQIS.
+See [Configure PyCharm to work with QGIS](../dev-env/pycharm#configure-pycharm-to-work-with-qgis).
 
-**TODO smales 2016-12-04 need to document how PyCharm is configured to use QGIS Python - is this configuration stored in the repository?**
-
-## Configure SNODAS Tools
-
-**TODO smalers 2016-12-04 Is any configuration needed to point the software to SNODAS data, etc., output folders, etc?**
+The default script created for SNODAS Tools development an be used as if the installed PyCharm version
+is consistent with the script.  Otherwise, copy the script to a new name and change as needed.
+Note that the script will be saved to Git unless it is copied to a folder outside of Git.
+Be careful to not clobber the default file with changes for a specific user.
 
 ## Next Steps - Development
 
 At this point it should be possible to use PyCharm to run and edit the Python programs.
-The development tasks can be followed to do development.
+The [Development Tasks](../dev-tasks/overview/) can be followed to do development.
+
+Once scripts run in the development environment, they can be deployed using a more limited set of installed software (mainly QGIS).

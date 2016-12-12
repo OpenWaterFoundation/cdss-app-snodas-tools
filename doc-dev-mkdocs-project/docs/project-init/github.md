@@ -1,7 +1,14 @@
 # Project Initialization / GitHub
 
 Various files related to the SNODAS Tools software, documentation, tests, etc. are managed in a public GitHub Git repository.
-The following sections describe how the repository was initialized.
+The following sections describe how the repository was initialized during project set-up.
+
+## Prerequisites
+
+Before creating a repository in GitHub and cloning to local files, the following steps must have been completed:
+
+* [Install Git Software](../dev-env/git/)
+* [Create Development Folder](dev-folder/)
 
 ## Create GitHub Repository
 

@@ -22,9 +22,9 @@ pages:
 # the following may be useful to make sure PyCharm starts with proper Python
 #    - 'Create Script to run PyCharm': 'project-init/pycharm-script.md'
     - 'GitHub Git Repository': 'project-init/github.md'
-    - 'PyCharm workspace': 'project-init/pycharm-workspace.md'
     - 'Developer Documentation (MkDocs)': 'project-init/dev-doc.md'
     - 'User Documentation (MkDocs)': 'project-init/user-doc.md'
+    - 'PyCharm Project': 'project-init/pycharm-project.md'
     - 'pytest': 'project-init/pytest.md'
 - 'New Developer Setup':
     - 'Overview': 'dev-new/overview.md'

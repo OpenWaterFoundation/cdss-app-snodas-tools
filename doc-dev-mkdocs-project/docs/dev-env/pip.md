@@ -1,5 +1,7 @@
 # Development Environment / pip
 
+**TODO SAM 2016-12-11 need to determine what version of `pip` is installed with QGIS Python.**
+
 It may be necessary to install add-on packages that extend the basic Python functionality.
 For example, the MkDocs software used to prepare this documentation is an add-on package.
 
