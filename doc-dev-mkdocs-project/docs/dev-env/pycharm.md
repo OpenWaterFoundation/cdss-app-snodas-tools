@@ -10,7 +10,7 @@ Refer to the [Development Tasks](../dev-tasks/) for information about using PyCh
 The following are prerequisites to installing PyCharm:
 
 * [Install QGIS](qgis/) - PyCharm will use the Python 2.7 that is distributed with QGIS
-* [Install Git for Windows](git/) - not sure if this needs to be installed first **TODO smalers 2016-12-11 evaluate PyCharm/GIT integration**
+* [Install Git for Windows](git/) - currently Git BASH is used for version control but in the future the integrated PyCharm Git features may be used
 
 The sections in this documentation are:
 
@@ -100,6 +100,11 @@ REM Command line parameters passed to this script will be passed to PyCharm
 start "PyCharm aware of QGIS" /B %PYCHARM% %*
 ```
 Running the `runPyCharmWithQgisEnv.bat` batch file in a Windows command prompt window will start PyCharm.
+
+## Configure PyCharm to work with Git
+
+Currently the PyCharm Git features are not used.  See the [Initial Project Setup - PyCharm Project](../project-init/pycharm-project/)
+documentation for information on Git.
 
 ## Next Steps
 

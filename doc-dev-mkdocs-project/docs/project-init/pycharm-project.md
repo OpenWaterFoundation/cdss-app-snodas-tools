@@ -1,13 +1,18 @@
 # Project Initialization / PyCharm Project
 
 PyCharm provides extensive functionality for editing and running Python Programs.
+This documentation explains how to configure a new PyCharm project that will contain the Python code.
 
-## PyCharm and Git Integration
+## PyCharm and Git Integration - Part 1
+
+This section provides background on PyCharm/Git integration.  See [PyCharm and Git Integration - Part 2](#pycharm-and-git-integration-part-2)
+for specific confuration actions.
 
 Because the SNODAS tools source code are stored in the Git repository it is necessary to make PyCharm
 aware of the repository.  Resources include:
 
-* [Using GitHub Integration](https://www.jetbrains.com/help/pycharm/2016.2/using-github-integration.html)
+* [PyCharm - Using GitHub Integration](https://www.jetbrains.com/help/pycharm/2016.3/using-github-integration.html) - not overly relevant because are not using the PyCharm Git features yet
+* [PyCharm - Directory-Based Versioning Model](https://www.jetbrains.com/help/pycharm/2016.3/directory-based-versioning-model.html) - important
 
 Important considerations include:
 
@@ -56,6 +61,18 @@ Expanding shows the following:
 
 **TODO SAM 2016-12-11 need to figure out what to do with this.  A quick review of the Configure option is unclear.
 For now use the Git for Windows tools to perform Git operations**
+
+## PyCharm and Git Integration - Part 2
+
+The following indicates how PyCharm files should be handled in Git:
+
+* [PyCharm - Directory-Based Versioning Model](https://www.jetbrains.com/help/pycharm/2016.3/directory-based-versioning-model.html) - important
+
+Therefore, for the SNODAS Tools the following is done:
+
+* Create a `.gitignore` file in the `pycharm-project\.idea` folder that ignores the `workspace.xml` file.
+This `.gitignore` file will be included when a new developer starts working on the project,
+and ensures that each developer's settings only apply to their local development files and not other users.
 
 ## Next Step
 
