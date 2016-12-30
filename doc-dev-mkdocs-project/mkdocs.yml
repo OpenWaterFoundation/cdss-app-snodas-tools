@@ -31,10 +31,12 @@ pages:
 - 'Deployed Environment':
     - 'Overview': 'deployed-env/overview.md'
     - 'Troubleshooting': 'deployed-env/troubleshooting.md'
+- 'Software Design':
+    - 'Overview': 'software-design/overview.md'
 - 'Development Tasks':
     - 'Overview': 'dev-tasks/overview.md'
-    - 'Previous Tool Version':  'dev-tasks/previous-tool.md'
-    - 'Software Design':  'dev-tasks/software-design.md'
+    - 'Previous Tool Version': 'dev-tasks/previous-tool.md'
+    - 'Software Design': 'dev-tasks/software-design.md'
     - 'PyCharm Troubleshooting': 'dev-tasks/pycharm-trouble.md'
     - 'Git Workflow': 'dev-tasks/git.md'
     - 'Documenting': 'dev-tasks/doc.md'
