@@ -33,6 +33,7 @@ pages:
     - 'Troubleshooting': 'deployed-env/troubleshooting.md'
 - 'Software Design':
     - 'Overview': 'software-design/overview.md'
+    - 'Data Management': 'software-design/data-management.md'
 - 'Development Tasks':
     - 'Overview': 'dev-tasks/overview.md'
     - 'Previous Tool Version': 'dev-tasks/previous-tool.md'

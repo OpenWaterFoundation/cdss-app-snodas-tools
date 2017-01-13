@@ -5,8 +5,7 @@ The following topics are discussed in this section:<br>
 * [SNODAS Tools Design Overview](#snodas-tools-design-overview)
 * [SNODAS Tools Scripts](#snodas-tools-scripts)
 * [SNODAS Tools Configuration](#snodas-tools-configuration)
-* [Data Management - File Structure](#data-management-file-structure)
-* [Processing Workflow](#data-management-file-structure)
+* [Processing Workflow](#processing-workflow)
 	+ [Download SNODAS Data](#download-snodas-data)
 	+ [Clip SNODAS National Grids to Colorado](#clip-snodas-national-grids-to-colorado)
 	+ [Create the Binary Snow Cover Raster](#create-the-binary-snow-cover-raster)
@@ -49,11 +48,7 @@ The SNODAS tools are divided into 3 individual scripts. <br>
 
 **TODO smalers 2016-12-06 describe how the tools are configured... configuration file, driving basins layer, Excel input, etc.**
 
-## Data Management - File Structure
 
-**TODO smalers 2016-12-06 Emma needs to describe the file structure for data mangement.
-Need something like [Development Folder Structure](../project-init/overview#development-folder-structure) but for the operational files.
-This is hopefully the same as the deployed system.  Difficult for Steve to understand the system design without this.**
 
 ## Processing Workflow
 
