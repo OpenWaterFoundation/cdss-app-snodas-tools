@@ -580,9 +580,9 @@ def snowCoverage(file, folder_input, folder_output):
 def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
     """Create empty csv files for output - both by date and by basin. The empty csv files have a header row with
      each column represented by a different fieldname (refer to 'fieldnames' section of the function for actual
-     fieldnames). Csv files by date contain one .csv file for each date and is titled 'SnowpackByDateYYYYMMDD.csv'.
+     fieldnames). Csv files by date contain one .csv file for each date and is titled 'SnowpackByDate_YYYYMMDD.csv'.
      Each byDate file contains the zonal statistics for each basin on that date. Csv files by basin contain one .csv
-     file for each watershed basin and is titled 'SnowpackByBasin(BasinId)'. Each byBasin file contains the zonal
+     file for each watershed basin and is titled 'SnowpackByBasin_BasinId)'. Each byBasin file contains the zonal
      statistics for that basin for each date that has been processed.
      file: daily .tif file  to be processed with zonal statistics (clipped, reprojected)
      vFile: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal stats calculations)
@@ -614,8 +614,8 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
                       'SWE_StdDev_meters', 'Count_pixels', 'SnowCover_percent', 'SWE_Mean_inches', 'SWE_Min_inches',
                         'SWE_Max_inches', 'SWE_StdDev_inches']
 
-        # Create string variable for name of outputed .csv file by date. Name: SnowpackByDateYYYYMMDD.csv.
-        results_date = 'SnowpackByDate' + date_name + '.csv'
+        # Create string variable for name of outputed .csv file by date. Name: SnowpackByDate_YYYYMMDD.csv.
+        results_date = 'SnowpackByDate_' + date_name + '.csv'
 
         # Check to see if the output file has already been created.
         if os.path.exists(os.path.join(csv_byDate, results_date)):
@@ -640,8 +640,8 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
         # Iterate through each basin of the basin boundary shapefile.
         for feature in iter:
 
-            # Create string variable for the name of output .csv file by basin. Name: SnowpackByBasinLOCALID.csv.
-            results_basin = 'SnowpackByBasin' + feature[ID_Field_Name] + '.csv'
+            # Create string variable for the name of output .csv file by basin. Name: SnowpackByBasin_LOCALID.csv.
+            results_basin = 'SnowpackByBasin_' + feature[ID_Field_Name] + '.csv'
 
             # Check to see if the output file has already been created. If so, the script moves onto the raster
             # processing. If not, a .csv file is created with the appropriate fieldnames as the info in the
@@ -694,7 +694,7 @@ def delete_ByBasinCSV_repeated_rows(file, vFile, csv_byBasin):
         for feature in iter:
 
             # Create string variable to be used as the title for the outputed .csv file - By Basin
-            results_basin = 'SnowpackByBasin' + feature[ID_Field_Name] + '.csv'
+            results_basin = 'SnowpackByBasin_' + feature[ID_Field_Name] + '.csv'
 
         # Set directory where the output .csv daily files are stored. - By Basin
         os.chdir(csv_byBasin)
@@ -711,8 +711,8 @@ def delete_ByBasinCSV_repeated_rows(file, vFile, csv_byBasin):
             for feature in iter:
 
                 # Create string variable to be used as the title for the input and output .csv file - By Basin
-                results_basin = 'SnowpackByBasin' + feature[ID_Field_Name] + '.csv'
-                results_basin_edit = 'SnowpackByBasin' + feature[ID_Field_Name] + 'edit.csv'
+                results_basin = 'SnowpackByBasin_' + feature[ID_Field_Name] + '.csv'
+                results_basin_edit = 'SnowpackByBasin_' + feature[ID_Field_Name] + 'edit.csv'
 
                 logging.warning(
                     'delete_ByBasinCSV_repeated_rows: Rewriting %s.' % results_basin)
@@ -733,7 +733,7 @@ def delete_ByBasinCSV_repeated_rows(file, vFile, csv_byBasin):
                 # Delete original, now inaccurate, csvByBasin file.
                 os.remove(results_basin)
 
-                # Rename the new edited csvByBasin file to its original name of SnowpackByBasin +
+                # Rename the new edited csvByBasin file to its original name of SnowpackByBasin_ +
                 # feature[ID_Field_Name] + '.csv'
                 os.rename(results_basin_edit, results_basin)
 
@@ -910,7 +910,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow):
             for feature in iter:
 
                 # Create string variable to be used as the title for the output .csv file - By Basin
-                results_basin = 'SnowpackByBasin' + feature[ID_Field_Name] + '.csv'
+                results_basin = 'SnowpackByBasin_' + feature[ID_Field_Name] + '.csv'
 
                 # Calculate snow coverage percent. Add the calculation to created field 'SnowCover'
                 feature['SnowCover'] = e.evaluate(feature)
@@ -1018,7 +1018,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow):
             vectorFile.updateFields()
 
             # Create a string variable to be used as the title for the outputed .csv file - By Date
-            results_date = 'SnowpackByDate' + date_name + '.csv'
+            results_date = 'SnowpackByDate_' + date_name + '.csv'
 
             # Set directory to the directory where the output .csv daily files are contained. - By Date
             os.chdir(csv_byDate)
@@ -1055,8 +1055,8 @@ def createGeoJson(file, csv_byDate):
     # Change directory to folder containing the csv files by date
     os.chdir(csv_byDate)
 
-    # Set name of JSON files. File name: SnowpackByDateYYYYMMDD.csv | JSON Name: SnowpackByDateYYYYMMDD.json
-    jsonName = 'SnowpackByDate' + file[14:22] + '.json'
+    # Set name of JSON files. File name: SnowpackByDate_YYYYMMDD.csv | JSON Name: SnowpackByDate_YYYYMMDD.json
+    jsonName = 'SnowpackByDate_' + file[14:22] + '.json'
 
     # Write contents of JSON file.
     if not os.path.exists(os.path.join(csv_byDate, jsonName)):

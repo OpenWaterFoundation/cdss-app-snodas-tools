@@ -30,6 +30,7 @@ pages:
     - 'Overview': 'dev-new/overview.md'
 - 'Deployed Environment':
     - 'Overview': 'deployed-env/overview.md'
+    - 'Task Scheduler': 'deployed-env/task-scheduler.md'
     - 'Troubleshooting': 'deployed-env/troubleshooting.md'
 - 'Software Design':
     - 'Overview': 'software-design/overview.md'
