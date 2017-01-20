@@ -63,12 +63,11 @@ locations of folders and files on the operational system.
 - - - - - > ```SNODAS_publishResults.py```   
 - - - - - > ```SNODASDaily_Automated_forTaskScheduler.bat```  
 
---- ```staticData\```  
-- - - - - > ```stateBoundary.shp```  
-- - - - - > ```stateBoundary.json```   
+--- ```staticData\```    
 - - - - - > ```watershedBasinBoundary.shp```   
-- - - - - > ```watershedBasinBoundary.json```  
-- - - - - > ```watershedBasinBoundaryExtent.shp``` 
+- - - - - > ```watershedBasinBoundaryExtent.shp```   
+- - - - - > ```watershedBasinBoundary.geojson```  
+- - - - - > ```stateBoundary.geojson```
  
 --- ```processedData\```  
 - - - - > ```SNODAS_log.txt```  
@@ -120,16 +119,14 @@ and exports daily snowpack zonal statistics.
 This script only processes the current date's SNODAS data. 
 For information on the data processing steps of ```SNODASDaily_Automated.py```, refer to the 
 [Processing Workflow](overview.md#processing-workflow) section. For information on the SNODAS FTP site, refer to the
-[SNODAS Tools Data](../../../doc-user-mkdocs-project/docs/data/overview.md) of the user guide. For information on
-the output snowpack products, refer to the [SNODAS Tools Products](../../../doc-user-mkdocs-project/docs/products/overview.md)
+[SNODAS Data](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/data/overview/) of the user guide. For information on
+the output snowpack products, refer to the [SNODAS Tools Products](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/products/overview/)
 section of the user guide.
 
 The ```SNODASDaily_Automated.py``` script is designed to be automatically run using a task scheduler program. Once the task is set 
 up, refer to [Task Scheduler](../deployed-env/task-scheduler) section for more information, the script downloads the daily SNODAS data on a daily timer and exports 
 the daily zonal statistics to the [processedData\ folder](#folder-snodastools_processeddata). 
-
- **TODO egiles 2017-01-13 fix the broken links that direct to the user manual**  
-  
+ 
  **SNODASDaily_Interactive.py**	
 
 The ```SNODASDaily_Interactive.py``` script downloads _historical_ SNODAS data from the SNODAS FTP site 
@@ -143,8 +140,8 @@ the exported statistics of the ```SNODAS_DailyAutomated.py``` script.
 
 For information on the data processing steps of ```SNODASDaily_Interactive.py```, refer to the 
 [Processing Workflow](overview.md#processing-workflow) section. For information on the SNODAS FTP site, refer to the
-[SNODAS Tools Data](../../../doc-user-mkdocs-project/docs/data/overview.md) section of the user guide. For information
-on the output snowpack products, refer to the [SNODAS Tools Products](../../../doc-user-mkdocs-project/docs/products/overview.md)
+[SNODAS Data](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/data/overview/) section of the user guide. For information
+on the output snowpack products, refer to the [SNODAS Tools Products](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/products/overview/)
 section of the user guide.
 
 
@@ -194,74 +191,169 @@ Two types of static data, script input data and visualization data, are stored w
 ** Script Input Data**
 
 The SNODAS tools require the input of two static data files. These two data files should be saved 
-within this folder. 
+within this folder prior to running the scripts. 
 
-(1) Watershed Basin Shapefile Input. The shapefile is a collection of basin features for the study area of interest. 
-Originally the SNODAS Tools were developed to perform snowpack analysis for the state of Colorado. Below is an
-image of the shapefile (displayed in green) used for the watershed basin input. The black, boxed 
+1. Watershed Basin Shapefile Input (```watershedBasinBoundary.shp```). This shapefile is a collection of basin features for the 
+study area of interest. Originally the SNODAS Tools were developed to perform snowpack analysis for the state of Colorado. Below
+is an image of the watershed basin shapefile (displayed in green) used for the watershed basin input. The black, boxed 
 outline is the Colorado state boundary. 
+
+	- Zonal statistics are statistics calculated by zone where the zones are defined by an input zone dataset and the values 
+are defined by a raster grid. This shapefile is the input zone dataset. 
 
 ![colorado Basins Shapefile](data-management-images/CO_basin_boundaries.png)
 
-(2) Watershed Basin Extent Shapefile Input. The single-feature shapefile is a bounding box extent of the Watershed 
-Basin Shapefile Input. Below is an image of the shapefile (displayed in green) used for the Colorado watershed 
-basin extent input. The Colorado watershed basin shapefile is overlaid with a transparent fill. 
+2. Watershed Basin Extent Shapefile Input (```watershedBasinBoundaryExtent.shp```). This single-feature shapefile extends 
+slightly beyond the extent of the watershed basin shapefile to ensure all areas of the study area are accurately represented 
+by the SNODAS data. Below is an image of the watershed basin extent shapefile (displayed in green) used for the Colorado watershed
+ basin extent input. The Colorado watershed basin shapefile is overlaid with a transparent fill. 
+
+	- This shapefile decreases the processing time of the scripts by clipping the national SNODAS grid to the manageable size of the 
+study area. 
 
 ![colorado Basins Extent](data-management-images/Co_basin_extent.png)
- **TODO egiles 2017-01-13 update this image to be the correct watershed basin shapefile and extent**
  
 ** Visualization Data **
 
+As previously mentioned, the output products can be displayed in tabular form or in a choropleth map. The static visulatization 
+data is used in the choropleth map. The visualiztion data are .GeoJSON files. 
+A [GeoJSON file](http://learn.openwaterfoundation.org/owf-learn-geojson/index.html) is " an open standard format designed for 
+representing simple geographical features, along with their non-spatial attributes, based on JavaScript Object Notation." 
+- [Wikipedia:GeoJSON](https://en.wikipedia.org/wiki/GeoJSON).
+
+
+1. Watershed Basin Boundary (```watershedBasinBoundary.geojson```). The watershed basin boundary GeoJSON file is the watershed
+basin shapefile input converted into a GeoJSON file. This file will display the individaul basin boundaries for which the zonal 
+statistics are calculated. In a choropleth map, each basin of the watershed basin boundary GeoJSON file will be filled with a 
+color representing a daily snowpack statistic. 
+
+2. State Boundary (```stateBoundary.geojson```). The state boundary GeoJSON file gives viewers of the choropleth map a sense of 
+location. Note that this file is defined as state boundary only becasue the SNODAS tools were originally developed for the state
+of Colorado. If the study area is other than state-level, it might be more appropriate to adjust this layer to represent a location 
+of corresponding scale (ex: basin exent, study area, etc.).
+
 ### SNODASTools\\processedData\\
 
-The ```C:\CDSS\SNODASTools\processedData\``` folder contains two sub-folders.
+All output products of ```SNODASDaily_Automated.py``` and ```SNODASDaily_Interactive.py``` are saved within the processedData\ folder. 
+For each processed day of data, 6 output products are created. To see a larger view of the images below, right-click on the image and 
+click *Open image in new tab*.
 
-	1. SNODASDailyDownload\  
-	2. SNODASHistoricalDownload\
-	
-All data files created from  the ```SNODASDailyDownload.py``` 
-script are saved within the ```SNODASDailyDownload\``` sub-folder. All data files created from  
-the ```SNODASHistoricalDownload.py``` script are saved within the ```SNODASHistoricalDownload\``` sub-folder.
-
-
-As mentioned previously, both the ```SNODASDailyDownload.py``` and the ```SNODASHistoricalDownload.py``` scripts
-iterate through the same functions and produce the same output files. The only difference between the two scripts is that
-the ```SNODASDailyDownload.py``` downloads and processes SNODAS data for the **current** date whereas the 
-```SNODASHistoricalDownload.py``` downloads and processes SNODAS data for **historical** dates. Due to the similarity in 
-script processing and output files, the 5 sub-folders under the ```SNODASDailyDownload\``` and the ```SNODASHistoricalDownload\```
-folders are identical. 
-
-The file structure of the 5 sub-folders is displayed below. 
-
-```processedData\```  
-- - > ```SNODAS_log.txt```  
-- - -  ```1_DownloadSNODAS\```   
-- - - - - - > ```SNODAS_YYYYMMDD.tar```  
-- - -  ```2_SetFormat\```   
-- - - - - - > ```us_ssmv11034tS__T0001TTNATSYYYYMMDD05HP001.tif```  
-- - -  ```3_ClipToExtent\```   
-- - - - - - > ```SNODAS_SWE_ClipAndReprojYYYYMMDD.tif```   
-- - -  ```4_CreateSnowCover\```    
-- - - - - - > ```SNODAS_SnowCover_ClipAndReprojYYYYMMDD.tif```   
-- - -  ```5_CalculateStatistics\```   
-- - - - - - - ```StatisticsbyBasin\```  
-- - - - - - - - - > ```SnowpackByBasin_LOCALID```  
-- - - - - - - ```StatisticsbyDate\```  
-- - - - - - - - - > ```SnowpackByDate_YYYYMMDD``` 
+1. The originally downloaded national SNODAS .tar file  
+	- ```SNODAS_YYYYMMDD.tar``` 
+	![Download](data-management-images/download.png)  
+2. The reformatted national SNODAS SWE data in .tif format  
+	 - ```us_ssmv11034tS__T0001TTNATSYYYYMMDD05HP001.tif```
+	 ![SetFormat](data-management-images/setformat.png)
+3. The clipped and reprojected SNODAS SWE .tif file  
+	- ```SNODAS_SWE_ClipAndReprojYYYYMMDD.tif```  
+	![Clip](data-management-images/clip.png)
+4. The clipped and reprojected snow cover binary .tif file  
+	- ```SNODAS_SnowCover_ClipAndReprojYYYYMMDD.tif```  
+	![Snow Cover](data-management-images/snowcover.png)
+5. The snowpack statistics in a .csv file organized by basin ID  
+	 - ```SnowpackByBasin_LOCALID```  
+	 ![ByBasin](data-management-images/statistics.png)
+6. The snowpack statistics in a .csv file organized by date  
+	 - ```SnowpackByDate_YYYYMMDD``` 
+	 ![ByDate](data-management-images/statistics.png)
 
 
+The 6 output products are saved within subfolders of the processedData folder. Each subfolder is explained in further detail below. 
+The name of each subfolder is described by the default name. However, the following folder names can be edited in the 
+[configuration file](#snodastools92snodasconfigini).  
 
-#### processedData\\SNODAS_log.txt
 #### processedData\\1_DownloadSNODAS\\
+
+The SNODAS tools access the [SNODAS FTP site](ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/) and download the daily 
+SNODAS .tar file. If the ```SNODASDaily_Automated.py``` script is utilized, the daily SNODAS .tar file is the current date. If the 
+```SNODASDaily_Interactive.py``` script is utilized, the daily SNODAS tar file is the date of interest defined by user input. 
+
+The file is downloaded to the 1_DownloadSNODAS folder and is named ```SNODAS_YYYYMMDD.tar``` where ```YYYYMMDD``` represents the date of data. 
+Note that the date does not represent the download date but rather the date when the SNODAS data is collected. 
+
+	Example: 
+	Downloaded SNODAS file for January 9th, 2013 -> SNODAS_20130109.tar
+
+Refer to the [Processing Workflow](overview/#processing-workflow) section for a general description of the SNODAS tools' downloading step. 
+Refer to [Tool Utilities and Functions](overview.md#tool-utilities-and-functions) for detailed information on the Python functions 
+called to download the SNODAS data.
+
 #### processedData\\2_SetFormat\\
+
+The SNODAS tools manipulate the SNODASYYYYMMDD.tar file to produce a SNODAS Snow Water Equivalent (SWE) national grid in .tif format. 
+
+The manipulated SNODAS SWE .tif file is saved to the 2_SetFormat folder and is named ```us_ssmv11034tS__T0001TTNATSYYYYMMDD05HP001.tif```
+where ```YYYYMMDD``` represents the date of data. Note that the date does not represent the download date but rather the date when the 
+SNODAS data is collected. 
+
+	Example: 
+	SNODAS SWE .tif file for January 9th, 2013 -> us_ssmv11034tS__T0001TTNATS2013010905HP001.tif
+
+The long and cryptic name of this file can be explained with the [NSIDC SNODAS user guide](http://nsidc.org/data/docs/noaa/g02158_snodas_snow_cover_model/index.html).   
+The naming convention variables are described below:
+
+**us: region of the file**  
+'us': United States  
+  
+**ssm: model used to generate the estimates**  
+'ssm': simple snow model  
+   
+**v1: signifies if the file contains snow model driving data or model output**  
+'v1': operational snow model output  
+
+**1034: product code representing the snow parameter represented by the data**  
+'1034': snow water equivalent  
+ 
+**tS\__: a vertical integration code that denotes what type of snow pack data are being collected **  
+'tS__': integral through all the layers of the snow pack  
+
+**T0001: time integration code**  
+'T0001': a one-hour snapshot  
+  
+**TTNA: detail of snow modeling operations**  
+'TTNA': will always be TTNA  
+  
+**TS: time step code**  
+TS is followed by the year, month, day, and hour of the start of the last time step of the 
+integration period for which the data applies. For example, the time integration code, 
+T0024, and time step code, TS2003102305, are for the time interval 2003-10-22 06 to 
+2003-10-23 05.    
+
+**YYYY: 4-digit year**  
+'YYYY': dependent on date of data   
+  
+**MM: 2-digit month**  
+'MM': dependent on date of data    
+
+**DD: 2-digit day of month**   
+'DD': dependent on date of data  
+ 
+**05: 2-digit hour of day**  
+'05': 5th hour of the day  
+  
+**H: time interval**  
+'H': hourly  
+ 
+**P001: offset code refering to where the data applies during a snow model time step in the snow 
+model's differencing scheme**  
+'P001': field represents a total flux for the entire time step such as precipitation or that a field
+represents data at the end of a time step  
+  
+   
+    
+Refer to the [Processing Workflow](overview/#processing-workflow) section for a general description of the SNODAS tools' set format step. 
+Refer to [Tool Utilities and Functions](overview.md#tool-utilities-and-functions) for detailed information on the Python functions 
+called to set the format of the SNODAS data.
+
 #### processedData\\3_CliptoExtent\\
 #### processedData\\4_CreateSnowCover\\
 #### processedData\\5_CalculateStatistics\\
 #### processedData\\5_CalculateStatistics\\StatisticsbyBasin\\
 #### processedData\\5_CalculateStatistics\\StatisticsbyDate\\
+#### processedData\\SNODAS_log.txt
 
 
-		
+### SNODASTools\\SNODASconfig.ini		
 		
 	
 		
