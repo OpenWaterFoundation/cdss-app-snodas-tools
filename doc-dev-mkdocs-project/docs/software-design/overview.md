@@ -1,8 +1,8 @@
-# Software Design / Overview
+# Table of Contents
 
 The following topics are discussed in this section:<br>
 
-* [SNODAS Tools Design Overview](#snodas-tools-design-overview)
+* [Overview](#overview)
 * [SNODAS Tools Scripts](#snodas-tools-scripts)
 * [SNODAS Tools Configuration](#snodas-tools-configuration)
 * [Processing Workflow](#processing-workflow)
@@ -14,22 +14,41 @@ The following topics are discussed in this section:<br>
 	+ [Generate Time Series Products](#generate-time-series-products)
 	+ [Publish Results](#publish-results)
 * [Tool Utilities and Functions](#tool-utilities-and-functions)
-* [Software Troubleshooting](#software-troubleshooting)
+	+ [Download SNODAS Data](#1-download-snodas-data)
+	+ [Convert Data Formats](#2-convert-data-formats)
+	+ [Clip and Project SNODAS Data](#3-clip-and-project-snodas-data)
+	+ [Create Snow Cover Data](#4-create-snow-cover-data)
+	+ [Calculate and Export Statistics](#5-calculate-and-export-statistics)
 
-## SNODAS Tools Design Overview
+
+## Overview
 
 The SNODAS tools design meets the following requirements:
 
 * Download historical and new daily SNODAS grids.
-* Clip grids to Colorado basins boundary so that original SNODAS grid can be viewed as product later
-(results in background layer that can be shown on maps).
-* Intersect basin polygons with Colorado SNODAS grid to determine basin statistics including average snow water equivalent over basin
+* Clip grids to [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) (```watershedBasinBoundaryExtent.shp```) 
+so that original SNODAS grid can be viewed as product later (results in background layer that can be shown on maps). 
+In the original design of the SNODAS tools for CDSS, the SNODAS grids are clipped to the extent of the Colorado basin boundary. 
+* Intersect basin polygons with clipped SNODAS grid to determine basin statistics including average snow water equivalent over basin
 and areal extent of snow cover (allows color-coded basin maps to be shown).
+
+	 |Statistic|Units|
+	 |----------|-----|
+	 |Mean Snow Water Equivalent|meters|
+	 |Minimum Snow Water Equivalent|meters|
+	 |Maximum Snow Water Equivalent|meters|
+	 |Standard Deviation of Snow Water Equivalent|meters|
+	 |Mean Snow Water Equivalent|inches|
+	 |Minimum Snow Water Equivalent|inches|
+	 |Maximum Snow Water Equivalent|inches|
+	 |Standard Deviation of Snow Water Equivalent|inches|
+	 |Percent Area of Snow Cover|unitless|
+	 
 * Create time series for a basin with daily history of statistics for individual basins and groups of basins
 (allow graphs to be created for current year and past years).
 * Publish the results to State of Colorado platforms to allow web access for water managers.
 
-The above process is described for SNODAS tool users in the [SNODAS Tools User Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/index.html").
+The above process is described for SNODAS tool users in the [SNODAS Tools User Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user).
 The following diagram illustrates the overall data flow and technologies that are used
 (to view the image full size, use the web browser feature to open the image in a new tab - for example, in Chrome right click and ***Open image in new tab***):
 
@@ -39,9 +58,14 @@ The following diagram illustrates the overall data flow and technologies that ar
 
 The SNODAS tools are divided into 3 individual scripts. <br>
 
-1. [__AutomatedDaily__](#download-snodas-data): calculates today’s approximate daily SWE statistics for each basin 
-2. [__UserInput__](#download-snodas-data): calculates historical approximate daily SWE statistics for each basin (the dates that are processed are dependent upon the interest and input of the user)
-3. [__SNODAS_utilities__](#tool-utilities-and-functions): holds all functions called upon within the two first scripts
+1. ```SNODASDaily_Automated.py```: Calculates today’s approximate daily snowpack statistics for each basin of the 
+[Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92) (```watershedBasinBoundary.shp```).
+	 
+	 
+2. ```SNODASDaily_Interactive.py```: Calculates historical approximate daily snowpack statistics for each basin of
+ the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92) (```watershedBasinBoundary.shp```). The historical dates 
+ are dependent upon user input.
+3. ```SNODAS_utilities.py```: Contains [all functions](#tool-utilities-and-functions) called within the above two scripts.
  
 
 ## SNODAS Tools Configuration
@@ -54,8 +78,6 @@ The SNODAS tools are divided into 3 individual scripts. <br>
 
 The following sections describe the processing workflow that is executed by the scripts.
 
-**TODO smalers 2016-12-29 Emma needs to clarify the following.  Indicate which scripts do what and then which functions are in which scripts.
-Focus on a simple explanation and let the code comments explain the code.**
 
 ### Download SNODAS Data
 
@@ -64,102 +86,83 @@ compares with previous years).  SNODAS data also need to be downloaded each day 
 The management of historical and daily downloads are the same, other than scripts are run differently in both cases.
 The intent of the software is to allow rerunning the entire process if necessary, such as if installing the software on a new system.
 
+**SNODASDaily_Automated.py**
 
-#### Download SNODAS Data (Each New Day)
+The ```SNODASDaily_Automated.py``` script downloads the current date's SNODAS data from the FTP site. Only the current date's data 
+can be downloaded and processed by this scipt. 
 
-The automated daily SWE calculator tool is designed to download the current day’s raw SNODAS data and output SWE and snow coverage statistics for 
-each watershed of the vector input. It is independent of user manipulation besides the original definition of the file locations for both the vector 
-inputs and the product outputs. These user configurations must be defined within the script content before the tool is run 
-(reference ‘Setting up the Tools’ in the user guide). 
+**SNODASDaily_Interactive.py**
 
-The following statistics are calculated for each basin of the watershed basin vector input:
+The ```SNODASDaily_Interactive.py``` script downloads the historical dates of SNODAS data that are inputed into the script by the user. When running the 
+```SNODASDaily_Interactive.py``` script, the console will print: 
 
-1. SWE mean (meters|inches) – *the daily average snow water equivalence of the basin*
-2. SWE minimum (meters|inches) – *the minimum snow water equivalence of the basin*
-3. SWE maximum (meters|inches) – *the maximum snow water equivalence of the basin*
-4. SWE standard deviation (meters|inches) – *the snow water equivalence standard deviation of the basin*
-5. Pixel count (pixels) – *the number of pixels representing the basin* 
-6. Snow Cover (percent of area) –  *the percentage of snow-covered ground of the basin*
+	Are you interested in one date or a range of dates? Type ‘One’ or ‘Range’.
 
-The functions utilized in the script are stored in the SNODAS_utilities.py. For a full description of each function, refer to the [*Tool Utilities and Functions*](software-design/#tool-utilities-and-functions)
-section of the user guide. 
+The user inputs 'One' if only one historical date is to be processed. The user inputs 'Range' if multiple historical dates are to be processed. 
 
-The automated daily script retrieves today’s date with the datetime module. With the retrieved date, the NSIDC FTP site is accessed and the 
-SNODAS data for the current date is downloaded. This download is delivered in .tar format and is saved within the ‘download’ folder of the user-defined 
-root folder location. The downloaded .tar file is extracted and the data of interest, SWE, is converted from .dat to .tif format. 
+ - If the input is 'One', the console will print:
 
-#### Download SNODAS Data (Historical)
+		Which date are you interested in? The date must be of or between 01 October 2003 
+		and today's date.  mm/dd/yy:	
 
-The User Input SWE Calculator Tool was used to process the historical SNODAS data. It also has the capability to process various dates of raw SNODAS 
-data defined by the user. The only difference between this tool and the automated daily SWE calculator tool is that the user can define the dates 
-of interest rather than being constricted to the current date. The processing steps are identical to the automated daily tool but instead of the current date, the user input SWE calculator tool 
-can process any date of interest, given that the date is within an appropriate range. 
+	- The user inputs a date in the correct format and that date of SNODAS data will be downloaded. 
 
-The following diagram illustrates the user prompt flow of the userInput script. Each box is further explained in the text below. 
-(to view the image full size, use the web browser feature to open the image in a new tab - for example, in Chrome right click and ***Open image in new tab***):
-![User Input Flow](overview-images/user_input_flow.png)
+ - If the input is 'Range', the console will print: 
+ 
+		What is the STARTING date of data that you are interested in? The date must be of or
+		between 01 October 2003 and today's date.  mm/dd/yy:
+		
+	- The user inputs the first date of a range of historical dates in the correct format. The console will print:
 
-The user input tool starts with a set of questions displayed on the console to gain understanding of which dates the user would like to process. 
-The first question is: 
+			What is the ENDING date of data that you are interested in? The date must be between
+			[date entered from previous prompt] and today's date. mm/dd/yy: 
+			
+	- The user inputs the last date of a range of historical dates in the correct format. All SNODAS data from the dates within the range will be 
+	downloaded (in sequential order).
+	
+ If you are experiencing errors after your inputs, reference the [Troubleshooting](..\deployed-env\troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
+	
+----------------------------------------------------------------------------------------------------------------------
 
-<center>*Are you interested in one date or a range of dates? Type ‘One’ or ‘Range’.*</center>
+The downloaded daily SNODAS data, whether downloaded from the ```SNODASDaily_Automated.py``` or the ```SNODASDaily_Interactive.py```, is
+saved in the 1_DownloadSNODAS folder as a .tar file. Refer to the [File Structure](file-structure.md#processeddata921_downloadsnodas92) section 
+for more information regarding the downloaded SNODAS .tar file and the 1_DownloadSNODAS folder. Refer to the [Tool Utilities and Functions](#1-download-snodas-data)
+section for detailed information on the Python function called to download the SNODAS data.
 
-This tool can process one date of data or a consecutive range of dates. The tool, however, cannot process a list of multiple, inconsecutive dates. 
+### Convert SNODAS Data Formats
 
-The second question prompts on the console after a correctly formatted answer to question 1 is inputted. The second question is:
+The daily downloaded SNODAS file is delivered in .tar format. To process the snowpack statistics, the .tar file is manipulated into a 
+.tif file representing the daily SWE values. 
 
-<center>*Do you want the results to output into a new project folder?: Type ‘Yes’ or ‘No’.*</center>
+This occurs by the following steps: 
 
-This prompt gives the user the flexibility to add the results from a previous process to the current process. This is beneficial for users who want to 
-calculate statistical outputs for dates of inconsecutive order. 
+|Step|Description|Result|
+|-|------|------|
+|<center>1|Extract SNODAS .tar file|7 SNODAS parameters (.gz)|
+|<center>2|Delete\Move SNODAS parameters other than SWE*|SNODAS SWE file (.gz)|
+|<center>3|Extract SWE .gz file|SNODAS SWE files (.dat and .Hdr)|
+|<center>4|Convert SWE .dat to .bil file|SNODAS SWE files (.bil and .Hdr)|
+|<center>5|Replace .Hdr file contents with custom specifications|SNODAS SWE files (.bil and .Hdr)|
+|<center>6|Create SWE .tif file|SNODAS SWE files (.tif, .bil and .Hdr)|
+|<center>7|Delete SWE .bil and .Hdr files| SNODAS SWE file (.tif)|
 
-For example, let’s say the user wants to obtain the statistics for the following dates: 
-<center> December 12th, 2010 </center>
- <center>January 3rd, 2013 </center>
- <center>January 4th 2013 </center>
- <center>January 5th, 2013  </center>
+\* The SNODAS tools are defaulted to delete all parameters, other than SWE. However, the other parameters' .gz files can 
+be saved if previously configured. In that case, the other parameters' .gz files are moved to a separate folder. Refer
+to section [2_SetFormat\OtherParameters folder](file-structure.md#processeddata922_setformat92) of the File Strucute tab for more information.
 
-These dates are not consecutive so the user would have to run the script multiple times to get the results 
-of interest. The first run would target 12/12/10. They would input ‘one’ for the first question because there is only one date of interest. They would then 
-input ‘yes’ for the second question because they are starting a new project. The second run would target all 01/03/13, 01/04/13 and 01/05/13 dates because 
-they are consecutive. The user would input ‘range’ for the first question because there are more than one dates of interest. They would then input ‘no’ for 
-the second question because they want the results from this run to combine with the results from the previous run (where 12/12/10 was processed.) 
+Steps 4 and 5 are NOHRSC suggestions to ingest the data into a geographic information system. In the case of the SNODAS tools, QGIS is 
+utilized as the GIS. The documentation explaining these steps is located in *Appendix B: Instructions to Extract and Ingest SNODAS 
+Data into GIS or Image Processing Software* (page 12) of the 
+[National Operational Hydrologic Remote Sensing Center SNOw Data Assimilation System (SNODAS) Products at NSIDC Special Report #11](http://nsidc.org/pubs/documents/special/nsidc_special_report_11.pdf).
 
-If the user wants to create a new project folder (answered YES to *Do you want the results to output into a new project folder?* ), the console displays the following prompt:
+The daily SNODAS national SWE .tif grid is saved in the 2_SetFormat folder. Refer to the [File Structure](file-structure.md#processeddata922_setformat92) section 
+for more information regarding the national SWE .tif file and the 2_SetFormat folder. Refer to [Tool Utilities and Functions](#2-convert-data-formats)
+section for detailed information on the Python functions called to process the above 7 steps.
 
-<center>What would you like this new project folder to be named? Please do not use spaces or special characters.</center>
-
-This new folder is created in the root directory that the user previously configured. (See ‘Setting up the Tools’ section). 
-Within the new folder, the script automatically creates the 6 project sub-folders - Download, SetEnvironment, Clip, Logging, Snow Cover and Results (See ‘Folder Structure’ section). 
-
-If the user wants to use a previously constructed project folder (answered NO to *Do you want the results to output into a new project folder?*), the console outputs a 
-list of all available project folders within the previously configured root director (See ‘Setting up the Tools’ section). The console also displays the following prompt: 
-
-<center>*Which existing project folder would you like to add the results?*</center>
-
-The user must input a valid existing project folder. The 6 project sub-folders are created because they are already existing within the folder from a previous process. 
-
-Once the script knows which folder to store the output results, it needs to obtain the dates of interest. If the user wants to process one date of data 
-(answered ONE to *Are you interested in one date or a range of dates?*) then the console displays the following prompt: 
-
-<center>*Which date are you interested in? The date must be of or between 01 October 2003 and today's date. (mm/dd/yy)*</center>
-
-The SNODAS historical data is only available on or after October 1st, 2003. The console only accepts the input date if the user types the date in the appropriate format (mm/dd/yy). 
-Once complete, the script starts to process the date of data and outputs the results to the appropriate project folder. 
-
-If the user wants to process a range of dates of data (answered RANGE to *Are you interested in one date or a range of dates?*) then the console displays the following prompt:
-
-<center>*What is the STARTING date of data that you are interested in? The date must be of or between 01 October 2003 and today's date. (mm/dd/yy)*</center>
-
-This input is the minimum bounding value for the range of interest. The console displays the following prompt:
-
-<center>*What is the ENDING date of data that you are interested in? The date must be of or between 01 October 2003 and today's date. (mm/dd/yy)*</center>
-
-The user must input the last date of data that they are interested in. This is the maximum bounding value for the range of interest. Once complete, the script starts to process 
-each date of data in sequential order and outputs the results to the appropriate project folder. If you are experiencing errors after your inputs, reference the
- [Software Troubleshooting](software-design/#software-troubleshooting)section for guidance. 
 
 ### Clip SNODAS National Grids to Colorado
+
+** TODO egiles 1/26/17 update this section**
 
 The downloaded masked SNODAS data is delivered with a contiguous United States extent and without projection. The script assigns the SNODAS .tif file 
 with the projection of WGS84 and clips the data to the extent of the watershed boundaries shapefile input.
@@ -171,11 +174,15 @@ The clipped SNODAS data is reprojected into the final projection of NAD83 Zone 1
 
 ### Create the Binary Snow Cover Raster
 
+** TODO egiles 1/26/17 update this section**
+
 The script calculates percentage of land covered by snow. To calculate this statistic, a binary snow coverage raster must be created and processed. The raster is 
 created by using the QGIS raster calculator tool to assign a value of ‘1’ to any pixel of the SNODAS .tif file containing a value greater than ‘0’. The created binary 
 .tif file is exported and saved within the ‘snowCover’ folder of the user-defined root folder. 
 
 ### Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics
+
+** TODO egiles 1/26/17 update this section**
 
 Zonal statistics are calculated on both the downloaded SNODAS SWE dataset and the created binary snow cover dataset to produce the output statistics. The QGIS zonal statistics 
 plugin is a tool that intersects an input vector file with an input raster file. The output is a tabular set of user-defined statistics added to the attribute table of the vector 
@@ -184,6 +191,8 @@ file. The tool calculates the defined statistics of the input raster pixels cont
 The script then exports and saves the tabular output within various .csv files in the ‘results’ folder of the user-defined root folder. 
 
 ### Saving the Statistical Results in Local .csv Files
+
+** TODO egiles 1/26/17 update this section**
 
 There are two different manners in which the same daily zonal statistics are exported – by date and by basin. The statistics exported by date are beneficial for the user who wants 
 to understand the *spatial aspect* of the SWE landscape. The statistics exported by basin are beneficial for the user who wants to understand the *temporal aspect* of the SWE landscape. 
@@ -220,170 +229,212 @@ The functions created are organized into 5 sequential processing categories to a
 the user should identify the issue with respect to the following function categories. This allows the user to easily pinpoint the potentially-problematic function. The 
 function categories are:
 
-1. Downloading SNODAS data: accesses the NSIDC FTP site and downloads the original SNODAS data (2 functions)
-2. Converting formats: converts data into useable formats for statistical processing (8 functions)
-3. Projecting and clipping: appropriately clips and projects SNODAS raster data for statistical processing (4 functions)
-4. Creating snow binary rasters: creates a new binary raster representing presence or absence of snow (1 function)
-5. Calculating statistics and exporting: calculates zonal statistics and exports statistics into .csv files (2 functions)
-
-### (1)	Downloading SNODAS data
-
-1. __download_today_SNODAS (downloadDir)__: This function is only utilized within the automatedDaily script. It accesses the SNODAS FTP site and download today's .tar file. The 
-.tar file downloadeds to the specified downloadDir folder. 
-	* Arguments: *downloadDir* - this is the full path name to the location where the original SNODAS rasters are stored. For this toolset, the downloadDir is defined by the download folder 
-within the root folder. <br><br>
+|<center>Function Category|<center>Description|<center>Number<br>of <br>Functions|
+|-||----------|------------|
+|1. Download SNODAS Data|Accesses the NSIDC FTP site and downloads the original SNODAS data.|<center>1|
+|2. Convert Data Formats|Converts data into useable formats for statistical processing.|<center>9|
+|3. Clip and Project SNODAS Data|Clips and projects SNODAS raster data for statistical processing.|<center>4|
+|4. Create Snow Cover Data|Creates a new binary raster representing presence or absence of snow.|<center>1|
+|5. Calculate and Export Statistics|Calculates zonal statistics and exports statistics into .csv files.|<center>3|
 
 
-2. __download_user_single_date_SNODAS (downloadDir, singleDate)__: This function is only called within the userInput script. It accesses the SNODAS FTP site and download the .tar 
-file of the date that the user has defined as singleDate. The .tar file downloads to the specified downloadDir folder. This function also works for the user input range of dates. 
-The script targets one date at a time and iterate through all the dates in the inputted range. The current targeted date is defined in the singleDate argument. The data from that date 
-downloads to the specificed downloadDir.
-	*  Arguments: *downloadDir* - this is the full path name to the location where the original SNODAS rasters are stored. For this toolset, the downloadDir is defined by the download folder 
-within the root folder. <br>
-*singleDate* - this is the single date of interest or the current target date of the user’s range of dates. 
+### 1. Download SNODAS Data
 
-### (2)	Converting formats
+1. __download_SNODAS (downloadDir, singleDate)__  
+	Access the SNODAS FTP site and download the .tar file of singleDate. The .tar file saves to the specified
+    downloadDir folder.
+	
+	Arguments:  
+	
+			downloadDir: full path name to the location where the downloaded SNODAS rasters are stored
+			singleDate: the date of interest from import datetime module
 
-1.	__get_date_string (date)__: This function is called within both the automatedDaily and the userInput scripts. It takes a datetime date and converts it into a string 
-date in the following format:  YYYYMMDD. This is important because the remaining functions in both scripts operate with an input string date value rather than in datetime format. 
-	* Arguments: *date* - this is a date, either today’s date or a user-inputted date, developed from the imported datetime.datetime module. <br><br>
+
+
+### 2. Convert Data Formats
+
+1.	__format_date_YYYYMMDD (date)__   
+	Convert datetime date to string date in format: YYYYMMDD. 
+
+	Arguments:
+
+		date: the date of interest from import datetime module
 	
 
-2.	__untar_SNODAS_file (file, folder_input, folder_output)__: This function is called within both the automatedDaily and the userInput scripts. When the SNODAS FTP site is 
-accessed, the downloaded daily files are stored and saved as zipped .tar files. These files must be unzipped to access the SNODAS grids. This function untars the downloaded SNODAS .tar 
-file located in the folder_input folder and extracts the files to the folder_output folder. 
-	* Arguments: *file* - this is the name of the SNODAS .tar file that is to be untarred. <br>
-*folder_input* – this is the full pathname to the folder holding the file. For this toolset, folder_input is defined by the download folder within the root folder. <br>
-*folder_output* - this is the full pathname to the folder that stores the extracted files. For this toolset, folder_output is defined by the setEnvironment folder within the root folder. <br><br>
+2.	__untar_SNODAS_file (file, folder_input, folder_output)__  
+	Untar downloaded SNODAS .tar file and extract the contained files to the folder_output.
+	
+	Arguments: 
+	
+		file: SNODAS .tar file to untar
+		folder_input: the full pathname to the folder containing 'file'
+		folder_output: the full pathname to the folder containing the extracted files
 
 
-3. __delete_irrelevant_SNODAS_files (file)__: This function is called within both the automatedDaily and the userInput scripts. The SNODAS .tar files contain many different 
-SNODAS datasets. For this project we are only interested in the SWE raster sets. The SWE rasters are named with a unique ID of '1034'. This function deletes a file if it is not 
-identified by this unique ID. 
-	* Arguments: *file* - this is the name of the raster extracted from the downloaded SNODAS .tar file <br><br>
+3. __delete_irrelevant_SNODAS_files (file)__  
+	 Delete file if not identified by the unique SWE ID. The SNODAS .tar files contain many different SNODAS datasets.
+     For this project, the parameter of interest is SWE, uniquely named with ID '1034'. If the configuration file is
+     set to 'False' for the value of the 'SaveAllSNODASparameters' section, then the parameters other than SWE are
+     deleted.
+	 
+	 Arguments: 
+	 
+		file: file extracted from the downloaded SNODAS .tar file
 
-4. __extract_SNODAS_gz_file (file)__: This function is called within both the automatedDaily and the userInput scripts. Each daily SNODAS raster has two files associated with it, 
-a .dat file and .Hdr file. Both are zipped within a .gz file. This function extracts the .dat and .Hdr files from a SNODAS .gz file.
-	* Arguments: *file* - this is the name of the .gz file that is to be extracted. <br><br>
+4. __move_irrelevant_SNODAS_files (file, folder_output)__   
+	Move file to the 'OtherParameters' folder if not identified by the unique SWE ID, '1034'. The SNODAS .tar files
+    contain many different SNODAS datasets. For this project, the parameter of interest is SWE, uniquely named with ID
+    '1034'. If the configuration file is set to 'True' for the value of the 'SaveAllSNODASparameters' section, then the
+    parameters other than SWE are moved to 'OtherParameters' subfolder of the 2_SetEnvironment folder.
+	
+	Arguments
 
-5. __convert_SNODAS_dat_to_bil (file)__: This function is called within both the automatedDaily and the userInput scripts. The .dat and .Hdr files are not appropriate file formats 
-to use with the QQS processing tools. However, the QGS tools, responsible for calculating the zonal statistics, work with .tif files. <br> <br>
-Unfortunately, there are settings within the SNODAS .dat files that cause issues when converting the .dat files into .tif format using the gdal_translate command. When attempted, the following 
-error is displayed: “ERROR 1: Maximum number of characters allowed reached.”  The error lies in the development syntax of the SNODAS .dat file.  By opening the .dat file with a text editor, one 
-can see that there is a description titled BARD codes followed by a long list of numerical values. This line of text is too long for gdal to process causing the issue. <br><br>
-Therefore, a different approach must be used to convert the raster grid to a .tif file. The script must first convert the .dat file into a .bil file. A custom .Hdr file must be made and then the 
-.bil file can be converted into the final .tif file. This function provides the processing for the first of these intermediary steps by converting the .dat file into a .bil file. 
+		file: file extracted from the downloaded SNODAS .tar file
+		folder_output: full pathname to folder where the other-than-SWE files are 
+		contained, OtherParameters
 
-	* Arguments: *file* - this is the name of the .dat file that is to be converted to .bil format. <br><br>
+5. __extract_SNODAS_gz_file (file)__  
+	Extract .dat and .Hdr files from SNODAS .gz file. Each daily SNODAS raster has 2 files associated with it
+    (.dat and .Hdr) Both are zipped within a .gz file.
 
-6. __create_SNODAS_hdr_file (file)__: This function is called within both the automatedDaily and the userInput scripts. A custom .Hdr file needs to be created in order to tell 
-the computer what raster settings the .bil file holds. This function creates the .Hdr file. The settings for the custom SNODAS .Hdr file were developed using the following source 
-[http://www.nohrsc.noaa.gov/archived_data/instructions.html](http://www.nohrsc.noaa.gov/archived_data/instructions.html).
+	Arguments: 
+		
+		file: .gz file to be extracted
 
-	* Arguments: *file* - this is the name of the .bil file that needs an .Hdr component. <br><br>
+6. __convert_SNODAS_dat_to_bil (file)__  
+	Convert SNODAS .dat file into supported file format (.tif). The .dat and .Hdr files are not supported file
+    formats to use with QGS processing tools. The QGS processing tools are used to calculate the daily zonal stats.
 
-7. __convert_SNODAS_bil_to_tif (file, folder_output)__: This function is called within both the automatedDaily and the userInput scripts. It converts the .bil file into a usable .tif 
-file for future processing within the QGS environment. 
+	Arguments:
 
-	* Arguments: *file* - this is the name of the file to be converted into a .tif file <br>
-*folder_output*: this is the full pathname to the location where the created .tif files are stored. For this toolset, folder_output is defined by the setEnvironment folder within the root folder. <br><br>
+		file: .dat file to be converted to .bil format
 
-8. __delete_SNODAS_bil_file (file)__: This function is called within both the automatedDaily and the userInput scripts. The .bil and .Hdr files are no longer important to keep in storage
- because the newly created .tif file holds the same data. This function deletes the file if the file is of .bil or .Hdr format.
+7. __create_SNODAS_hdr_file (file)__  
+	Create custom .hdr file. A custom .Hdr file needs to be created to indicate the raster settings of the .bil file.
+    The custom .Hdr file aids in converting the .bil file to a usable .tif file.
 
-	* Arguments: *file* - this is the name of the file to be checked for either .Hdr or .bil format. If the file exhibits a .Hdr or .bil extension, it will be deleted. <br><br>
+	Arguments: 
+	
+		file: .bil file that needs a custom .Hdr file
 
-### (3)	Projecting and clipping
+8. __convert_SNODAS_bil_to_tif(file, folder_output)__  
+	Convert .bil file into .tif file for processing within the QGIS environment.
 
-1. __copy_and_move_SNODAS_tif_file (file, folder_output)__: This function is called within both the automatedDaily and the userInput scripts. It copies and moves the created .tif file 
-from its original location to the folder_output. 
+	Arguments:
 
-	* Arguments: *file* - the name of the .tif file to be copied and moved to another location. <br>
-*folder_output* - the full pathname to the folder that holds the newly copied .tif file. For this toolset, folder_output is defined by the clip folder within the root folder. <br><br>
+		file: file to be converted into a .tif file
+		folder_output: full pathname to location where the created .tif files are contained
+		
+9. __delete_SNODAS_bil_file(file)__  
+	Delete file with .bil or .hdr extensions. The .bil and .hdr formats are no longer important to keep because the
+    newly created .tif file holds the same data.
 
-2.	__assign_SNODAS_projection_WGS84 (file, folder)__: This function is called within both the automatedDaily and the userInput scripts. The downloaded SNODAS raster does not have a 
-projection. This function assigns the proper projection of WGS84 to the file so that the accurate zonal statistics can be calculated. 
+	Arguments:
 
-	* Arguments: *file* - the name of the .tif file that is to be assigned a projection. <br>
-*folder* - the full pathname to the folder where both the unprojected and projected raster is and will be stored. For this toolset, folder is defined by the clip folder within the root folder. <br><br>
+		file: file to be checked for either .hdr or .bil extension (and, ultimately deleted)
 
-3. __SNODAS_raster_clip_WGS84 (file, folder, vector_extent)__: This function is called within both the automatedDaily and the userInput scripts. The SNODAS grid is a national dataset. This 
-function clips the national grid by the extent of vector_extent. 
-	* Arguments: *file* - the name of the projected (WGS84) .tif file to be clipped. <br>
-*folder* - the full pathname to the folder where both the unclipped and clipped raster is and will be stored. For this toolset, folder is defined by the clip folder within the root folder. <br>
-*vector_extent* - the full pathname to the shapefile holding the extent of the watershed basin boundaries. This shapefile should be projected in WGS84 rather than NAD83 to match the projection of the .tif file. 
-For this toolset, vector_extent is defined by the Colorado Watershed Basin extent (WGS84). <br><br>
+### 3. Clip and Project SNODAS Data
 
-4.	__SNODAS_raster_reproject_NAD83 (file, folder)__: This function is called within both the automatedDaily and the userInput scripts. It reprojects the clipped raster from WGS84 to the 
-desired projection of NAD83 UTM Zone 13N.
-	* Arguments: *file* - the name of the clipped .tif file with a WGS84 projection to be reprojected into NAD83. <br>
-*folder* - the full pathname to the folder where both the WGS84 clipped raster and the NAD83 clipped raster is and will be stored. For this toolset, folder is defined by the clip folder within the root folder. <br><br>
+1.	__copy_and_move_SNODAS_tif_file (file, folder_output)__   
+	Copy and move created .tif file from original location to folder_output. The copied and moved file will be
+    edited. To keep the file as it is, the original is saved within the original folder. 
 
-### (4)	Creating snow binary rasters
+	Arguments:
 
-1. __snowCoverage (file, folder_input, folder_output)__: This function is called within both the automatedDaily and the userInput scripts. It creates a binary .tif raster that displays 
-snow coverage. This created raster is used to calculate the percentage of daily snow cover statistic for each basin. If a pixel in the input file, the SNODAS raster file, is greater than 0 
-(there is snow on the ground) then the new raster's pixel is allocated the value of 1. If a pixel in the input raster is 0 or a null value (there is no snow on the ground or no data was collected) then the new raster's 
-pixel is allocated the value of 0. The output binary .tif file is saved in folder_output. 
+		file: .tif file to be copied and moved to folder_output
+		folder_output: full pathname to the folder holding the newly copied .tif file
+	
 
-	* Arguments: *file* - the name of the daily SNODAS .tif raster that is to be the input of the created binary raster <br>
-*folder_input* - the full pathname to the folder where file is stored. For this toolset, folder_input is defined by the clip folder within the root folder. <br>
-*folder_output*: the full pathname to the folder where the newly created binary snow cover raster is stored. For this toolset, folder_input is defined by the snowCover folder within the root folder. <br>
+2.	__assign_SNODAS_projection (file, folder)__  
+	Assign projection to file. Defaulted in configuration file to project to WGS84. The downloaded SNODAS raster
+    is unprojected however the "SNODAS fields are grids of point estimates of snow cover in latitude/longitude
+    coordinates with the horizontal datum WGS84." - [SNODAS Data Products at NSIDC User Guide](http://nsidc.org/data/docs/noaa/g02158_snodas_snow_cover_model/)
+	
+	Arguments: 
+	
+		file: the name of the .tif file that is to be assigned a projection
+		folder: full pathname to the folder where both the unprojected and projected raster are stored
 
-### (5)	Calculating statistics and exporting
 
-1. __create_csv_files (file, vFile, csv_byDate, csv_byBasin)__: This function is called within both the automatedDaily and the userInput scripts. It creates the required csv files to hold 
-the statistical results - both by date and by basin. The csv files by date are organized with one .csv file for *each date* and are titled 'ResultsByDateYYYYMMDD.csv'. Each byDate file contains the zonal 
-statistics for each basin on that date. The csv files by basin is organized with one .csv file for *each basin* and is titled 'ResultsByBasin(LOCALID)' where LOCALID is substituted with the basin’s unique 
-ID. Each byBasin file contains the zonal statistics for that basin for each date that has been processed.
+3. __SNODAS_raster_clip (file, folder, vector_extent)__  
+	 Clip file by vector_extent shapefile. The output filename starts with 'Clip'.
+	 
+	 Arguments: 
+	 
+		file: the projected (defaulted to WGS84) .tif file to be clipped
+		folder: full pathname to folder where both the unclipped and clipped rasters are stored
+		vector_extent: full pathname to shapefile holding the extent of the basin boundaries. This 
+		shapefile must be projected in projection assigned in function assign_SNODAS_projection 
+		(defaulted to WGS84).
 
-	* Arguments: *file* - the daily .tif SNODAS raster file that is to be processed with zonal statistics (clipped to basin extent and projected in NAD83). <br>
-*vFile* - the shapefile of the basin boundaries (these boundaries are used as the polygons in the zonal statistics calculations). For this toolset, vFile is defined by the Colorado Watershed Basin (projected in NAD83). <br>
-*csv_byDate* - the full pathname to the folder that holds the results by date .csv files. For this toolset, csv_byDate is defined by the results\byDate folder within the root folder. <br>
-*csv_byBasin* - the full pathname to the folder that holds the results by basin .csv files. For this toolset, csv_byBasin is defined by the results\byBasin folder within the root folder. <br><br>
+4. __SNODAS_raster_reproject_NAD83  (file, folder)__   
+	Reproject clipped raster from it's original projection (defaulted to WGS84) to desired projection (defaulted
+    to NAD83 UTM Zone 13N).
+	
+	Arguments
 
-2.	__zStat_and_export (file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow)__: This function is called within both the automatedDaily and the userInput scripts. It calculates the zonal 
-statistics (SWE mean, SWE minimum, SWE maximum, SWE standard deviation, pixel count and percent of land covered by snow) of the basin shapefile in respect to the current raster. The zonal statistics are
-exported to both the byDate and the byBasin csv files.
-	* Arguments: *file* - the daily SNODAS .tif file that is to be processed in the zonal statistics tool (clipped to basin extent and projected in NAD83) <br>
-*vFile* - the shapefile of the basin boundaries (these boundaries are used as the polygons in the zonal statistics calculations). For this toolset, vFile is defined by the Colorado Watershed Basin (projected in NAD83).<br>
-*csv_byDate* - the full pathname to the folder holding the results by date .csv files. For this toolset, csv_byDate is defined by the results\byDate folder within the root folder.<br>
-*csv_byBasin* - the full pathname to the folder holding the results by basin .csv files. For this toolset, csv_byBasin is defined by the results\byBasin folder within the root folder. <br>
-*DirClip* - the full pathname to the folder holding all the daily clipped, NAD83 .tif SNODAS rasters. For this toolset, DirClip is defined by the clip folder within the root folder.<br>
-*DirSnow* - the full pathname to the folder holding all the binary snow coverage rasters. For this toolset, DirSnow is defined by the snowCover folder within the root folder.<br><br>
+		file: clipped file with original projection to be reprojected into desired projection
+		folder: full pathname of folder where both the originally clipped rasters and the reprojected 
+		clipped rasters are contained
 
-## Software Troubleshooting
+### 4. Create Snow Cover Data
 
-### User Input Error Messages in the Console
+1.	__snowCoverage (file, folder_input, folder_output)__   
+	Create binary .tif raster indicating snow coverage. If a pixel in the input file is > 0 (there is snow on the
+    ground) then the new raster's pixel value is assigned '1'. If a pixel in the input raster is 0 or a null value
+    (there is no snow on the ground) then the new raster's pixel value is assigned '0'. The output raster is used to
+    calculate the percent of daily snow coverage for each basin.
 
-If you are experiencing error messages when typing your input into the console while running the userinput script, it could be any of the following: 
+	Arguments:
 
-- If you are entering a date: The date could be in the improper format. You should enter all dates in the mm/dd/yy format. For example, if you are interested in February 6th of 2005 then you will enter 02/06/05. <br><br>
-	* The date could be out of appropriate range. Remember that the SNODAS data is only available on or after October 1st, 2003. If you try to enter a date before then, you will receive an error message. The SNODAS data is
-	only available up until today’s date. If you try to enter a date in the future, you will receive an error message. 
-	* If you are interested in a range of dates, then your end date must be after your starting date. Make sure that you are entering a date later than the starting date that you entered. Otherwise, you will receive an error. 
-	* Make sure that you do not add a space before or after the entered date. After typing in the year, press enter without adding any extra spacing. These extra spaces could cause the script to produce an error. <br><br>
-- If you are entering text:<br><br>
-	* Make sure that you are typing one of the options that the prompt has asked you to type. If you enter text other than the preset options, you will receive an error. 
-	* Make sure that you do not add a space before or after the entered text. After the last character of your input, press enter without adding any extra spacing. These extra spaces could cause the script to produce an error. <br><br>
-- If you accidentally choose an option in a prompt that is not the option you wanted:<br><br>
-	* If this occurs, there is no way for you to go back to the last question and fix the error. Instead you must shut down the running script and restart a new script. You will be prompted with the first question again. Go through the prompts as usual with the inputs that you want. 
+		file: daily SNODAS SWE .tif raster
+		folder_input: full pathname to the folder where the file is stored
+		folder_output: full pathname to the folder where the newly created binary snow cover raster
+		is stored
 
-### Interrupting the Script Mid-Process
+### 5. Calculate and Export Statistics
 
-It is important that once a script is running that it continues until completion without interruption. Interruption can mean two actions. First, it could mean that the script is manually terminated. Secondly, 
-it could mean that the userInput  script is running at the same time as the automatedDaily  script. Both actions will most likely result in a corrupted basin boundary shapefile. 
+1.	__create_csv_files (file, vFile, csv_byDate, csv_byBasin)__   
+	 Create empty csv files for output - both by date and by basin. The empty csv files have a header row with
+     each column represented by a different field name (refer to 'fieldnames' section of the function for actual
+     fieldnames). Csv files by date contain one .csv file for each date and is titled 'SnowpackByDate_YYYYMMDD.csv'.
+     Each byDate file contains the zonal statistics for each basin on that date. Csv files by basin contain one .csv
+     file for each watershed basin and is titled 'SnowpackByBasin_BasinId)'. Each byBasin file contains the zonal
+     statistics for that basin for each date that has been processed. 
 
-Why does this occur? 
+	Arguments:
 
-The zStat_and_export function creates new fields in the basin shapefile attribute table for each day of processing. The statistics store under the newly created fields only to be written to a local csv file. 
-The script then deletes the newly created fields to allow space for the next day of spatial statistics to be calculated and copied over to a new .csv file. <br>
+		file: daily .tif file  to be processed with zonal statistics (clipped, reprojected)
+		vFile: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal 
+		stats calculations)
+		csv_byDate: full pathname of folder containing the results by date (.csv file)
+		csv_byBasin: full pathname of folder containing the results by basin (.csv file)
+	
 
-The script is built to temporarily edit the structure of the basin’s attribute table only to be converted back to its original structure at the end of the script. If the script is interrupted in the middle 
-of a process, it is possible that the structure of the basin’s attribute table will permanently corrupt causing the entire script to break and/or the script to calculate inaccurate statistics. Another possible outcome 
-of interrupting the script mid-process would be permanent deletion of basin polygon/features within the basin shapefile.  <br>
-
-If the script is interrupted mid-process, there is a fix. This is a semi-complicated process so it is best to avoid this troubleshooting issue altogether. If an interruption has occurred, most likely, the results 
-will be inaccurate or incomplete. It is best to delete all results created from the interrupted script (this includes the created .tif files rather than just the .csv result files). The corrupted basin shapefile 
-(not the basin extent shapefile) must be overwritten with an original copy. Most likely, the fields of the attribute table are not correct (either too many fields or not enough fields). As mentioned above, some 
-polygons/features of the corrupted basin shapefile might also be deleted. <br>
+2.	__delete_ByBasinCSV_repeated_rows (file, vFile, csv_byBasin)__  
+	Check to see if date has already been processed. If so, iterate through by basin csv file and only write rows to new csv file 
+	that do not start with the date. Ultimately, delete row of data for today's date so that new data can be overwritten without 
+	producing multiple rows of the same date. 
+	
+	Arguments: 
+	
+		file: daily .tif file  to be processed with zonal statistics (clipped, reprojected)
+		vFile: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal 
+		stats calculations)
+		csv_byBasin: full pathname of folder containing the results by basin (.csv file)
+		
+3. __zStat_and_export (file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow)__  
+	Calculate zonal statistics of basin boundary shapefile and the current file. The zonal stats export to
+	both the byDate and the byBasin csv files.
+    
+	 
+	 Arguments: 
+	 
+		file: daily raster .tif SNODAS file that is to be processed in the zonal statistics tool 
+		(clipped, reprojected)
+		vfile: the shapefile of the basin boundaries (these boundaries are used as the polygons in 
+		the zonal statistics calculations)
+		csv_byDate: full pathname to the folder containing results by date (.csv file)
+		csv_byBasin: full pathname to the folder containing results by basin (.csv file)
+		DirClip: full pathname to the folder containing all daily clipped, NAD83 .tif SNODAS rasters
+		DirSnow: full pathname to the folder containing all binary snow coverage rasters

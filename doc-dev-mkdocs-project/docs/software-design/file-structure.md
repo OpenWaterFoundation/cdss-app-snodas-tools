@@ -305,7 +305,7 @@ Note that the date does not represent the download date but rather the date when
 	Downloaded SNODAS file for January 9th, 2013 -> SNODAS_20130109.tar
 
 Refer to the [Processing Workflow](overview/#processing-workflow) section for a general description of the SNODAS tools' downloading step. 
-Refer to [Tool Utilities and Functions](overview.md#tool-utilities-and-functions) for detailed information on the Python functions 
+Refer to [Tool Utilities and Functions](overview.md#1-download-snodas-data) for detailed information on the Python functions 
 called to download the SNODAS data.
 
 #### processedData\\2_SetFormat\\
@@ -316,7 +316,7 @@ shown below.
 ![nationaltif](file-structure-images/nationalTIF.png)
 
 Refer to the [Processing Workflow](overview/#processing-workflow) section for a general description of the SNODAS tools' set format step. 
-Refer to [Tool Utilities and Functions](overview.md#tool-utilities-and-functions) for detailed information on the Python functions 
+Refer to [Tool Utilities and Functions](overview.md#2-convert-data-formats) for detailed information on the Python functions 
 called to set the format of the SNODAS data.
 
 The manipulated SNODAS SWE .tif file is saved to the 2_SetFormat folder and is named ```us_ssmv11034tS__T0001TTNATSYYYYMMDD05HP001.tif```
@@ -419,7 +419,7 @@ data is collected.
 	Clipped and reprojected SNODAS file for January 9th, 2013 -> SNODAS_SWE_ClipAndReproj20130109.tif
 	
 Refer to the [Processing Workflow](overview/#processing-workflow) section for a general description of the SNODAS tools' clip and reprojecting steps. 
-Refer to [Tool Utilities and Functions](overview.md#tool-utilities-and-functions) for detailed information on the Python functions 
+Refer to [Tool Utilities and Functions](overview.md#3-project-and-clip-snodas-data) for detailed information on the Python functions 
 called to clip and reproject the SNODAS data.
 
 #### processedData\\4_CreateSnowCover\\
@@ -432,18 +432,18 @@ that the date does not represent the download date but rather the date when the 
 	Clipped and reprojected snow cover file for January 9th, 2013 -> 
 	SNODAS_SnowCover_ClipAndReproj20130109.tif
 
-```SNODAS_SnowCover_ClipAndReprojYYYYMMDD.tif```, shown below for the Colorado dataset, is created by iterating through the pixels of 
-the ```SNODAS_SWE_ClipAndReprojYYYYMMDD.tif``` file and assigning pixel values dependent on the following guidelines:
+```SNODAS_SnowCover_ClipAndReprojYYYYMMDD.tif```, shown below for the Colorado dataset, is created by iterating through the cells of 
+the ```SNODAS_SWE_ClipAndReprojYYYYMMDD.tif``` file and assigning cell values dependent on the following guidelines:
 
 |SNODAS_```SWE```_ClipAndReprojYYYYMMDD|SNODAS_```SnowCover```_ClipAndReprojYYYYMMDD|
 | ---------------------------------- | ---------------------------------------- |
-| a pixel has a value greater than 0 (there is snow on the ground)| the corresponding pixel is assigned a value of '1' (presence of snow displayed in white)|
-| a pixel has a value equal to 0 (there is no snow on the ground)| the corresponding pixel is assigned a value of '0' (absence of snow displayed in black)
+| a cell has a value greater than 0 (there is snow on the ground)| the corresponding cell is assigned a value of '1' (presence of snow displayed in white)|
+| a cell has a value equal to 0 (there is no snow on the ground)| the corresponding cell is assigned a value of '0' (absence of snow displayed in black)
 
 ![snowCover](file-structure-images/snowCoverTIF.png)
 
 Refer to the [Processing Workflow](overview/#processing-workflow) section for a general description of the SNODAS tools' Create Snow Cover step. 
-Refer to [Tool Utilities and Functions](overview.md#tool-utilities-and-functions) for detailed information on the Python functions 
+Refer to [Tool Utilities and Functions](overview.md#4-create-snow-cover-data) for detailed information on the Python functions 
 called to create the daily snow cover .tif file.
 
 	
@@ -473,7 +473,7 @@ The calculated zonal statistics are:
 |SWE Minimum (m)| The daily SWE minimum in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_Min_m|
 |SWE Maximum (m)|The daily SWE maximum in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_Max_m|
 |SWE Standard Deviation (m)|The daily SWE standard deviation in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_StdDev_m|
-|Pixel Count| The number of pixels within each basin of the watershed basin shapefile input.|SNODAS_Pixel_Count|
+|cell Count| The number of cells within each basin of the watershed basin shapefile input.|SNODAS_cell_Count|
 |Percent of Snow Coverage|The percentage of land within each basin of the watershed basin shapefile input covered by snow.|SNODAS_SnowCover_percent|
 |SWE Mean (in)| The daily SWE mean in inches for each basin of the watershed basin shapefile input.|SNODAS_SWE_Mean_in|
 |SWE Minimum (in)| The daily SWE minimum in inches for each basin of the watershed basin shapefile input.|SNODAS_SWE_Min_in|
@@ -481,7 +481,7 @@ The calculated zonal statistics are:
 |SWE Standard Deviation (in)|The daily SWE standard deviation in inches for each basin of the watershed basin shapefile input.|SNODAS_SWE_StdDev_in|
 
 Refer to the [Processing Workflow](overview/#processing-workflow) section for a general description of the SNODAS tools' calculate statistics step. 
-Refer to [Tool Utilities and Functions](overview.md#tool-utilities-and-functions) for detailed information on the Python functions called to create 
+Refer to [Tool Utilities and Functions](overview.md#5-calculate-and-export-statistics) for detailed information on the Python functions called to create 
 the .csv files and calculate and export the zonal statistics.
 
 
