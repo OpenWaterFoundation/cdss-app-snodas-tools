@@ -7,7 +7,8 @@ The following topics are discussed in this section:<br>
 * [SNODAS Tools Configuration](#snodas-tools-configuration)
 * [Processing Workflow](#processing-workflow)
 	+ [Download SNODAS Data](#download-snodas-data)
-	+ [Clip SNODAS National Grids to Colorado](#clip-snodas-national-grids-to-colorado)
+	+ [Convert SNODAS Data Formats](#convert-snodas-data-formats)
+	+ [Clip and Project SNODAS National Grids to Study Area](#clip-and-project-snodas-national-grids-to-study-area)
 	+ [Create the Binary Snow Cover Raster](#create-the-binary-snow-cover-raster)
 	+ [Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics](#intersect-snodas-colorado-grid-with-colorado-basins-and-calculate-statistics)
 	+ [Saving the Statistical Results in Local .csv Files](#saving-the-statistical-results-in-local-csv-files)
@@ -76,7 +77,13 @@ The SNODAS tools are divided into 3 individual scripts. <br>
 
 ## Processing Workflow
 
-The following sections describe the processing workflow that is executed by the scripts.
+The following sections describe the processing workflow that is executed by the scripts of the SNODAS tools. Below is a flow 
+diagram explaining the overview of the SNODAS tools processing workflow.
+
+**TODO egiles 1/27/2017 create an overview workflow and place here**
+**TODO egiles 1/27/2017 update step-by-step workflow images to describe 
+files with less detail. The detailed filenames are included in the file 
+structure workflow but are uneccesary on this overview page**
 
 
 ### Download SNODAS Data
@@ -89,11 +96,11 @@ The intent of the software is to allow rerunning the entire process if necessary
 **SNODASDaily_Automated.py**
 
 The ```SNODASDaily_Automated.py``` script downloads the current date's SNODAS data from the FTP site. Only the current date's data 
-can be downloaded and processed by this scipt. 
+can be downloaded and processed by this script. 
 
 **SNODASDaily_Interactive.py**
 
-The ```SNODASDaily_Interactive.py``` script downloads the historical dates of SNODAS data that are inputed into the script by the user. When running the 
+The ```SNODASDaily_Interactive.py``` script downloads the historical dates of SNODAS data that are inputs defined by the user. When running the 
 ```SNODASDaily_Interactive.py``` script, the console will print: 
 
 	Are you interested in one date or a range of dates? Type ‘One’ or ‘Range’.
@@ -123,11 +130,27 @@ The user inputs 'One' if only one historical date is to be processed. The user i
  If you are experiencing errors after your inputs, reference the [Troubleshooting](..\deployed-env\troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
 	
 ----------------------------------------------------------------------------------------------------------------------
+The default setting accesses the masked SNODAS data rather than the unmasked SNODAS data. The SNODAS tools were originally designed to analyze 
+the historical snowpack statistics of Colorado. The masked data entirely covers the Colorado extent and has the largest repository of historical 
+data. As mentioned above, the masked data is set as the default. This can be changed, however, in the [configuration file](file-structure.md#snodastools92snodasconfigini)
+under **section**  *SNODAS_FTPSite* **option**  *folder*.
+
+||Masked SNODAS Data|Unmasked SNODAS Data|
+|-|--------------|-----------------|
+|Spatial Coverage|Contiguous U.S.| Southernmost Latitude: 24.0996 ° N, Northernmost Latitude: 58.2329 ° N, Westernmost Longitude: 130.5171 ° W, Easternmost Longitude: 62.2504 ° W|
+|Spatial Resolution|30 arc seconds|30 arc seconds|
+|Temporal Coverage|30 September 2003 to present|09 December 2009 to present|
+|Temporal Resolution|24-hour|24-hour|
+|Grid size| 6,935 columns by 3,351 rows| 8,192 columns by 4,096 rows|
+|Grid values|16-bit, signed integers|16-bit, signed integers|
+
 
 The downloaded daily SNODAS data, whether downloaded from the ```SNODASDaily_Automated.py``` or the ```SNODASDaily_Interactive.py```, is
 saved in the 1_DownloadSNODAS folder as a .tar file. Refer to the [File Structure](file-structure.md#processeddata921_downloadsnodas92) section 
 for more information regarding the downloaded SNODAS .tar file and the 1_DownloadSNODAS folder. Refer to the [Tool Utilities and Functions](#1-download-snodas-data)
 section for detailed information on the Python function called to download the SNODAS data.
+
+![download-workflow](overview-images/download.png)
 
 ### Convert SNODAS Data Formats
 
@@ -137,7 +160,7 @@ The daily downloaded SNODAS file is delivered in .tar format. To process the sno
 This occurs by the following steps: 
 
 |Step|Description|Result|
-|-|------|------|
+|-|------|------| 
 |<center>1|Extract SNODAS .tar file|7 SNODAS parameters (.gz)|
 |<center>2|Delete\Move SNODAS parameters other than SWE*|SNODAS SWE file (.gz)|
 |<center>3|Extract SWE .gz file|SNODAS SWE files (.dat and .Hdr)|
@@ -148,7 +171,7 @@ This occurs by the following steps:
 
 \* The SNODAS tools are defaulted to delete all parameters, other than SWE. However, the other parameters' .gz files can 
 be saved if previously configured. In that case, the other parameters' .gz files are moved to a separate folder. Refer
-to section [2_SetFormat\OtherParameters folder](file-structure.md#processeddata922_setformat92) of the File Strucute tab for more information.
+to section [2_SetFormat\OtherParameters folder](file-structure.md#processeddata922_setformat92) of the File Structure tab for more information.
 
 Steps 4 and 5 are NOHRSC suggestions to ingest the data into a geographic information system. In the case of the SNODAS tools, QGIS is 
 utilized as the GIS. The documentation explaining these steps is located in *Appendix B: Instructions to Extract and Ingest SNODAS 
@@ -159,61 +182,91 @@ The daily SNODAS national SWE .tif grid is saved in the 2_SetFormat folder. Refe
 for more information regarding the national SWE .tif file and the 2_SetFormat folder. Refer to [Tool Utilities and Functions](#2-convert-data-formats)
 section for detailed information on the Python functions called to process the above 7 steps.
 
+![setFormat-workflow](overview-images/setFormat.png)
 
-### Clip SNODAS National Grids to Colorado
+### Clip and Project SNODAS National Grids to Study Area
 
-** TODO egiles 1/26/17 update this section**
+The daily national SNODAS grid files are large and take a long time to process. Therefore the SNODAS tools clip the national grid to the extent of the study area. 
+The [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) (```watershedBasinBoundaryExtent.shp```) is the 
+shapefile used to clip the SNODAS daily .tif file. 
 
-The downloaded masked SNODAS data is delivered with a contiguous United States extent and without projection. The script assigns the SNODAS .tif file 
-with the projection of WGS84 and clips the data to the extent of the watershed boundaries shapefile input.
 
-Note: The clip must be performed with a single-polygon shapefile of the extent of the watershed boundaries in WGS84 projection. It is the user’s responsibility 
-to provide this shapefile. The script does not create it. Refer to ‘Setting up the Tools’ section of the user guide for further information. 
+||The SNODAS Tools:|
+|-|-----------------|
+|1.|Project the SNODAS daily grid to the same projection as the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) (defaulted to WGS84)|
+|2.|Clip the SNODAS daily grid to the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92)|
+|3.|Reproject the clipped SNODAS daily grid to the projection of the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92) (defaulted to NAD83 Zone 13N)|
 
-The clipped SNODAS data is reprojected into the final projection of NAD83 Zone 13N. 
+The original SNODAS grids are delivered without projection however ["the SNODAS fields are grids of point estimates of snow cover in latitude/longitude coordinates
+with the horizontal datum WGS 84"](http://nsidc.org/data/docs/noaa/g02158_snodas_snow_cover_model/index.html#2). The SNODAS tools project the SNODAS daily grids to 
+the same projection as the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92). The default projection of the Watershed
+Basin Extent Shapefile Input is WGS84. If the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) is projected in a projection 
+other than WGS84, the projection EPSG code must be changed in the [configuration file](file-structure.md#snodastools92snodasconfigini)
+under **section** *VectorInputExtent* **option** *projection_epsg*.
+
+For visualization purposes of the end product, the clipped daily SNODAS grid is reprojected into the same projection as the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92).
+The final reprojection is performed before the creation of the snow cover grid and the calculating of the zonal statistics to ensure correct final snowpack statistics. 
+The final projection is defaulted to NAD 83 Zone 13N because the SNODAS tools were originally designed to calculate snowpack statistics for the basins of Colorado. If
+the final projection is other than NAD 83 Zone 13N, the projection EPSG must be changed in the [configuration file](file-structure.md#snodastools92snodasconfigini)
+under **section** *VectorInputShapefile* **option** *projection_epsg*.
+
+The clipped and reprojected SNODAS SWE .tif grids are saved in the 3_ClipToExtent folder. Refer to the [File Structure](file-structure.md#processeddata923_cliptoextent92) section 
+for more information regarding the clipped SWE .tif file and the 3_ClipToExtent folder. Refer to [Tool Utilities and Functions](#3-clip-and-project-snodas-data)
+section for detailed information on the Python functions called to project, clip and reproject the national SNODAS SWE grid.
+
+![clip-workflow](overview-images/clip.png)
 
 ### Create the Binary Snow Cover Raster
 
-** TODO egiles 1/26/17 update this section**
+** TODO egiles 1/27/16 change snowCoverage(file, folder_input, folder_output) function in SNODAS_utilities.py
+ to have null values also equal null values**
 
-The script calculates percentage of land covered by snow. To calculate this statistic, a binary snow coverage raster must be created and processed. The raster is 
-created by using the QGIS raster calculator tool to assign a value of ‘1’ to any pixel of the SNODAS .tif file containing a value greater than ‘0’. The created binary 
-.tif file is exported and saved within the ‘snowCover’ folder of the user-defined root folder. 
+The SNODAS tools calculate a daily percent snow cover statistic for each basin of the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92).
+The daily percent snow cover statistic is the percentage of land covered by snow. 
 
-### Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics
+To perform this calculation a daily binary snow cover grid must be created to display which cells of each basin are covered by snow.
+This grid is created by iterating through the cells of the daily clipped SNODAS SWE grid and applying the following rules:
 
-** TODO egiles 1/26/17 update this section**
+|If any cell in the daily clipped SNODAS SWE grid is:|Then the corresponding cell of the daily binary <br> snow cover grid is assigned:|
+|---------|-----------|
+|greater than 0 (presence of snow)|a value of 1|
+|0 (absence of snow)|a value of 0|
+|-9999 (null value)|-9999 (null value)|
 
-Zonal statistics are calculated on both the downloaded SNODAS SWE dataset and the created binary snow cover dataset to produce the output statistics. The QGIS zonal statistics 
-plugin is a tool that intersects an input vector file with an input raster file. The output is a tabular set of user-defined statistics added to the attribute table of the vector 
-file. The tool calculates the defined statistics of the input raster pixels contained within each individual feature of the input vector file. 
+The daily binary snow cover .tif grids are saved in the 4_CreateSnowCover folder. Refer to the [File Structure](file-structure.md#processeddata924_createsnowcover92) section 
+for more information regarding the binary snow cover .tif files and the 4_CreateSnowCover folder. Refer to [Tool Utilities and Functions](#4-create-snow-cover-data)
+section for detailed information on the Python functions called to create the daily binary snow cover grids.
 
-The script then exports and saves the tabular output within various .csv files in the ‘results’ folder of the user-defined root folder. 
+![snowcover-workflow](overview-images/snowcover.png)
 
-### Saving the Statistical Results in Local .csv Files
+### Calculate and Export Zonal Statistics
 
-** TODO egiles 1/26/17 update this section**
+**Calculate Zonal Statistics**
 
-There are two different manners in which the same daily zonal statistics are exported – by date and by basin. The statistics exported by date are beneficial for the user who wants 
-to understand the *spatial aspect* of the SWE landscape. The statistics exported by basin are beneficial for the user who wants to understand the *temporal aspect* of the SWE landscape. 
+Zonal statistics are statistics calculated by zone where the zones are defined by an input zone dataset and the values are defined by a raster grid. 
+Zonal statistics are performed on both the [daily clipped and reprojected SNODAS SWE grid](file-structure.md#processeddata923_cliptoextent92)
+and the [daily clipped binary snow cover grid](file-structure.md#processeddata924_createsnowcover92). For both,
+the input zone dataset is the [watershed basin boundary shapefile](file-structure.md#snodastools92staticdata92).   
 
-The daily statistics exported by date are contained as one .csv file within the ‘results/byDate’ folder of the user-defined root folder. The .csv file is titled 
-‘ResultsbyDateYYYYMMDD’ where the current date substitutes the YYYYMMDD format. Inside the .csv file, the y-axis is defined by each basin (uniquely identified by Local ID). 
-The 6 daily statistics are referenced in individual columns to the right of the Local ID. 
+|The zonal statistics performed on: |Compute the following statistics:|
+|---------|-----------|
+|the daily clipped and reprojected SNODAS grid|SWE mean, SWE minimum, SWE maximum, <br> SWE standard deviation, and cell count|
+|the daily clipped binary snow cover grid|percent of snow coverage*|
 
-The following image illustrates the byDate output results viewed in Excel. Notice that the date is constant and the Local_ID is unique. 
-(to view the image full size, use the web browser feature to open the image in a new tab - for example, in Chrome right click and ***Open image in new tab***):
-![byDate](overview-images/results_byDate.png)
+\* The percent of snow coverage is computed by dividing the basin cell count of cells valued at '1' in the daily clipped binary snow cover grid
+by the total cell count of each basin (the cell count is computed by the zonal statistics performed on the daily clipped and reprojected SNODAS
+grid).
 
-The daily statistics exported by basin are parsed between multiple .csv files in the ‘results/byBasin’ folder of the user-defined root folder.  There is one .csv file for each unique basin.
-The .csv files are titled ‘ResultsbyDateLOCALID’ where the basin-specific local ID replaces the LOCALID format. Inside each .csv file, the y -axis is defined by the dates previously processed 
-by the script. The 6 daily statistics are referenced in individual columns to the right of each date. 
+** Export Zonal Statistics**
 
-The following image illustrates the byDate output results viewed in Excel. Notice that the date is constant and the Local_ID is unique. 
-(to view the image full size, use the web browser feature to open the image in a new tab - for example, in Chrome right click and ***Open image in new tab***):
+The daily snowpack statistics computed by the QGIS Zonal Statistics tool are exported into two types of .csv files. The first .csv file
+organizes the statistics by date. The second .csv file organizes the statistics by basin. Both types of .csv files are saved within
+the 5_CalculateStatistics folder. For more information on the two types of exported .csv files, including examples, and the 
+5_CalculateStatistics folder, refer to the [File Structure](file-structure.md#processeddata925_calculatestatistics92) section.
+Refer to [Tool Utilities and Functions](#5-calculate-and-export-statistics) section for detailed information on the Python 
+functions called to calculate and export the daily zonal statistics.
 
-
-![byBasin](overview-images/results_byBasin.png)
+![statistics-workflow](overview-images/statistics.png)
 
 ### Generate Time Series Products
 

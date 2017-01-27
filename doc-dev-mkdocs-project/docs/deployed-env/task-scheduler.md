@@ -5,12 +5,12 @@ beneficial to the SNODAS tools because new SNODAS data must be downloaded and pr
 
 The ```SNODASDaily_Automated.py```
 script is designed to be programmed on a timed schedule. It will download the current day's SNODAS data from the SNODAS FTP site 
-and export the daily zonal statistics in the [processedData](../software-design/data-management.md#snodastools92processeddata92) folder on the local computer. 
+and export the daily zonal statistics in the [processedData](../software-design/file-structure.md#snodastools92processeddata92) folder on the local computer. 
 
 For information on the data processing steps of ```SNODASDaily_Automated.py```, refer to the 
 [Processing Workflow](../software-design/overview.md#processing-workflow) section. For information on the SNODAS FTP site, refer to the
-[SNODAS Tools Data](../../../doc-user-mkdocs-project/docs/data/overview.md) of the user guide. For information on
-the output snowpack products, refer to the [SNODAS Tools Products](../../../doc-user-mkdocs-project/docs/products/overview.md)
+[SNODAS Tools Data](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/data/overview/) of the user guide. For information on
+the output snowpack products, refer to the [SNODAS Tools Products](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/products/overview/)
 section of the user guide.
 
 **TODO egiles 2017-01-19 fix the broken links that direct to the user manual**
