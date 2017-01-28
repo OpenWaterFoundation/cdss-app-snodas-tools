@@ -419,7 +419,7 @@ data is collected.
 	Clipped and reprojected SNODAS file for January 9th, 2013 -> SNODAS_SWE_ClipAndReproj20130109.tif
 	
 Refer to the [Processing Workflow](overview/#clip-and-project-snodas-national-grids-to-study-area) section for a general description of the SNODAS tools' clip and reprojecting steps. 
-Refer to [Tool Utilities and Functions](overview.md#3-project-and-clip-snodas-data) for detailed information on the Python functions 
+Refer to [Tool Utilities and Functions](overview.md#3-clip-and-project-snodas-national-grids-to-study-area) for detailed information on the Python functions 
 called to clip and reproject the SNODAS data.
 
 #### processedData\\4_CreateSnowCover\\
@@ -444,7 +444,7 @@ the ```SNODAS_SWE_ClipAndReprojYYYYMMDD.tif``` file and assigning cell values de
 ![snowCover](file-structure-images/snowCoverTIF.png)
 
 Refer to the [Processing Workflow](overview/#create-the-binary-snow-cover-raster) section for a general description of the SNODAS tools' Create Snow Cover step. 
-Refer to [Tool Utilities and Functions](overview.md#4-create-snow-cover-data) for detailed information on the Python functions 
+Refer to [Tool Utilities and Functions](overview.md#4-create-the-binary-snow-cover-raster) for detailed information on the Python functions 
 called to create the daily snow cover .tif file.
 
 	
@@ -482,7 +482,7 @@ The calculated zonal statistics are:
 |SWE Standard Deviation (in)|The daily SWE standard deviation in inches for each basin of the watershed basin shapefile input.|SNODAS_SWE_StdDev_in|
 
 Refer to the [Processing Workflow](overview/#intersect-snodas-colorado-grid-with-colorado-basins-and-calculate-statistics) section for a general description of the SNODAS tools' calculate statistics step. 
-Refer to [Tool Utilities and Functions](overview.md#5-calculate-and-export-statistics) for detailed information on the Python functions called to create 
+Refer to [Tool Utilities and Functions](overview.md#5-calculate-and-export-zonal-statistics) for detailed information on the Python functions called to create 
 the .csv files and calculate and export the zonal statistics.
 
 

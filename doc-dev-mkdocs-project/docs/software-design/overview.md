@@ -10,16 +10,15 @@ The following topics are discussed in this section:<br>
 	+ [Convert SNODAS Data Formats](#convert-snodas-data-formats)
 	+ [Clip and Project SNODAS National Grids to Study Area](#clip-and-project-snodas-national-grids-to-study-area)
 	+ [Create the Binary Snow Cover Raster](#create-the-binary-snow-cover-raster)
-	+ [Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics](#intersect-snodas-colorado-grid-with-colorado-basins-and-calculate-statistics)
-	+ [Saving the Statistical Results in Local .csv Files](#saving-the-statistical-results-in-local-csv-files)
+	+ [Calculate and Export Zonal Statistics](#calculate-and-export-zonal-statistics)
 	+ [Generate Time Series Products](#generate-time-series-products)
 	+ [Publish Results](#publish-results)
 * [Tool Utilities and Functions](#tool-utilities-and-functions)
 	+ [Download SNODAS Data](#1-download-snodas-data)
 	+ [Convert Data Formats](#2-convert-data-formats)
-	+ [Clip and Project SNODAS Data](#3-clip-and-project-snodas-data)
-	+ [Create Snow Cover Data](#4-create-snow-cover-data)
-	+ [Calculate and Export Statistics](#5-calculate-and-export-statistics)
+	+ [Clip and Project SNODAS National Grids to Study Area](#3-clip-and-project-snodas-national-grids-to-study-area)
+	+ [Create the Binary Snow Cover Raster](#4-create-the-binary-snow-cover-raster)
+	+ [Calculate and Export Zonal Statistics](#5-calculate-and-export-zonal-statistics)
 
 
 ## Overview
@@ -77,13 +76,12 @@ The SNODAS tools are divided into 3 individual scripts. <br>
 
 ## Processing Workflow
 
-The following sections describe the processing workflow that is executed by the scripts of the SNODAS tools. Below is a flow 
-diagram explaining the overview of the SNODAS tools processing workflow.
+The following sections describe the processing workflow that is executed by the scripts of the SNODAS tools. The image below is a flow 
+diagram displaying the entire SNODAS tools processing workflow (to view the image full size, use the web browser feature to open the 
+image in a new tab - for example, in Chrome right click and ***Open image in new tab***). Throughout each following section of the processing 
+workflow documentation, the flow diagram is split into individual processing steps and explained in detail. 
 
-**TODO egiles 1/27/2017 create an overview workflow and place here**
-**TODO egiles 1/27/2017 update step-by-step workflow images to describe 
-files with less detail. The detailed filenames are included in the file 
-structure workflow but are uneccesary on this overview page**
+![processing workflow overveiw](overview-images/overview.png)
 
 
 ### Download SNODAS Data
@@ -211,7 +209,7 @@ the final projection is other than NAD 83 Zone 13N, the projection EPSG must be 
 under **section** *VectorInputShapefile* **option** *projection_epsg*.
 
 The clipped and reprojected SNODAS SWE .tif grids are saved in the 3_ClipToExtent folder. Refer to the [File Structure](file-structure.md#processeddata923_cliptoextent92) section 
-for more information regarding the clipped SWE .tif file and the 3_ClipToExtent folder. Refer to [Tool Utilities and Functions](#3-clip-and-project-snodas-data)
+for more information regarding the clipped SWE .tif file and the 3_ClipToExtent folder. Refer to [Tool Utilities and Functions](#3-clip-and-project-snodas-national-grids-to-study-area)
 section for detailed information on the Python functions called to project, clip and reproject the national SNODAS SWE grid.
 
 ![clip-workflow](overview-images/clip.png)
@@ -234,7 +232,7 @@ This grid is created by iterating through the cells of the daily clipped SNODAS 
 |-9999 (null value)|-9999 (null value)|
 
 The daily binary snow cover .tif grids are saved in the 4_CreateSnowCover folder. Refer to the [File Structure](file-structure.md#processeddata924_createsnowcover92) section 
-for more information regarding the binary snow cover .tif files and the 4_CreateSnowCover folder. Refer to [Tool Utilities and Functions](#4-create-snow-cover-data)
+for more information regarding the binary snow cover .tif files and the 4_CreateSnowCover folder. Refer to [Tool Utilities and Functions](#4-create-the-binary-snow-cover-raster)
 section for detailed information on the Python functions called to create the daily binary snow cover grids.
 
 ![snowcover-workflow](overview-images/snowcover.png)
@@ -263,7 +261,7 @@ The daily snowpack statistics computed by the QGIS Zonal Statistics tool are exp
 organizes the statistics by date. The second .csv file organizes the statistics by basin. Both types of .csv files are saved within
 the 5_CalculateStatistics folder. For more information on the two types of exported .csv files, including examples, and the 
 5_CalculateStatistics folder, refer to the [File Structure](file-structure.md#processeddata925_calculatestatistics92) section.
-Refer to [Tool Utilities and Functions](#5-calculate-and-export-statistics) section for detailed information on the Python 
+Refer to [Tool Utilities and Functions](#5-calculate-and-export-zonal-statistics) section for detailed information on the Python 
 functions called to calculate and export the daily zonal statistics.
 
 ![statistics-workflow](overview-images/statistics.png)
@@ -386,7 +384,7 @@ function categories are:
 
 		file: file to be checked for either .hdr or .bil extension (and, ultimately deleted)
 
-### 3. Clip and Project SNODAS Data
+### 3. Clip and Project SNODAS National Grids to Study Area
 
 1.	__copy_and_move_SNODAS_tif_file (file, folder_output)__   
 	Copy and move created .tif file from original location to folder_output. The copied and moved file will be
@@ -430,7 +428,7 @@ function categories are:
 		folder: full pathname of folder where both the originally clipped rasters and the reprojected 
 		clipped rasters are contained
 
-### 4. Create Snow Cover Data
+### 4. Create the Binary Snow Cover Raster
 
 1.	__snowCoverage (file, folder_input, folder_output)__   
 	Create binary .tif raster indicating snow coverage. If a pixel in the input file is > 0 (there is snow on the
@@ -445,7 +443,7 @@ function categories are:
 		folder_output: full pathname to the folder where the newly created binary snow cover raster
 		is stored
 
-### 5. Calculate and Export Statistics
+### 5. Calculate and Export Zonal Statistics
 
 1.	__create_csv_files (file, vFile, csv_byDate, csv_byBasin)__   
 	 Create empty csv files for output - both by date and by basin. The empty csv files have a header row with
