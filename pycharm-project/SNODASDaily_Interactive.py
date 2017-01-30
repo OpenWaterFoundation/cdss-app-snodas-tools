@@ -11,7 +11,8 @@
 #   to pick a list of non-sequential dates.
 
 # Import necessary modules
-import SNODAS_utilities, os, logging, time, configparser
+import SNODAS_utilities, os, logging, time, configparser, sys
+from sys import version_info
 from logging.config import fileConfig
 from qgis.core import QgsApplication
 from datetime import datetime, timedelta
@@ -96,7 +97,21 @@ name_of_byDate_folder = ConfigSectionMap("FolderNames")['by_date']
 name_of_byBasin_folder = ConfigSectionMap("FolderNames")['by_basin']
 
 
+
 if __name__ == "__main__":
+
+    #Boolean vairable used to test python version throughout script.
+    py3 = version_info[0] > 2
+
+    # Get total number of arguments passed to SNODASDaily_Interactive.py through command parameters
+    totalArg = len(sys.argv)
+
+    # Get the arguments list
+    cmdargs = str(sys.argv)
+
+    # Print
+    print ("Total number of args passed to the SNODASDaily_Interactive.py script: %d") % totalArg
+    print ("Argument list: %s") % cmdargs
 
     # Initialize QGIS resources: more info at
     # http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html. This block of code allows for the
@@ -110,16 +125,22 @@ if __name__ == "__main__":
 
     # Get user inputs as raw data
     # Ask the user to decide between downloading only one date of data or a range of multiple dates of data.
-    singleOrRange = raw_input("Are you interested in one date or a range of dates?: Type 'One' or 'Range'. \n")
+    if py3:
+        singleOrRange = input("Are you interested in one date or a range of dates?: Type 'One' or 'Range'. \n")
+    else:
+        singleOrRange = raw_input("Are you interested in one date or a range of dates?: Type 'One' or 'Range'. \n")
 
     # While loop that continues to prompt user for a new input if original input is invalid.
     while singleOrRange.upper() != "ONE" and singleOrRange.upper() != "RANGE":
 
-        # User prompt
-        print "Your input is not recognized. Please enter 'One' or 'Range'.\n"
-
         # Ask the user to re-enter downloading data type - one date or range of dates.
-        singleOrRange = raw_input("Are you interested in one date or a range of dates?: Type 'One' or 'Range'. \n")
+        if py3:
+            singleOrRange = input(
+                "Your input is not recognized. \n Are you interested in one date or a range of dates?: "
+                "Type 'One' or 'Range'. \n")
+        else:
+            singleOrRange = raw_input("Your input is not recognized. \n Are you interested in one date or a range of "
+                                      "dates?: Type 'One' or 'Range'. \n")
 
     # Create the root folder and the 5 sub-folders (Defaulted to: 1_DownloadSNODAS, 2_SetFormat, 3_ClipToExtent,
     # 4_CreateSnowCover, 5_CalculateStatistics [2 sub-folders: StatisticsByBasin, StatisticsByDate]). Check for folder
@@ -169,19 +190,24 @@ if __name__ == "__main__":
         count = True
         while count:
             try:
-                userIn = raw_input(
+                if py3:
+                    userIn = input(
+                        "\n Which date are you interested in? The date must be of or between 01 October 2003 and today's "
+                        "date. \n mm/dd/yy: \n")
+                else:
+                    userIn = raw_input(
                     "\n Which date are you interested in? The date must be of or between 01 October 2003 and today's "
                     "date. \n mm/dd/yy: \n")
                 singleDate = datetime.strptime(userIn, "%m/%d/%y")
                 if (datetime(year=2003, month=9, day=30) < singleDate <= now) == False:
-                    print "\n You have chosen an invalid date."
+                    print ('\n You have chosen an invalid date.')
                     count = True
                 else:
                     startDate = singleDate
                     endDate = singleDate
                     count = False
             except ValueError:
-                print "Invalid Format!"
+                print ('Invalid Format!')
 
     # If the user is interested in a range of multiple dates.
     else:
@@ -192,17 +218,22 @@ if __name__ == "__main__":
         count = True
         while count:
             try:
-                userIn = raw_input(
+                if py3:
+                    userIn = input(
                     "\n What is the STARTING date of data that you are interested in? The date must be of or between "
                     "01 October 2003 and today's date. \n mm/dd/yy: \n")
+                else:
+                    userIn = raw_input(
+                        "\n What is the STARTING date of data that you are interested in? The date must be of or between "
+                        "01 October 2003 and today's date. \n mm/dd/yy: \n")
                 startDate = datetime.strptime(userIn, "%m/%d/%y")
                 if (datetime(year=2003, month=9, day=30) < startDate <= now) == False:
-                    print "\n You have chosen an invalid date."
+                    print ('\n You have chosen an invalid date.')
                     count = True
                 else:
                     count = False
             except ValueError:
-                print "Invalid Format!"
+                print ('Invalid Format!')
 
         # Ask the user which END date they would like. Must be in mm/dd/yy format and be within the specified
         # range of available dates. Continue to ask the user for a date if the entered string is not a valid date with
@@ -210,17 +241,22 @@ if __name__ == "__main__":
         count = True
         while count:
             try:
-                userIn = raw_input(
+                if py3:
+                    userIn = input(
                     "\n What is the ENDING date of data that you are interested in? The date must be between "
-                    "the %s and today's date. \n mm/dd/yy: \n" % startDate.date())
+                    " %s and today's date. \n mm/dd/yy: \n" % startDate.date())
+                else:
+                    userIn = raw_input(
+                        "\n What is the ENDING date of data that you are interested in? The date must be between "
+                        " %s and today's date. \n mm/dd/yy: \n" % startDate.date())
                 endDate = datetime.strptime(userIn, "%m/%d/%y")
                 if (startDate < endDate <= now) == False:
-                    print "\n You have chosen an invalid date."
+                    print ('\n You have chosen an invalid date.')
                     count = True
                 else:
                     count = False
             except ValueError:
-                print "Invalid Format!"
+                print ('Invalid Format!')
 
 
     ###### End of user input. Begin automated script.
@@ -353,11 +389,6 @@ if __name__ == "__main__":
                                                                   results_date_path,
                                                                   clip_path, snowCover_path)
 
-            # Create .JSON files
-            for file in os.listdir(results_date_path):
-                if current_date in str(file):
-                    SNODAS_utilities.createGeoJson(file, results_date_path)
-
             # Display elapsed time of current date's processing in log.
             end_day = time.time()
             elapsed_day = end_day - start_day
@@ -367,8 +398,8 @@ if __name__ == "__main__":
         # If config file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
         # script will not run and the following error message will be printed to the console and to the logging file.
         else:
-            print "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. " \
-                              "Please type in 'True' or 'False' and rerun this script."
+            print ('ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. " \
+                              "Please type in \'True\' or \'False\' and rerun this script.')
             logging.error(
                             "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
                             "valid. Please type in 'True' or 'False' and rerun the script.")

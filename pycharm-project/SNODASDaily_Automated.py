@@ -138,7 +138,7 @@ if __name__ == "__main__":
     fileConfig(Configfile)
     logger = logging.getLogger()
     logging.info('SNODASDailyDownload.py: Started \n')
-    logFile = root + '\SNODAS_log.txt'
+
 
     # Initialize QGIS resources to utilize QGIS functionality.
     # More information at: http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html.
@@ -244,11 +244,6 @@ if __name__ == "__main__":
             if today_date in str(file):
                 SNODAS_utilities.zStat_and_export(file, basin_shp, results_basin_path, results_date_path,
                                                       clip_path, snowCover_path)
-
-        # Create .JSON files
-        for file in os.listdir(results_date_path):
-            if today_date in str(file):
-                SNODAS_utilities.createGeoJson(file, results_date_path)
 
         # Close logging including the elapsed time of the running script in seconds.
         end = time.time()

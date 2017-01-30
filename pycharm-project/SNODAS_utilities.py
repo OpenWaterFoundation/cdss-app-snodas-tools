@@ -64,14 +64,18 @@ def ConfigSectionMap(section):
 #
 #   ID_Field_Name: The field name of the basin boundary attribute table describing the identification of each basin.
 #   The naming convention of the CSVByBasin result files use the ID_Field_Name.
+#
+#   null_value: The null values that SNODAS applies to the data's null value. Defaulted to -9999 but should be changed
+#   if the null values provided by SNODAS are changed.
 
 website = ConfigSectionMap("SNODAS_FTPSite")['website']
 username = ConfigSectionMap("SNODAS_FTPSite")['username']
 password = ConfigSectionMap("SNODAS_FTPSite")['password']
 SNODAS_FTP_folder = ConfigSectionMap("SNODAS_FTPSite")['folder_path']
-projectionInput = ConfigSectionMap("VectorInputExtent")['projection_epsg']
-projectionOutput = ConfigSectionMap("VectorInputShapefile")['projection_epsg']
+projectionInput = "EPSG:" + ConfigSectionMap("VectorInputExtent")['projection_epsg']
+projectionOutput = "EPSG:" + ConfigSectionMap("VectorInputShapefile")['projection_epsg']
 ID_Field_Name = ConfigSectionMap("VectorInputShapefile")['basin_id']
+null_value = ConfigSectionMap("SNODAS_FTPSite")['null_value']
 
 # Get today's date. ---------------------------------------------------------------------------------------------------
 now = datetime.now()
@@ -85,6 +89,7 @@ def download_SNODAS(downloadDir, singleDate):
     singleDate: the date of interest from import datetime module"""
 
     logging.info('download_SNODAS: Starting %s' % singleDate)
+
 
     # Code format for the following block of code in reference to:
     # http://www.informit.com/articles/article.aspx?p=686162&seqNum=7 and
@@ -118,7 +123,7 @@ def download_SNODAS(downloadDir, singleDate):
             ftp.retrbinary('RETR ' + file, localfile.write, 1024)
 
             logging.info('download_SNODAS: Downloaded %s' % singleDate)
-            print "Download of %s from FTP site completed. \n" % singleDate
+            print ("Download of %s from FTP site completed. \n") % singleDate
 
     logging.info('download_SNODAS: Finished %s \n' % singleDate)
 
@@ -506,7 +511,7 @@ def SNODAS_raster_reproject_NAD83(file, folder):
     logging.info('SNODAS_raster_reproject_NAD83: Finished %s \n' % file)
 
 
-# Creating binary snow cover raster function --------------------------------------------------------------------------
+# Creating binary raster functions --------------------------------------------------------------------------
 def snowCoverage(file, folder_input, folder_output):
     """Create binary .tif raster indicating snow coverage. If a pixel in the input file is > 0 (there is snow on the
     ground) then the new raster's pixel value is assigned '1'. If a pixel in the input raster is 0 or a null value
@@ -525,12 +530,16 @@ def snowCoverage(file, folder_input, folder_output):
         # Set name of snow cover .tif file
         snow_file = 'SNODAS_SnowCover_ClipAndReproj' + file[24:32] + '.tif'
 
+        # Set name of land .tif file
+        land_file = 'SNODAS_Land_ClipAndReproj' + file[24:32] + '.tif'
+
         # Set full pathname variables for input into later raster calculator options
         file_full_input = os.path.join(folder_input, file)
-        file_full_output = os.path.join(folder_output, snow_file)
+        file_full_output_snow = os.path.join(folder_output, snow_file)
+        file_full_output_land = os.path.join(folder_output, land_file)
 
         # Check for previous processing of file.
-        if os.path.exists(file_full_output):
+        if os.path.exists(file_full_output_snow):
 
             logging.warning('snowCoverage: %s has been previously created. Overwriting the file now.' % file)
 
@@ -557,10 +566,21 @@ def snowCoverage(file, folder_input, folder_output):
 
             # Set raster calculator options/settings. (expression, output path, output type, output extent,
             # output width, output height, entries)
-            calc = QgsRasterCalculator('(%s)>0' % rastercalcname, '%s' % file_full_output, 'GTiff',
+            calc = QgsRasterCalculator(('(%s)>0' % rastercalcname), '%s' % file_full_output_snow, 'GTiff',
                                            rLyr.extent(),
                                            rLyr.width(),
                                            rLyr.height(), entries)
+
+            # Begin calculation
+            calc.processCalculation()
+
+            # Set raster calculator options/settings. (expression, output path, output type, output extent,
+            # output width, output height, entries)
+            calc = QgsRasterCalculator('(%s)!=(%s)' % (rastercalcname, null_value), '%s' % file_full_output_land,
+                                       'GTiff',
+                                       rLyr.extent(),
+                                       rLyr.width(),
+                                       rLyr.height(), entries)
 
             # Begin calculation
             calc.processCalculation()
@@ -577,9 +597,10 @@ def snowCoverage(file, folder_input, folder_output):
 
 
 # Calculating zonal statistics and exporting functions ----------------------------------------------------------------
+
 def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
     """Create empty csv files for output - both by date and by basin. The empty csv files have a header row with
-     each column represented by a different fieldname (refer to 'fieldnames' section of the function for actual
+     each column represented by a different field name (refer to 'fieldnames' section of the function for actual
      fieldnames). Csv files by date contain one .csv file for each date and is titled 'SnowpackByDate_YYYYMMDD.csv'.
      Each byDate file contains the zonal statistics for each basin on that date. Csv files by basin contain one .csv
      file for each watershed basin and is titled 'SnowpackByBasin_BasinId)'. Each byBasin file contains the zonal
@@ -610,9 +631,9 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
         # Define fieldnames for output .csv files. These MUST match the keys of the dictionaries. Fieldnames make up
         # the header row of the outputed .csv files. The column headers of the .csv files are in
         # sequential order as layed out in the fieldnames list.
-        fieldnames = ['Date_YYYYMMDD', ID_Field_Name, 'SWE_Mean_meters', 'SWE_Minimum_meters', 'SWE_Maximum_meters',
-                      'SWE_StdDev_meters', 'Count_pixels', 'SnowCover_percent', 'SWE_Mean_inches', 'SWE_Min_inches',
-                        'SWE_Max_inches', 'SWE_StdDev_inches']
+        fieldnames = ['Date_YYYYMMDD', ID_Field_Name, 'SNODAS_SWE_Mean_m', 'SNODAS_SWE_Min_m', 'SNODAS_SWE_Max_m',
+                      'SNODAS_SWE_StdDev_m', 'SNODAS_Pixels_Count', 'SNODAS_SnowCover_percent', 'SNODAS_SWE_Mean_in',
+                      'SNODAS_SWE_Min_in', 'SNODAS_SWE_Max_in', 'SNODAS_SWE_StdDev_in','SNODAS_Land_Sum']
 
         # Create string variable for name of outputed .csv file by date. Name: SnowpackByDate_YYYYMMDD.csv.
         results_date = 'SnowpackByDate_' + date_name + '.csv'
@@ -665,7 +686,10 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
     logging.info('create_csv_files: Finished %s' % file)
 
 def delete_ByBasinCSV_repeated_rows(file, vFile, csv_byBasin):
-    """ file: daily .tif file  to be processed with zonal statistics (clipped, reprojected)
+    """ Check to see if date has already been processed. If so, iterate through by basin csv file and only write rows to new csv file
+	that do not start with the date. Ultimately, delete row of data for today's date so that new data can be overwritten without
+	producing multiple rows of the same date.
+	file: daily .tif file  to be processed with zonal statistics (clipped, reprojected)
     vFile: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal stats calculations)
     csv_byBasin: full pathname of folder containing the results by basin (.csv file)"""
 
@@ -764,9 +788,9 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow):
     # Define fieldnames for output .csv files. These MUST match the keys of the dictionaries. The fieldnames make up
     # the header row for the output .csv files. The column headers of the .csv files are in sequential order as layed
     # out in the fieldnames list.
-    fieldnames = ['Date_YYYYMMDD', ID_Field_Name, 'SWE_Mean_meters', 'SWE_Minimum_meters', 'SWE_Maximum_meters',
-                      'SWE_StdDev_meters', 'Count_pixels', 'SnowCover_percent', 'SWE_Mean_inches', 'SWE_Min_inches',
-                        'SWE_Max_inches', 'SWE_StdDev_inches']
+    fieldnames = ['Date_YYYYMMDD', ID_Field_Name, 'SNODAS_SWE_Mean_m', 'SNODAS_SWE_Min_m', 'SNODAS_SWE_Max_m',
+                      'SNODAS_SWE_StdDev_m', 'SNODAS_Pixels_Count', 'SNODAS_SnowCover_percent', 'SNODAS_SWE_Mean_in',
+                    'SNODAS_SWE_Min_in', 'SNODAS_SWE_Max_in', 'SNODAS_SWE_StdDev_in','SNODAS_Land_Sum']
 
     # Envelop input shapefile (for example, the Colorado River Basin NAD83 shapefile) as a QGS object vector layer
     vectorFile = QgsVectorLayer(vFile, 'Reprojected Basins', 'ogr')
@@ -795,8 +819,10 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow):
 
             # Set full pathname of rasters for later input into the zonal stat tool
             snow_file = 'SNODAS_SnowCover_ClipAndReproj' + file[24:32] + '.tif'
+            land_file = 'SNODAS_Land_ClipAndReproj' + file[24:32] + '.tif'
             raster_pathH = os.path.join(DirClip, file)
             raster_pathS = os.path.join(DirSnow, snow_file)
+            raster_pathL = os.path.join(DirSnow, land_file)
 
             # Set input object options for the zonal stat tool - Mean.
             # [input shapefile (must be a valid QGS vector layer), input raster (must be the full pathname),
@@ -844,8 +870,13 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow):
             eStd = QgsExpression('Sstdev / 1000')
             eStd.prepare(vectorFile.pendingFields())
 
-            # Set input object options for the zonal stat tool - Count
+            # Set input object options for the zonal stat tool - Count of Total Basin Cells
             zonalStats = QgsZonalStatistics(vectorFile, raster_pathH, "S", 1, QgsZonalStatistics.Count)
+            # Call zonal stat tool to start processing
+            zonalStats.calculateStatistics(None)
+
+            # Set input object options for the zonal stat tool - Sum of Cells Classified as Land
+            zonalStats = QgsZonalStatistics(vectorFile, raster_pathL, "L", 1, QgsZonalStatistics.Count)
             # Call zonal stat tool to start processing
             zonalStats.calculateStatistics(None)
 
@@ -877,6 +908,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow):
 
             # Set raster calculator expression  to populate the 'SnowCover' field. Sum of basin pixels covered by snow
             # divided by total count of basin pixels.
+            #e = QgsExpression('Ssum / Lsum * 100')
             e = QgsExpression('Ssum / Scount * 100')
             e.prepare(vectorFile.pendingFields())
 
@@ -970,16 +1002,17 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow):
                 # /testing/en/docs/pyqgis_developer_cookbook/vector.html#retrieving-information-about-
                 # attributes]. Other resources at http://stackoverflow.com/questions/1024847
                 # /add-key-to-a-dictionary-in-python
-                d['SWE_Mean_meters'] = feature['Smean']
-                d['SWE_Minimum_meters'] = feature['Smin']
-                d['SWE_Maximum_meters'] = feature['Smax']
-                d['SWE_StdDev_meters'] = feature['Sstdev']
-                d['Count_pixels'] = feature['Scount']
-                d['SnowCover_percent'] = feature['SnowCover']
-                d['SWE_Mean_inches'] = feature['MeanIn']
-                d['SWE_Min_inches'] = feature['MinIn']
-                d['SWE_Max_inches'] = feature['MaxIn']
-                d['SWE_StdDev_inches'] = feature['StDevIn']
+                d['SNODAS_SWE_Mean_m'] = feature['Smean']
+                d['SNODAS_SWE_Min_m'] = feature['Smin']
+                d['SNODAS_SWE_Max_m'] = feature['Smax']
+                d['SNODAS_SWE_StdDev_m'] = feature['Sstdev']
+                d['SNODAS_Pixels_Count'] = feature['Scount']
+                d['SNODAS_SnowCover_percent'] = feature['SnowCover']
+                d['SNODAS_SWE_Mean_in'] = feature['MeanIn']
+                d['SNODAS_SWE_Min_in'] = feature['MinIn']
+                d['SNODAS_SWE_Max_in'] = feature['MaxIn']
+                d['SNODAS_SWE_StdDev_in'] = feature['StDevIn']
+                d['SNODAS_Land_Sum'] = feature['Lsum']
 
                 # Append current dictionary to the empty basin array. This array is exported to the
                 # output .csv file at the end of this 'for' loop.
@@ -1036,39 +1069,9 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow):
 
             logging.info('zStat_and_export: Zonal statistics of %s are exported to %s' % (file, csv_byBasin))
 
-            print "Zonal stastics of %s are complete." % date_name
+            print ("Zonal statistics of %s are complete.") % date_name
 
 
         else:
             logging.info('zStat_and_export: %s is not a .tif file and the zonal statistics were not processed.' % file)
 
-def createGeoJson(file, csv_byDate):
-    """Convert results from the csv_byDate files into .json files to be uploaded into the web application.
-        file: .csv file to be used to create the .json file
-        csv_byDate: full pathname to the folder holding the results by date (.csv file)"""
-
-    logging.info('createGeoJson: Started %s' % file)
-
-    # Hold current directory in a variable, currdir, to be used at the end of the script.
-    currdir = os.getcwd()
-
-    # Change directory to folder containing the csv files by date
-    os.chdir(csv_byDate)
-
-    # Set name of JSON files. File name: SnowpackByDate_YYYYMMDD.csv | JSON Name: SnowpackByDate_YYYYMMDD.json
-    jsonName = 'SnowpackByDate_' + file[14:22] + '.json'
-
-    # Write contents of JSON file.
-    if not os.path.exists(os.path.join(csv_byDate, jsonName)):
-        csvfile = open(file, 'r')
-        jsonfile = open(jsonName, 'w')
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            json.dump(row, jsonfile)
-            jsonfile.write(',')
-            jsonfile.write('\n')
-
-    # Return directory back to original
-    os.chdir(currdir)
-
-    logging.info('createGeoJson: Finished %s' % file)

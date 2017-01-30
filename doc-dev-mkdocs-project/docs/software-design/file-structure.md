@@ -505,7 +505,7 @@ Each SnowpackStatisticsByBasin_XXXX.csv contains rows of snowpack statistics org
 SnowpackStatisticsByBasin_XXXX.csv file is updated with a new row of statistics. 
 
 An example of a SnowpackStatisticsByBasin_XXXX.csv file is shown below. You can see that the dates, January 1st through January 5th, 2017, have been 
-processed by the SNODAS tools. 
+processed by the SNODAS tools. The red circle shows that all values under the Local_ID column (the watershed basin ID) are equivalent.
 Right-click on the image and click *Open image in new tab* to see a larger view. 
 
 ![statsByBasin](file-structure-images/statsbybasin.png)
@@ -525,8 +525,9 @@ landscape comparison capabilities because the data shows the varying daily snowp
 Each SnowpackStatisticsByDate_YYYYMMDD.csv contains rows of snowpack statistics organized by basin ID. Each basins' statistics are saved within individual 
 rows of the .csv file. 
 
-An example of a SnowpackStatisticsByDate_YYYYMMDD.csv file is shown below. You can see that the daily statistics (October 15th, 2014) for all basins of the 
-[Watershed Basin Shapefile Input](#snodastools92staticdata92) (```watershedBasinBoundary.shp```) are represented. Right-click on the image and click *Open image in new tab* to see a larger view. 
+An example of a SnowpackStatisticsByDate_YYYYMMDD.csv file is shown below. The daily statistics (October 15th, 2014) for all basins of the 
+[Watershed Basin Shapefile Input](#snodastools92staticdata92) (```watershedBasinBoundary.shp```) are represented. The red circle shows that all 
+values under the Date_YYYYMMDD column are equivalent. Right-click on the image and click *Open image in new tab* to see a larger view. 
 
 ![statsByBasin](file-structure-images/statsbydate.png)
 
@@ -571,6 +572,7 @@ The options that are defaulted to 'N/A' are pathnames that are specific to the l
 |**SNODAS_FTPSite**<br>username|The username used to access the SNODAS FTP site. The defaulted generic username does not need to be changed.|anonymous|
 |**SNODAS_FTPSite**<br>password|The password used to access the SNODAS FTP site. The defaulted generic password does not need to be changed.|None|
 |**SNODAS_FTPSite**<br>folder|The path to the folder containing the SNODAS masked data files.|/DATASETS/NOAA/G02158/masked/|
+|**SNODAS_FTPSite**<br>null_value|The SNODAS data null value. This should remain at default unless NOHRSC changes the null value.|-9999|
 |**FolderNames**<br>download|The name of the [download folder](#processeddata921_downloadsnodas92) located in the processedData folder.|1_DownloadSNODAS|
 |**FolderNames**<br>setformat|The name of the [set format folder](#processeddata922_setformat92) located in the processedData folder.|2_SetFormat|
 |**FolderNames**<br>clip|The name of the [clip folder](#processeddata923_cliptoextent92) located in the processedData folder.|3_ClipToExtent|
