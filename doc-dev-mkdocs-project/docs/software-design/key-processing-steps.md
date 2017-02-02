@@ -35,11 +35,15 @@ overlapping polygons.  The code for the QGIS Zonal Statistics tool can be viewed
 # Handling SNODAS cells Overlapped by Multiple Features
 
 The QGIS Zonal Statistic tool calculates statistics on the daily SNODAS raster cells inside of each basin feature. There are scenarios, however, where a SNODAS cell is 
-split by a basin boundary causing the cell to be in two different polygon features at once. The entire cell, however, must be assigned to only one polygon feature.
-The QGIS Zonal Statistics tool assigns the raster cell to the polygon that has the largest proportion of the cell within its boundaries.  
+split by a basin boundary causing the cell to be in two different polygon features at once. However, each raster cell can only be assigned to one polygon. QGIS zonal statistics
+use the location of the cell's center to determine which polygon the cell "belongs".The only scenario where this is not true is if the cell resolution is larger than the 
+polygon area. In that scenario the statistics are based off of weighted proportions. For more infomation about weighted proportions, reference 
+[line 329](https://github.com/qgis/QGIS/blob/a2f51260db5357917e86b78f1bb2915379d670dd/src/analysis/vector/qgszonalstatistics.cpp#L329) of the QGIS Zonal Statistics 
+code. 
 
-An example of the daily SNODAS cells overlapped by multiple features is shown below. The red line is a basin boundary. Using the largest proportion technique, cell 1
-is used to calculate the zonal statistics of the lower-right basin whereas cell 2 is used to calculate the zonal statistics of the upper-left basin.
+An example of the daily SNODAS cells overlapped by multiple features is shown below. The red line is a basin boundary. The green dots represent the center point of each cell.
+Using the cell center technique, cell 1 is used to calculate the zonal statistics of the lower-right basin whereas cell 2 is used to calculate the zonal statistics of the 
+upper-left basin.
 
 <center>![Overlapped Cells](key-processing-images/assign-pixel.png)</center>
 
@@ -50,9 +54,9 @@ Snowfall on large bodies of water, like a lake or reservoir, will react consider
 
 ## Calculating SNODAS Statistics
 
-To mitigate data errors due to this phenomenon
-the SNODAS model applies an open water mask to the landscape assigning open water cells a null value of '55527'. The SWE statistics, therefore, are only representative 
-of non-water areas. 
+To mitigate data errors due to this phenomenon the SNODAS model applies an open water mask to the landscape assigning open water cells a null value of '55527'. 
+ The QGIS Zonal Statistics tool disregards cells with no-data values when calculating all output statisiics - count, mean, etc. 
+ The SWE statistics, therefore, are only representative of non-water areas.
 
 The aerial image on the top is of the Eleven Mile Reservoir in Colorado (the basin is outlined in red). The image on the bottom is Eleven Mile Reservoir atop a daily SNODAS 
 raster grid. The grid is set to color null values as white. As shown, the open water body is not included in the SNODAS grid. 
@@ -63,10 +67,7 @@ raster grid. The grid is set to color null values as white. As shown, the open w
  
 ## Calculating Snow Cover Statistics
 
-** egiles TODO 1/26/17 explain the Snow Coverage percentage statistics and how it is affected by the open water mask. I need to talk to Steve first. The way I have the snow
-cover statistic now is that the valuation of presence/absence of snow comes from the SWE grid (so null bodies of water will not be included in the snow cover area.). But
-to calculate the statistic, the total cells with presence is divided over the total count of cells in the polygon. This will mean that even null values are included in 
-the total sum and will therefore make some basin snow coverage percent never to reach 100%** 
+** egiles TODO 1/26/17 need to fix the snow cover layer so that the null values are read by the zonal statistics tool. This means that the null values must have a value of -9999.**
 
 # Handling Missing SNODAS Values
 
