@@ -136,7 +136,7 @@ under **section**  *SNODAS_FTPSite* **option**  *folder*.
 ||Masked SNODAS Data|Unmasked SNODAS Data|
 |-|--------------|-----------------|
 |Spatial Coverage|Contiguous U.S.| Southernmost Latitude: 24.0996 ° N, Northernmost Latitude: 58.2329 ° N, Westernmost Longitude: 130.5171 ° W, Easternmost Longitude: 62.2504 ° W|
-|Spatial Resolution|30 arc seconds|30 arc seconds|
+|Spatial Resolution|30 arc seconds, nominally 1 km on the ground|30 arc seconds, nominally 1 km on the ground|
 |Temporal Coverage|30 September 2003 to present|09 December 2009 to present|
 |Temporal Resolution|24-hour|24-hour|
 |Grid size| 6,935 columns by 3,351 rows| 8,192 columns by 4,096 rows|
