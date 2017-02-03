@@ -18,7 +18,7 @@ The following topics are discussed in this section:<br>
 		- [processedData\\5_CalculateStatistics\\](#processeddata925_calculatestatistics92)
 			- [5_CalculateStatistics\\StatisticsbyBasin\\](#processeddata925_calculatestatistics92statisticsbybasin92)
 			- [5_CalculateStatistics\\StatisticsbyDate\\](#processeddata925_calculatestatistics92statisticsbydate92)
-		- [processedData\\SNODAS_log.txt\\](#processeddata92snodas_logtxt)
+		- [processedData\\SNODASTools.log\\](#processeddata92snodastoolslog)
 	+ [SNODASTools\\SNODASconfig\.ini](#snodastools92snodasconfigini)
 	
 
@@ -73,7 +73,7 @@ locations of folders and files on the operational system.
 - - - - - > ```stateBoundary.geojson```
  
 --- ```processedData\```  
-- - - - > ```SNODAS_log.txt```  
+- - - - > ```SNODASTools.log```  
 - - - - -  ```1_DownloadSNODAS\```   
 - - - - - - - - > ```SNODAS_YYYYMMDD.tar```  
 - - - - -  ```2_SetFormat\```   
@@ -531,9 +531,83 @@ values under the Date_YYYYMMDD column are equivalent. Right-click on the image a
 
 ![statsByBasin](file-structure-images/statsbydate.png)
 
-#### processedData\\SNODAS_log.txt
+#### processedData\\SNODASTools.log
 
-** TODO egiles 1/25/17 include information about the log file (info exporting to file, warning exported to console, time rotated handler, etc. **	
+The SNODAS Tools are set to export logging messages to aid in troubleshooting. The logging setting for the SNODAS Tools are configured with the
+[configuration file format](https://docs.python.org/2.7/library/logging.config.html#configuration-file-format). 
+
+**Levels of Logging Messages**  
+The SNODAS Tools are set to export logging messages to both the console and the SNODASTools.log file. Warning and error messages export to both the console and the
+SNODASTools.log file. Info messages are defaulted to export *solely* to the SNODASTools.log file. The logging level of messages exported to the 
+SNODASTools.log file can be changed from the defaulted ```DEBUG``` level in the [configuration file](#snodastools92snodasconfigini) under section ```logger_log02``` option ```level```.
+
+**Formatting of Logging Messages**  
+All logging messages are formatted to the default simpleFormatter. The simpleFormatter outputs the date and local time of the created log record
+ (```YYYY-MM-DD  HH:MM:SS,MSS``` where ```MSS``` refers to the three-digit millisecond value) followed by the logging message.   
+ 
+ The logging message follows the format: ```SSSS: EEEE: MMMM``` where:
+ 
+ |Format|Description|Example|
+ |----|------|---|
+ |SSSS|The name of the .py script or function for which the log message is regarding.|_SNODASDaily_Interactive.py:_|
+ |EEEE|The logging level of the log message. Only present if the logging level is a warning or an error.|_WARNING:_|
+ |MMMM|The logging message.| _SNODAS_20110217.tar has been untarred._|
+ 
+ The format of the logging messages can be changed from the defaulted ```%(asctime)s %(message)s``` in the [configuration file](#snodastools92snodasconfigini)
+ under section ```formatter_simpleFormatter``` option ```format```.
+
+
+**Timed Rotating File Handler**  
+If the SNODASTools.log logging level is set to default ```DEBUG```, all logging messages will be written to the SNODASTools.log file. For each processed day of SNODAS
+data, the size of the SNODASTools.log file will increase by approximately 12KB. The SNODAS Tools are designed to run everyday. This high frequency of processing would
+quickly cause the SNODASTools.log file to become incredibly large. To address this issue, the SNODASTools.log file is configured to run on a
+[Timed Rotating File Handler](https://docs.python.org/2/library/logging.handlers.html#timedrotatingfilehandler).
+
+The timed rotating file handler creates and updates multiple versions of the SNODASTools.log file based upon a configured temporal schedule. After an allotted amount of time
+(defaulted to 5 weeks), the oldest version of the SNODASTools.log is deleted and only the most recent log files are available. By default, a new SNODASTools.log 
+file is created every Monday, local time. The SNODASTools.log file from the previous week is assigned a numerical suffix of '1' and saved in the processedData folder. 
+
+ - **Note**:  
+ If ```SNODASTools1.log``` already exists, it is renamed to ```SNODASTools2.log```.   
+ If ```SNODASTools2.log``` already exists, it is renamed to ```SNODASTools3.log```. And so on.   
+ The ```SNODASTools5.log``` file is deleted and the previous ```SNODASTools4.log``` is renamed ```SNODASTools5.log```.
+
+|Name of Log File|Included Logging Messages|
+|------|------|
+|SNODASTools.log|All logging messages from the current week (starting on Monday).| 
+|SNODASTools1.log|All logging messages from last week.| 
+|SNODASTools2.log|All logging messages from two weeks ago.| 
+|SNODASTools3.log|All logging messages from three weeks ago.|  
+|SNODASTools4.log|All logging messages from four weeks ago.| 
+|SNODASTools5.log|All logging messages from five weeks ago.| 
+ 
+The default setting saves 5 versions of the 
+SNODASTools.log file. This means that any processing from the past 5 weeks can be accessed. SNODASTools.log files older than 5 weeks are deleted. 
+The previous 5 versions of the SNODASTools.log are saved under the processedData. 
+
+As previously mentioned, each processed SNODAS date increases the individual SNODASTools.log file by approximately 12KB. Given the default setting of the timed rotating 
+file handler, each log file will be approximately 84KB (daily size of 12KB multiplied by the 7 days of the week). The total size of file space used for SNODAS Tools' 
+logging will be approximately 420KB (weekly log file size of 84KB multipled by 5 weeks of backup files).
+
+ - **Note**:  
+ The size increase of the SNODASTools.log file will be larger than 12KB for each processed date of SNODAS data if the processed date of SNODAS data is being rerun and 
+ the original files are being overwritten. 
+
+The settings of the timed rotating file handler can be changed in the [configuration file](#snodastools92snodasconfigini)
+ under section ```handler_fileHandler``` option ```args```. There are 4 arguments (filename, type of time interval, interval, and backupConut) that can be altered within the option ```args```.
+ 
+|Argument|Description|Defaulted to:|
+|-----|----|------|
+|Filename|The full pathname to the location of the log file.|../processedData/SNODASTools.log|
+|Type of Time Interval|Time interval type when a new log file is to be created. <br> <br> Options: seconds, days, weekdays, etc.|<center>'W0' Monday|
+|Interval|Time interval. <br> <br> Example (if type of time interval = 'days'): <br> 1 - every day <br> 2 - every other day <br> 5 - every five days, etc.|<center>1|
+|backupCount|The number of previous SNODASTools.log files to be saved.|<center>5|
+
+
+ Refer to the Python tutorial documentation for further information regarding the 
+ argument options of a [TimedRotatingFileHandler](https://docs.python.org/2/library/logging.handlers.html#timedrotatingfilehandler) class.
+
+
 
 ### SNODASTools\\SNODASconfig.ini		
 
@@ -556,7 +630,10 @@ Under each section, there are corresponding *options* that relate to the section
 	'projection_epsg' refers to the projection of the Watershed Basin Extent Shapefile Input.
 	
 All configuration file sections and corresponding options are explained in the table below. The defaults of each configuration option is listed in the far-right column. 
-The options that are defaulted to 'N/A' are pathnames that are specific to the local computer of the deployed environment.  
+The options that are defaulted to 'N/A' are pathnames that are specific to the local computer of the deployed environment.   
+
+Note: The table entries starting at ```loggers:keys``` and ending at ```formatter_simpleFormatter:format``` refer to the configuration of the logging file. For information regarding how
+the logging file is configured, reference the [processedData\SNODASTools.log](#processeddata92snodastoolslog) section.
 
 |Configuration File <br> **Section**<br>Option|Description|Defaulted <br> to:|
 |--------------------------|------------|---|
@@ -580,7 +657,21 @@ The options that are defaulted to 'N/A' are pathnames that are specific to the l
 |**FolderNames**<br>calculate_statistics|The name of the [calculate statistics folder](#processeddata925_calculatestatistics92) located in the processedData folder.|5_CalculateStatistics|
 |**FolderNames**<br>by_date|The name of the [statistics by Date folder](#processeddata925_calculatestatistics92statisticsbydate92) located in the calculate statistics folder.|/StatisticsbyDate|
 |**FolderNames**<br>by_basin|The name of the [statistics by Basin folder](#processeddata925_calculatestatistics92statisticsbybasin92) located in the calculate statistics folder.|/StatisticsbyBasin|
-|**FolderNames**<br>logging_file|The name of the [SNODAS logging file](#processeddata92snodas_logtxt) located in the processedData folder.|SNODASTools_Log.txt|
-	
-** TODO egiles 1/25/17 include the logging sections of the configuration file in the above table**		
-
+|**loggers**<br>keys|The available SNODASTools logs. This should not be changed unless a new log configration is to be created.|root, log02|
+|**handlers**<br>keys|The available SNODASTools handlers. This should not be changed unless a new handler is to be created.|fileHandler, consoleHandler|
+|**formatters**<br>keys|The available SNODASTools formatters. This should not be changed unless a new formatter is to be created.|simpleFormatter|
+|**logger_root**<br>level|The log level of the 'root' logger.|WARNING|
+|**logger_root**<br>handlers|The handler used for the 'root' logger.|consoleHandler|
+|**logger_log02**<br>level|The log level of the 'log02' logger.|DEBUG|
+|**logger_log02**<br>handlers|The handler used for the 'log02' logger.|fileHandler|
+|**logger_log02**<br>qualname|The name used to call the log in the SNODASTools' applications.|log02|
+|**logger_log02**<br>propogate|Propogation setting. <br> 1 to indicate that messages must propagate to handlers higher up the logger hierarchy from this logger, or 0 to indicate that messages are not propagated to handlers up the hierarchy.|0|
+|**handler_consoleHandler**<br>class|The class type of the consoleHandler.|StreamHandler|
+|**handler_consoleHandler**<br>level|The log level of the consoleHandler.|NOTSET|
+|**handler_consoleHandler**<br>formatter|The formatter of the consoleHandler.|simpleFormatter|
+|**handler_consoleHandler**<br>args|The location of output log messages for the consoleHandler.|(sys.stdout,)|
+|**handler_fileHandler**<br>class|The class type of the fileHandler.|handlers.TimedRotatingFileHandler|
+|**handler_fileHandler**<br>level|The log level of the fileHandler.|NOTSET|
+|**handler_fileHandler**<br>formatter|The formatter of the fileHandler.|simpleFormatter|
+|**handler_fileHandler**<br>args|The options for the TimedRotatingFileHandler (filename, when to rotate, rotation interval, backupCount) |('../processedData/SNODASTools.log', 'W1', 1, 5)|
+|**formatter_simpleFormatter**<br>foramt|The format of log messages.|%(asctime)s %(message)s|
