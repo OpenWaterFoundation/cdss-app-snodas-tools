@@ -2,8 +2,13 @@
 
 This documentation is provided to explain the process implemented by the SNODAS Tools,
 to allow users of the data products to better understand features and limitations of the data and processes.
+Note that the SNODAS Tools can be used to calculate snowpack statistics for study areas other than Colorado. For 
+the purpose of this documentation, however, the SNODAS Tools process will be explained using Colorado, the study area 
+for which the SNODAS tools were originally designed. Refer to the 
+[SNODAS Tools Developer Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/)
+for information regarding how to use the SNODAS Tools to calculate snowpack statistics for other study areas. 
 
-The SNODAS Tools perform the following steps:
+In broad terms, the SNODAS Tools perform the following steps:
 
 1. [Download SNODAS data](#download-snodas-data)
 2. [Clip National SNODAS Grid to Colorado](#clip-national-snodas-grid-to-colorado)
@@ -11,28 +16,42 @@ The SNODAS Tools perform the following steps:
 4. [Generate Time Series Snowpack Products](#generate-time-series-snowpack-products)
 
 These steps are performed using the free and open source Geographic Information System (GIS) software [QGIS/pyQGIS/GDAS/OGR software](http://www.qgis.org/en/site/).
-More information about the SNODAS Tools software can be found in the [SNODAS Tools Developer Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/).
+Detailed information about the SNODAS Tools software can be found in the [SNODAS Tools Developer Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/).
 
 The following sections summarize each processing step.
 
 ## Download SNODAS Data
 
 National SNODAS grids are downloaded to the SNODAS Tools computer for processing into products that are relevant to Colorado.
+ 
 
-**TODO smalers 2016-12-09 describe the original source of data, with link.  Don't get into the gory details of data complexity (put that in the developer documentation)
-Include screen shots here to illustrate products.  Explain how there are daily versions and this project downloaded the full history.
-Explain how the full history is useful because it allows review of a specific year for comparison with the current year.**
+[Daily SNODAS grids](overview.md#snodas-data-grids)are national grids representing a variety of snowpack parameters. They are developed 
+by NOAA National Weather Service’s National Operational Hydrologic Remote Sensing Center (NOHRSC) and hosted by the National Snow and 
+Ice Data Center (NSIDC). NSIDC stores the daily grids, dating back to September 30th,  2003, in a public FTP site 
+[( ftp://sidads.colorado.edu)](ftp://sidads.colorado.edu) that is updated everyday. Although, as mentioned before, the SNODAS products 
+contain many grids of snowpack parameters, the SNODAS Tools are designed to specifically calculate snowpack statistics of the Snow
+Water Equivalent (SWE) grid. Below is an image of a daily SNODAS grid representing SWE values across the nation. The black area indicates 
+coverage of SWE values. ***TODO egiles 2/3/2017 update image with a larger image using QGIS platform**
+
+![nationalSNODASgrid](overview-images/nationalTIF.png)
+
+The SNODAS Tools are designed to process all available daily SNODAS SWE grids from September 30th, 2003 to the current date. 
+A full historical repository of daily snowpack statistics gives insight into how the Colorado snowpack has changed over the years. 
+It also allows review of the snowpack conditions for a specific year in comparison to the historical average. 
+
+To obtian to this vast repositiory, the SNODAS Tools are designed to download and process both [historical](#download-snodas-data-historical)
+and [present dates](#download-snodas-data-each-new-day) of SNODAS daily data.
 
 ### Download SNODAS Data (Historical)
 
-The organization of SNODAS files has changed over time.
-Therefore, the tools perform clean-up to put data into a common format and naming convention for additional processing.
-Because the grids are relatively large, they are [clipped to Colorado boundary in the next step](#clip-national-snodas-grid-to-colorado).
+The organization of SNODAS files has changed over time. Therefore, the tools perform clean-up to put data into a common format and 
+naming convention for additional processing. Because the national grids are relatively large, they are 
+[clipped to Colorado boundary in the next step](#clip-national-snodas-grid-to-colorado).
 
 ### Download SNODAS Data (Each New Day)
 
 Similar to historical data download, SNODAS grids are downloaded each day to update the current snowpack products.
-The grid is made available in the following locations:
+The current date's grid, along with the historical grids, is made available in the following locations:
 
 * [CDSS Map Viewer](http://cdss.state.co.us/onlineTools/Pages/MapViewer.aspx) - **TODO smalers 2016-12-11 need to confirm that State is loading it and give directions for how to find**
 * [Data Archive at CWCB](http://cwcb.state.co.us) - **TODO smalers 2016-12-11 location being determined via conversations with State**
@@ -41,12 +60,15 @@ be available during SNODAS Tools development depending on ongoing costs
 
 ## Clip National SNODAS Grid to Colorado
 
-The SNODAS snow product grids include the contiguous United States.
-To facilitate processing, the national grid is clipped to a boundary
-that contains the extent of all basins in Colorado and extending into other states.
-The Colorado basins map layer is used in later steps to produce basin-specific snow statistics such as snow water equivalent (SWE).
+The SNODAS snow product grids include the contiguous United States. To facilitate processing, the national grid is clipped to 
+a boundary that contains the extent of all basins in Colorado. Some Colorado basins extend beyond the Colorado state boundary so 
+the Colorado basin extent extends partially into other states. For a more detailed description on the clipping of the SNODAS daily grids 
+to the extent of the study area, refer to the 
+[Processing Workflow](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/overview/#clip-and-project-snodas-national-grids-to-study-area) 
+section of the SNODAS Tools Developer Manual.
 
-**TODO smalers 2016-12-11 would be nice if SNODAS tools can be configured to work in other states but can revisit that later if another state is interested.**
+The Colorado basins map layer is used in later steps to produce basin-specific snow statistics such as mean snow water equivalent (SWE) 
+and percent snow covearge.
 
 **TODO smalers 2016-12-09 Emma fill in more background with screenshots showing the extent for Colorado.
 This would also be a good place to link to the data layer (again) and list of basins (Excel).
@@ -54,16 +76,32 @@ We can add links to download for the products and basin layer once that is in pl
 
 ## Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics
 
-The Colorado basins layer is intersected with the Colorado SNODAS grid to calculate the following statistics:
+The Colorado basins layer is intersected with the daily Colorado SNODAS grids to calculate the following statistics:
 
-* Snow Water Equivalent (SWE) average over basin (inches) - a measure of how much water is available to melt out
-* Areal Extent of Snow Cover (AESC, percent) - indicates how much of the basin has some level of snow cover
-* Others?
+|Statistic|Units|Description|
+|---------|-----|----------|
+|Snow Water Equivalent (SWE) average over basin|inches and meters|a measure of how much water is available to melt out|
+|Snow Water Equivalent (SWE) minimum over basin|inches and meters|a measure of the smallest daily observation of SWE|
+|Snow Water Equivalent (SWE) maximum over basin|inches and meters|a measure of the largerst daily observation of SWE|
+|Snow Water Equivalent (SWE) standard deviation over basin|inches and meters|a measure of SWE variation across the basin|
+|Areal Extent of Snow Cover (percent)|unitless|indicates how much of the basin has some level of snow cover|
 
-The statistics are written to a comma-separated-value (CSV) file (Excel file?) of the following form: (include example),
-and are made available on the web.
 
-**TODO smalers 2016-12-11 need to fill out, include links to products, is it one big table or by basin, or both?**
+The statistics are written to comma-separated-value (CSV) files. The current date's statistics are compiled with the historical 
+statistics to create two large repositories of Colorado snowpack statistics. 
+
+The first is a historical snowpack repository organized **by date**. In this repository a separate csv file is created for each 
+date of processed SNODAS data. Each csv file contatains the snowpack statistics for every Colorado basin specific to that date. 
+This repository is useful when analyzing the differences in snowpack statistics across the entire landscape for a given day.
+
+The second is a historical snowpack repository organized **by Colorado basin**. In this repository a separate csv file is 
+created for each Colorado basin. Each csv file contains the snowpack statistics for all historical dates of processed SNODAS 
+data specific to that Colorado basin. This repository is useful when analyzing the differences in snowpack statistics over time 
+given a specific basin.
+
+**TODO egiles 2017-02-03 include links and images of the csv files**
+
+**TODO smalers 2016-12-11 include links to products**
 
 ## Generate Time Series Snowpack Products
 
