@@ -1,4 +1,14 @@
-# SNODAS Tools Data / Overview
+# Table of Contents
+
+The following topics are discussed in this section:
+
+ - [Overview](#overview)
+ - [SNODAS Data Grids](#snodas-data-grids)
+ - [Input Zone Dataset: Watershed Basins](#input-zone-dataset-watershed-basins)
+	- [Colorado Basins](#colorado-basins)
+
+
+# Overview
 
 The SNODAS tools utilize the Snow Data Assimilation System (SNODAS) national data grids.
 
@@ -11,7 +21,7 @@ information and more is described in detail at [http://nsidc.org/data/docs/noaa/
 
 Multiple national raster grids have been and continue to be created for each day. 
 
-|There are 8 parameters of <br> SNODAS data that are produced:|
+|<center>The 8 parameters of SNODAS data <br> that are produced daily|
 |-----|
 |Snow Water Equivalent (SWE)|
 |Snow Depth|
@@ -22,10 +32,16 @@ Multiple national raster grids have been and continue to be created for each day
 |Liquid Precipitation|
 |Snow Pack Average Temperature|
 
- For the purpose of this project, the only interested parameter is that of Snow Water Equivalence. 
+For the purpose of this project, the only parameter of interest is Snow Water Equivalent (SWE). The daily SWE grid values are snapshots of SWE for a specific date at *6:00 AM UTC* (*11:00 PM previous day MST*). 
+Below is an image of a daily SNODAS grid representing SWE values across the nation. The areas of higher SWE are represented by blue while the areas with lower, or no SWE values, are represented by brown. 
 
-The data is packaaged in two formats: masked or unmasked data. The masked data is clipped to the contiguous US  while the unmasked 
-data extends to cover a larger area. For the purpose of this project, the unmasked data is the more appropriate size and is the chosen avenue for data assimilation. 
+![nationalSNODASgrid](overview-images/nationalTIF.png)
+*SNODAS Snow Water Equivalent Masked Grid for January 16th, 2017 (6:00 AM UTC)*
+
+
+The SNODAS data is available in 2 spatial coverages: masked and unmasked data. The masked data is clipped to the contiguous US  while the unmasked 
+data extends to cover a larger area, see below. For the purpose of this project, the unmasked data is the more appropriate size and is the chosen avenue for data assimilation. 
+
 
 ||Masked SNODAS Data|Unmasked SNODAS Data|
 |-|--------------|-----------------|
@@ -36,15 +52,24 @@ data extends to cover a larger area. For the purpose of this project, the unmask
 |Grid size| 6,935 columns by 3,351 rows| 8,192 columns by 4,096 rows|
 |Grid values|16-bit, signed integers|16-bit, signed integers|
 
-
 The temporal coverage of the masked data begins on September 30, 2003 and extends to the 
-current date. For the purpose of this project, all available data file were downloaded starting on September 30, 2003. 
+current date. For the purpose of this project, all available data files are downloaded starting on September 30, 2003. 
 
 The raster datasets are stored on the following FTP site: [ftp://sidads.colorado.edu](ftp://sidads.colorado.edu) under the pathname 
 ```/DATASETS/NOAA/G02158/masked/```. 
-This directory has folders indicating the years of which the data temporally covers. In each year’s folder, there are folders indicating 
-each month of the year. The 8 daily rasters store within zipped daily .tar files located in each specific month.  The .tar files follow the 
+This directory contains folders indicating the years of which the data temporally covers. 
+
+![FTPyear](overview-images/yearDirectory.png)
+
+In each year’s folder, there are folders indicating 
+each month of the year. 
+
+![FTPmonth](overview-images/monthDirectory.png)
+
+The [8 daily rasters representing each unique snowpack parameter](#snodas-data-grids) store within zipped daily .tar files located in each specific month.  The .tar files follow the 
 naming convention of ```SNODAS_YYYYMMDD.tar``` where YYYYMMDD represents the date of data.
+
+![FTPday](overview-images/dayDirectory.png)
 
 **TODO smalers 2016-12-10 provide SNODAS resources and links and explain generally what SNODAS is,
 as well as benefits and limitations, mention that SNODAS is distributed whereas SNOTEL and snow course are measurements at sites.
@@ -56,7 +81,7 @@ Split into sections as appropriate.**
 
 ## Input Zone Dataset: Watershed Basins
 
-The SNODAS tools calculate zonal snowpack statistics on the SNODAS SWE daily grids. 
+The SNODAS Tools calculate zonal snowpack statistics on the SNODAS SWE daily grids. 
 Zonal statistics are statistics calculated by zone where the zones are defined by an input zone dataset 
 and the values are defined by a raster grid. The raster grid is [the daily
 SNODAS SWE grid](#snodas-data-grids). The input zone dataset is a watershed basin boundary shapefile. One set of daily
@@ -70,7 +95,7 @@ next section explains the specifications of the original Colorado watershed basi
 **TODO smalers 2016-12-11 explain that basins are small HUC-?? and align with National Weather Service (NWS) forecast basins.
 Smaller basins are aggregated to larger totals.
 Elevation zones are used in the basins included in the Northern Colorado Water Conservancy District boundary (Upper Colorado and Poudre Basins),
-and are also accumuated to produce a total for a basin.  Provide a screen shot and ability to download.**
+and are also accumulatedto produce a total for a basin.  Provide a screen shot and ability to download.**
 The basin boundaries for Colorado were defined using input from four NWS River Forecast Centers.
 The separate boundary spatial data layers were adjusted to ensure that basin boundaries did not overlap or have gaps.
 This ensures that SNODAS values are not under or over-counted.

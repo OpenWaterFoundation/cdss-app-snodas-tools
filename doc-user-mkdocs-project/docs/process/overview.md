@@ -1,18 +1,38 @@
-# SNODAS Tools Process / Overview
+# Table of Contents
+
+The following topics are discussed in this section:
+
+ - [Overview](#overview)
+ - [Download National SNODAS Data](#download-snodas-data)
+	- [Download Historical Data](#download-snodas-data-historical)
+	- [Download Current Date's Data](#download-snodas-data-each-new-day)
+ - [Clip National SNODAS Grid to Colorado](#clip-national-snodas-grid-to-colorado)
+ - [Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics](#intersect-snodas-colorado-grid-with-colorado-basins-and-calculate-statistics)
+ - [Generate Time Series Snowpack Products](#generate-time-series-snowpack-products)
+	- [Snowpack Statistics in Tables](#snowpack-statistics-in-tables)
+	- [Snowpack Statistics in Choropleth Maps](#snowpack-statistics-in-choropleth-maps)
+ - [Additional Process Details](#additional-process-details)
+	- [Alignment of Basin Boundaries](#alignment-of-basin-boundaries)
+	- [Handling of Water Bodies](#handling-of-water-bodies)
+	- [Handling Elevation Zones](#handling-elevation-zones)
+	- [Calculating Totals for Basin Groups](#calculating-totals-for-basin-groups)
+	- [Calculating Percent of Melt-Out](#calculating-percent-of-melt-out)
+
+# Overview
 
 This documentation is provided to explain the process implemented by the SNODAS Tools,
 to allow users of the data products to better understand features and limitations of the data and processes.
 Note that the SNODAS Tools can be used to calculate snowpack statistics for study areas other than Colorado. For 
-the purpose of this documentation, however, the SNODAS Tools process will be explained using Colorado, the study area 
-for which the SNODAS tools were originally designed. Refer to the 
+the purpose of this documentation, however, the process of the SNODAS Tools is explained using Colorado, the study area 
+for which the SNODAS Tools were originally designed. Refer to the 
 [SNODAS Tools Developer Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/)
 for information regarding how to use the SNODAS Tools to calculate snowpack statistics for other study areas. 
 
 In broad terms, the SNODAS Tools perform the following steps:
 
-1. [Download SNODAS data](#download-snodas-data)
+1. [Download Daily SNODAS Data](#download-snodas-data)
 2. [Clip National SNODAS Grid to Colorado](#clip-national-snodas-grid-to-colorado)
-3. [Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics](#intersect-snodas-colorado-grid-with-colorado-basins-and-calculate-statistics)
+3. [Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Snowpack Statistics](#intersect-snodas-colorado-grid-with-colorado-basins-and-calculate-statistics)
 4. [Generate Time Series Snowpack Products](#generate-time-series-snowpack-products)
 
 These steps are performed using the free and open source Geographic Information System (GIS) software [QGIS/pyQGIS/GDAS/OGR software](http://www.qgis.org/en/site/).
@@ -25,21 +45,23 @@ The following sections summarize each processing step.
 National SNODAS grids are downloaded to the SNODAS Tools computer for processing into products that are relevant to Colorado.
  
 
-[Daily SNODAS grids](overview.md#snodas-data-grids)are national grids representing a variety of snowpack parameters. They are developed 
+[Daily SNODAS data grids](../data/overview.md#snodas-data-grids) are national grids representing a variety of snowpack parameters. They are developed 
 by NOAA National Weather Service’s National Operational Hydrologic Remote Sensing Center (NOHRSC) and hosted by the National Snow and 
 Ice Data Center (NSIDC). NSIDC stores the daily grids, dating back to September 30th,  2003, in a public FTP site 
-[( ftp://sidads.colorado.edu)](ftp://sidads.colorado.edu) that is updated everyday. Although, as mentioned before, the SNODAS products 
-contain many grids of snowpack parameters, the SNODAS Tools are designed to specifically calculate snowpack statistics of the Snow
-Water Equivalent (SWE) grid. Below is an image of a daily SNODAS grid representing SWE values across the nation. The black area indicates 
-coverage of SWE values. ***TODO egiles 2/3/2017 update image with a larger image using QGIS platform**
+[( ftp://sidads.colorado.edu)](ftp://sidads.colorado.edu) that is updated every day. Although, as mentioned before, the SNODAS products 
+contain many grids of snowpack parameters, the SNODAS Tools are designed to specifically calculate snowpack statistics in regards to the Snow
+Water Equivalent (SWE) grid. Below is an image of a daily SNODAS grid representing SWE values across the nation. The areas of higher SWE are represented 
+by blue while the areas with lower, or no SWE values, are represented by brown. 
 
 ![nationalSNODASgrid](overview-images/nationalTIF.png)
+*SNODAS Snow Water Equivalent Masked Grid for January 16th, 2017*
+
 
 The SNODAS Tools are designed to process all available daily SNODAS SWE grids from September 30th, 2003 to the current date. 
 A full historical repository of daily snowpack statistics gives insight into how the Colorado snowpack has changed over the years. 
 It also allows review of the snowpack conditions for a specific year in comparison to the historical average. 
 
-To obtian to this vast repositiory, the SNODAS Tools are designed to download and process both [historical](#download-snodas-data-historical)
+To obtain this vast repository, the SNODAS Tools are designed to download and process both [historical](#download-snodas-data-historical)
 and [present dates](#download-snodas-data-each-new-day) of SNODAS daily data.
 
 ### Download SNODAS Data (Historical)
@@ -60,46 +82,77 @@ be available during SNODAS Tools development depending on ongoing costs
 
 ## Clip National SNODAS Grid to Colorado
 
-The SNODAS snow product grids include the contiguous United States. To facilitate processing, the national grid is clipped to 
-a boundary that contains the extent of all basins in Colorado. Some Colorado basins extend beyond the Colorado state boundary so 
-the Colorado basin extent extends partially into other states. For a more detailed description on the clipping of the SNODAS daily grids 
+The masked [SNODAS data grids](../data/overview.md#snodas-data-grids) cover the contiguous United States. To facilitate processing, the national grid is clipped to 
+a boundary that contains the extent of all basins in Colorado. *Note:* Some Colorado basins extend beyond the Colorado state boundary so 
+the Colorado basin extent extends partially into other states.  
+
+![COBasins](overview-images/CO_basin_boundaries.png)
+*Above: The Colorado basins displayed in green. The outline of the Colorado state boundary is overlaid in balck.*
+
+![COExtent](overview-images/CO_basin_extent.png)
+*Above: The Colorado basin extent displayed in green. The outline of the Colorado basins are overlaid in black.*
+
+![NationalGridWithExtentOverlay](overview-images/nationalWExtent.png)
+*Above: The SNODAS Snow Water Equivalent Masked Grid for January 16th, 2017 with the Colorado basin extent outline overlaid in black.*
+
+![ClippedSWEtoColorado](overview-images/clipSWE.png)
+*Above: The SNODAS Snow Water Equivalent Grid for January 16th, 2017 clipped to the Colorado basin extent. The skewed image is due to reprojections built into the SNODAS Tools. 
+Reference the [SNODAS Tools Developer Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/overview/#clip-and-project-snodas-national-grids-to-study-area) for information about the reprojections.*
+
+For a more detailed description on the clipping of the SNODAS daily grids 
 to the extent of the study area, refer to the 
 [Processing Workflow](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/overview/#clip-and-project-snodas-national-grids-to-study-area) 
 section of the SNODAS Tools Developer Manual.
 
 The Colorado basins map layer is used in later steps to produce basin-specific snow statistics such as mean snow water equivalent (SWE) 
-and percent snow covearge.
+and percent snow coverage.
 
-**TODO smalers 2016-12-09 Emma fill in more background with screenshots showing the extent for Colorado.
-This would also be a good place to link to the data layer (again) and list of basins (Excel).
+**TODO smalers 2016-12-09 
+This would also be a good place to link to the list of basins (Excel).
 We can add links to download for the products and basin layer once that is in place**
 
 ## Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics
 
-The Colorado basins layer is intersected with the daily Colorado SNODAS grids to calculate the following statistics:
+The output daily snowpack statistics are specific to each basin of the Colorado basins layer. Using 
+[the QGIS Zonal Statistics Plugin](https://docs.qgis.org/2.2/en/docs/user_manual/plugins/plugins_zonal_statistics.html),
+the clipped SNODAS daily grid is intersected with the Colorado basin layer and the following statistics are calculated for each basin:
 
-|Statistic|Units|Description|
+|Statistic (by Basin)|Units|Description|
 |---------|-----|----------|
-|Snow Water Equivalent (SWE) average over basin|inches and meters|a measure of how much water is available to melt out|
-|Snow Water Equivalent (SWE) minimum over basin|inches and meters|a measure of the smallest daily observation of SWE|
-|Snow Water Equivalent (SWE) maximum over basin|inches and meters|a measure of the largerst daily observation of SWE|
-|Snow Water Equivalent (SWE) standard deviation over basin|inches and meters|a measure of SWE variation across the basin|
+|Snow Water Equivalent (SWE) average|inches and meters|a measure of how much water is available to melt out|
+|Snow Water Equivalent (SWE) minimum|inches and meters|a measure of the smallest daily observation of SWE|
+|Snow Water Equivalent (SWE) maximum|inches and meters|a measure of the largest daily observation of SWE|
+|Snow Water Equivalent (SWE) standard deviation|inches and meters|a measure of SWE variation across the basin|
 |Areal Extent of Snow Cover (percent)|unitless|indicates how much of the basin has some level of snow cover|
 
+### Snowpack Statistics in Tables
 
 The statistics are written to comma-separated-value (CSV) files. The current date's statistics are compiled with the historical 
-statistics to create two large repositories of Colorado snowpack statistics. 
+statistics to create two large repositories of Colorado snowpack statistics, statistics organized ```by date``` and statistics 
+organized ```by basin```. 
 
-The first is a historical snowpack repository organized **by date**. In this repository a separate csv file is created for each 
-date of processed SNODAS data. Each csv file contatains the snowpack statistics for every Colorado basin specific to that date. 
+**Colorado Snowpack Statistics organized By Date**  
+In this repository a separate csv file is created for each 
+date of processed SNODAS data. Each csv file contains the snowpack statistics for every Colorado basin specific to that date. 
 This repository is useful when analyzing the differences in snowpack statistics across the entire landscape for a given day.
+Below is an example of the Colorado snowpack statistics organized by date CSV file. Right-click on the image and click *Open image 
+in new tab* to see a larger view. The red circle indicates the date column. Note that the date is unchanging throughout the entire CSV file. 
 
-The second is a historical snowpack repository organized **by Colorado basin**. In this repository a separate csv file is 
+![StatsByDate](overview-images/statsbydate.png)
+
+**Colorado Snowapack Statistics organized By Basin**  
+In this repository a separate csv file is 
 created for each Colorado basin. Each csv file contains the snowpack statistics for all historical dates of processed SNODAS 
 data specific to that Colorado basin. This repository is useful when analyzing the differences in snowpack statistics over time 
-given a specific basin.
+given a specific basin. Below is an example of the Colorado snowpack statistics organized by basin CSV file. Right-click on the 
+image and click *Open image in new tab* to see a larger view. The red circle indicates the 
+unique Colorado basin ID (LOCAL_ID). Note that the LOCAL_ID is unchanging throughout the entire CSV file. 
 
-**TODO egiles 2017-02-03 include links and images of the csv files**
+![StatsByBasin](overview-images/statsbybasin.png)
+
+### Snowpack Statistics in Choropleth Maps
+
+The daily snowpack statistics can also be viewed via a [choropleth map](http://www.datavizcatalogue.com/methods/choropleth.html). 
 
 **TODO smalers 2016-12-11 include links to products**
 
@@ -112,6 +165,8 @@ which are made available on the web.
 
 TSTool is also used to accumulate smaller basin statistics into larger basin statistics, to provide data at streamflow forecast points that are used
 for water management.
+
+**TODO egiles 2017-02-06 insert screen shot of TSTool-produced SNODAS graph**
 
 ## Additional Process Details
 
@@ -149,3 +204,8 @@ Are the same statistics represented in the totals or are additional calculations
 ### Calculating Percent of Melt-Out
 
 **TODO smalers 2016-12-11 Joe Busto indicated an interest in a graph showing percent of melt-out.  Steve needs to discuss with him to get an example.**
+
+
+** Questions for Steve (from Emma) 2016-02-06: Should we include the above key processing steps here even though they are explained in the developer 
+documentation under section "software design: key processing steps"? Should we include any information about the creation of the snow cover grid in 
+the process section of the user documentation?**
