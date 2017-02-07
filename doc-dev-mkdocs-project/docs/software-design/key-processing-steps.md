@@ -2,16 +2,14 @@
 
 The following topics are discussed in this section:
 
-* [Overview](#overview)
 * [Handling Overlapping Basin Boundaries](#handling-overlapping-basin-boundaries)
 * [Handling Cells Overlapped by Multiple Features](#handling-snodas-cells-overlapped-by-multiple-features)
-* [Handling Large Bodies of Water](#handling-large-bodies-of-water)
+* [Handling Large Bodies of Water](#handling-large-bodies-of-water)	
+	- [Calculating SNODAS SWE Statistics](#calculating-snodas-swe-statistics)
+	- [Calculating Snow Cover Statistics](#calculating-snow-cover-statistics)
 * [Handling Missing Values](#handling-missing-snodas-values)
 * [Handling Elevation Zones](#handling-elevation-zones)
 
-# Overview
-
-** egiles TODO 1/26/17 add overview content**
 
 # Handling Overlapping Basin Boundaries
 
@@ -52,7 +50,7 @@ upper-left basin.
 Snowfall on large bodies of water, like a lake or reservoir, will react considerably differently than snowfall on ground. 
 
 
-## Calculating SNODAS Statistics
+### Calculating SNODAS SWE Statistics
 
 To mitigate data errors due to this phenomenon the SNODAS model applies an open water mask to the landscape assigning open water cells a null value of '55527'. 
  The QGIS Zonal Statistics tool disregards cells with no-data values when calculating all output statisiics - count, mean, etc. 
@@ -65,16 +63,34 @@ raster grid. The grid is set to color null values as white. As shown, the open w
   
  <center>![Raster SNODAS](key-processing-images/water-null-raster.png)</center> 
  
-## Calculating Snow Cover Statistics
+### Calculating Snow Cover Statistics
 
-** egiles TODO 1/26/17 need to fix the snow cover layer so that the null values are read by the zonal statistics tool. This means that the null values must have a value of -9999.**
+For each basin, the areal snow cover statistic is calculated by dividing:  
+<center> _the sum of cells covered by snow_ in the basin  
+ by  
+ _the total count of cells_ in the basin.  </center>  
+ 
+*The sum of cells covered by snow* is calculated by using the QGIS Zonal Statisitcs sum tool on the 
+[binary ```SNODAS_SnowCover_ClipandReprjYYYYMMDD.tif``` raster](file-structure.md#processeddata924_createsnowcover92).
+The binary snow cover raster contains the value of ```1``` for any cell with a SWE value ```greater than 0``` (there is some presence of snow on 
+the ground). Therefore, the sum of the cells within each basin is indicative of how many cells within each basin are covered by snow. Cells that are
+not included in the sum are those valued at ```0``` (SWE values of ```0```) and those of no-data value. 
+
+*The total count of cells* in each basin is calculated by using the QGIS Zonal Statistics count tool on the [```SNODAS_SWE_ClipAndReprojYYYMMDD.tif``` raster](file-structure.md#processeddata923_cliptoextent92).
+The QGIS Zonal Statisics tool does not count cells of no-data values. 
+
+Cells representing large bodies of water are not included in either the *sum of cells covered by snow* or the *total count of cells*. The aeral snow cover statistic, therfore, 
+describes the approximate percentage of land in each basin (non-water) covered by some value of snow. 
 
 # Handling Missing SNODAS Values
 
-** egiles TODO 1/26/17 add missing SNODAS values content - i have done initial research on this and can only find a few sources. Need to talk to Steve about the objectives
-of this topic. All I know to include is that null values are included as -9999.**
+The no-data value of SNDOAS products is set to -9999. This is set in the SNODAS Tools' [configuration file](file-structure.md#snodastools92snodasconfigini). 
+If the SNODAS no-data value is changed, it is pertinent that the new value is entered in the configuration file under section ```SNODAS_FTPSite``` option ```null_value```. 
+The configured null_value variable is used in the [SNODAS_raster_clip](overview.md#3-clip-and-project-snodas-national-grids-to-study-area) function and the 
+[SNODAS_raster_reproject_NAD83](overview.md#3-clip-and-project-snodas-national-grids-to-study-area) function of the 
+```SNODAS_utilities.py``` script to set the no-data value of the clipped SNODAS grid to the original no-data value of the SNODAS national dataset.
 
 # Handling Elevation Zones
 
 ** egiles TODO 1/26/17 add elevation zones content - there has been discussion on how we want to work with local_id vs total_id. I am going to wait to write this content
-until we further discuss the topic with Amy**
+until we further discuss the topic with Amy on 2/8**

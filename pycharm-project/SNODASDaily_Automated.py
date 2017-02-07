@@ -134,10 +134,11 @@ if __name__ == "__main__":
     if os.path.exists(results_date_path) == False:
         os.makedirs(results_date_path)
 
+
     # Create and configures logging file
     fileConfig(Configfile)
-    logger = logging.getLogger()
-    logging.info('SNODASDailyDownload.py: Started \n')
+    logger = logging.getLogger('log02')
+    logger.info('SNODASDailyDownload.py: Started \n')
 
 
     # Initialize QGIS resources to utilize QGIS functionality.
@@ -248,9 +249,9 @@ if __name__ == "__main__":
         # Close logging including the elapsed time of the running script in seconds.
         end = time.time()
         elapsed = end - start
-        logging.info ('\n')
-        logging.info('\n SNODASDailyDownload.py: Completed.')
-        logging.info('Elapsed time: %d seconds' % elapsed)
+        logger.info ('\n')
+        logger.info('\n SNODASDailyDownload.py: Completed.')
+        logger.info('Elapsed time: %d seconds' % elapsed)
 
 
     # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
@@ -258,5 +259,7 @@ if __name__ == "__main__":
     else:
         print "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. Please " \
               "type in 'True' or 'False' and rerun this script."
+        logger.error("ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. "
+                      "Please type in 'True' or 'False' and rerun the script.")
         logging.error("ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. "
                       "Please type in 'True' or 'False' and rerun the script.")

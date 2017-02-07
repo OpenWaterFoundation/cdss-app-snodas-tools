@@ -84,9 +84,10 @@ locations of folders and files on the operational system.
 - - - - - - - - > ```SNODAS_SnowCover_ClipAndReprojYYYYMMDD.tif```   
 - - - - -  ```5_CalculateStatistics\```   
 - - - - - - - - - ```StatisticsbyBasin\```  
-- - - - - - - - - - - > ```SnowpackByBasin_LOCALID```  
+- - - - - - - - - - - > ```SnowpackStatisticsByBasin_LOCALID```  
 - - - - - - - - - ```StatisticsbyDate\```  
-- - - - - - - - - - - > ```SnowpackByDate_YYYYMMDD```   
+- - - - - - - - - - - > ```SnowpackStatisticsByDate_YYYYMMDD```  
+- - - - - - - - - - - > ```ListOfDates.txt``` 
 
 
 --> ```SNODASconfig.ini```
@@ -281,10 +282,10 @@ click *Open image in new tab*.
 	- ```SNODAS_SnowCover_ClipAndReprojYYYYMMDD.tif```  
 	![Snow Cover](file-structure-images/snowcover.png)
 5. The snowpack statistics in a .csv file organized by basin ID  
-	 - ```SnowpackByBasin_LOCALID```  
+	 - ```SnowpackStatisticsByBasin_LOCALID```  
 	 ![ByBasin](file-structure-images/statistics.png)
 6. The snowpack statistics in a .csv file organized by date  
-	 - ```SnowpackByDate_YYYYMMDD``` 
+	 - ```SnowpackStatisticsByDate_YYYYMMDD``` 
 	 ![ByDate](file-structure-images/statistics.png)
 
 
@@ -512,6 +513,8 @@ Right-click on the image and click *Open image in new tab* to see a larger view.
 
 	
 #### processedData\\5_CalculateStatistics\\StatisticsbyDate\\
+**Statistics By Date CSV Files**  
+
 As previously explained, the snowpack zonal statistics are organized and exported into two different types of .csv files, by basin and by date. 
  
 There is one SnowpackStatisticsByDate_YYYYMMDD.csv file for **each** date of processed SNODAS data where ```YYYYMMDD``` represents the date of data. 
@@ -530,6 +533,14 @@ An example of a SnowpackStatisticsByDate_YYYYMMDD.csv file is shown below. The d
 values under the Date_YYYYMMDD column are equivalent. Right-click on the image and click *Open image in new tab* to see a larger view. 
 
 ![statsByBasin](file-structure-images/statsbydate.png)
+
+**ListOfDates.txt**  
+
+The ListOfDates.txt file is a text file that contains a list of all processed dates of SNODAS data. All dates in the list correspond to 
+a SnowpackStatisticsByDate_YYYYMMDD.csv file in the StatisticsbyDate folder. The dates in the ListOfDates.txt file are in the YYYYMMDD format. 
+This text file is used in the development of the [Map Application](). 
+
+**ToDO egiles 2/7/2017 point to Kory's application and change the name of 'Map Application' to the actual title of the application**
 
 #### processedData\\SNODASTools.log
 
@@ -565,21 +576,12 @@ quickly cause the SNODASTools.log file to become incredibly large. To address th
 
 The timed rotating file handler creates and updates multiple versions of the SNODASTools.log file based upon a configured temporal schedule. After an allotted amount of time
 (defaulted to 5 weeks), the oldest version of the SNODASTools.log is deleted and only the most recent log files are available. By default, a new SNODASTools.log 
-file is created every Monday, local time. The SNODASTools.log file from the previous week is assigned a numerical suffix of '1' and saved in the processedData folder. 
+file is created every Monday, local time. The SNODASTools.log file from the previous week is assigned a suffix of ```.YYYY-MM-DD``` and saved in the processedData folder. The 
+```.YYYY-MM-DD``` refers to the day that the log file was originally created. Given the default, ```.YYYY-MM-DD``` will always be a Monday. 
 
- - **Note**:  
- If ```SNODASTools1.log``` already exists, it is renamed to ```SNODASTools2.log```.   
- If ```SNODASTools2.log``` already exists, it is renamed to ```SNODASTools3.log```. And so on.   
- The ```SNODASTools5.log``` file is deleted and the previous ```SNODASTools4.log``` is renamed ```SNODASTools5.log```.
-
-|Name of Log File|Included Logging Messages|
-|------|------|
-|SNODASTools.log|All logging messages from the current week (starting on Monday).| 
-|SNODASTools1.log|All logging messages from last week.| 
-|SNODASTools2.log|All logging messages from two weeks ago.| 
-|SNODASTools3.log|All logging messages from three weeks ago.|  
-|SNODASTools4.log|All logging messages from four weeks ago.| 
-|SNODASTools5.log|All logging messages from five weeks ago.| 
+ - **Note:**   
+ The timed rotating file handler defaults to adding the dated suffix as an extension. For example ```SNODASTools.log``` will become ```SNODASTools.log.YYYY-MM-DD```.
+ This locks up the previous log files to be opened and viewed in *Notepad*. The previous log files can still be opened and viewed using [*Notepad++*](https://notepad-plus-plus.org/).
  
 The default setting saves 5 versions of the 
 SNODASTools.log file. This means that any processing from the past 5 weeks can be accessed. SNODASTools.log files older than 5 weeks are deleted. 
@@ -673,5 +675,5 @@ the logging file is configured, reference the [processedData\SNODASTools.log](#p
 |**handler_fileHandler**<br>class|The class type of the fileHandler.|handlers.TimedRotatingFileHandler|
 |**handler_fileHandler**<br>level|The log level of the fileHandler.|NOTSET|
 |**handler_fileHandler**<br>formatter|The formatter of the fileHandler.|simpleFormatter|
-|**handler_fileHandler**<br>args|The options for the TimedRotatingFileHandler (filename, when to rotate, rotation interval, backupCount) |('../processedData/SNODASTools.log', 'W1', 1, 5)|
+|**handler_fileHandler**<br>args|The options for the TimedRotatingFileHandler (filename, when to rotate, rotation interval, backupCount) |('../processedData/SNODASTools.log', 'W0', 1, 5)|
 |**formatter_simpleFormatter**<br>foramt|The format of log messages.|%(asctime)s %(message)s|

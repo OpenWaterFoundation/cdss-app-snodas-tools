@@ -176,9 +176,9 @@ if __name__ == "__main__":
 
     # Create and configures logging file
     fileConfig(Configfile)
-    logger = logging.getLogger()
-    logging.info('SNODASDailyDownload.py: Started \n')
-    logFile = root + '\SNODAS_log.txt'
+    logger = logging.getLogger('log02')
+    logger.info('SNODASDailyDownload.py: Started \n')
+
 
     # After the user chooses the project folder where the data will be stored, they must then choose the dates of
     # interest. If the user is interested in only one date of data.
@@ -289,7 +289,7 @@ if __name__ == "__main__":
 
         # If date has already been procesed within the folder, the download & zonal statistics are rerun.
         if os.path.exists(possible_file):
-            logging.warning ( "\n This date (%s) has already been processed. The files will be reproecessed and "
+            logger.warning ( "\n This date (%s) has already been processed. The files will be reproecessed and "
                               "rewritten." % current_date)
 
         # Download current date SNODAS .tar file from the FTP site at
@@ -392,8 +392,9 @@ if __name__ == "__main__":
             # Display elapsed time of current date's processing in log.
             end_day = time.time()
             elapsed_day = end_day - start_day
-            logging.info('\n %s: Completed.' % current_date)
-            logging.info('Elapsed time (date: %s): %d seconds' % (current_date,elapsed_day))
+            logger.info('\n %s: Completed.' % current_date)
+            logger.info('Elapsed time (date: %s): %d seconds' % (current_date,elapsed_day))
+            print ('Elapsed time (%s): %d seconds.\n' % (current_date, elapsed_day))
 
         # If config file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
         # script will not run and the following error message will be printed to the console and to the logging file.
@@ -403,9 +404,13 @@ if __name__ == "__main__":
             logging.error(
                             "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
                             "valid. Please type in 'True' or 'False' and rerun the script.")
+            logger.error(
+            "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
+            "valid. Please type in 'True' or 'False' and rerun the script.")
 
     # Close logging including the elapsed time of the running script in seconds.
     end = time.time()
     elapsed = end - start
-    logging.info('\n SNODASHistoricalDownload.py: Completed.')
-    logging.info('Elapsed time (full script): %d seconds' % elapsed)
+    logger.info('\n SNODASHistoricalDownload.py: Completed.')
+    logger.info('Elapsed time (full script): %d seconds' % elapsed)
+    print ('SNODASDaily_Interactive.py Complete. Elapsed time (full script): %d seconds' % elapsed)

@@ -13,14 +13,14 @@ for the [Colorado Water Conservation Board](http://cdss.state.co.us).
 
 ## Overview of SNODAS Tools
 
-The SNODAS SWE Statistics Calculators calculate daily approximate snowpack zonal statistics of a given input basin boundary shapefile. They estimate 
+The SNODAS Tools calculate daily approximate snowpack zonal statistics of a given input basin boundary shapefile. They estimate 
 daily mean Snow Water Equivalence (SWE), daily minimum SWE, daily maximum SWE, daily SWE standard deviation, pixel count of the basin (with respect 
 to the properties of the SNODAS raster), and daily percentage of land covered by snow. The results of the toolset can be manipulated to produce 
 visually-enticing choropleth maps displaying the various snowpack statistics. Graphs can also be formed to display temporal changes in the SWE statistics 
 across the landscape. These two final visual products are available to display the snowpack landscape over space and time. 
 
 Although the toolset was specifically designed for Colorado watersheds, it can also be utilized to estimate the snowpack statistics of any area in the 
-contiguous United States (the bounds of the masked SNODAS data limit the extent of statistical processing – see [SNODAS Data](../data/overview)). 
+contiguous United States (the bounds of the masked SNODAS data limit the extent of statistical processing – see [SNODAS Data](../data/overview#snodas-data-grids)). 
 
 ## About the Colorado Water Conservation Board
 
