@@ -9,6 +9,8 @@ The following topics are discussed in this section:<br>
 * [CDSS\\TsTool-Version\\](#cdss92tstool-version92)
 * [CDSS\\SNODASTools\\](#cdss92snodastools92)
 	+ [SNODASTools\\bin\\](#snodastools92bin92)
+		- [Scripts](#bin92snodastoolslog)
+		- [Log files](#bin92snodastoolslog)
 	+ [SNODASTools\\staticData\\](#snodastools92staticdata92)
 	+ [SNODASTools\\processedData\\](#snodastools92processeddata92)
 		- [processedData\\1_DownloadSNODAS\\](#processeddata921_downloadsnodas92)
@@ -18,7 +20,7 @@ The following topics are discussed in this section:<br>
 		- [processedData\\5_CalculateStatistics\\](#processeddata925_calculatestatistics92)
 			- [5_CalculateStatistics\\StatisticsbyBasin\\](#processeddata925_calculatestatistics92statisticsbybasin92)
 			- [5_CalculateStatistics\\StatisticsbyDate\\](#processeddata925_calculatestatistics92statisticsbydate92)
-		- [processedData\\SNODASTools.log\\](#processeddata92snodastoolslog)
+		
 	+ [SNODASTools\\SNODASconfig\.ini](#snodastools92snodasconfigini)
 	
 
@@ -64,7 +66,8 @@ locations of folders and files on the operational system.
 - - - - - > ```SNODASDaily_Interactive.py```  
 - - - - - > ```SNODAS_utilities.py```  
 - - - - - > ```SNODAS_publishResults.py```   
-- - - - - > ```SNODASDaily_Automated_forTaskScheduler.bat```  
+- - - - - > ```SNODASDaily_Automated_forTaskScheduler.bat```   
+- - - - - > ```SNODASTools.log```  
 
 --- ```staticData\```    
 - - - - - > ```watershedBasinBoundary.shp```   
@@ -72,8 +75,7 @@ locations of folders and files on the operational system.
 - - - - - > ```watershedBasinBoundary.geojson```  
 - - - - - > ```stateBoundary.geojson```
  
---- ```processedData\```  
-- - - - > ```SNODASTools.log```  
+--- ```processedData\```   
 - - - - -  ```1_DownloadSNODAS\```   
 - - - - - - - - > ```SNODAS_YYYYMMDD.tar```  
 - - - - -  ```2_SetFormat\```   
@@ -112,6 +114,10 @@ All SNDOAS scripts, input data and output data are stored within the ```CDSS\SNO
 
 ### SNODASTools\\bin\\
 
+The ```C:\CDSS\SNODASTools\bin\``` folder holds all of the SNODAS tools' scripts and all of the corresponding log files.
+
+#### SNODAS Tools' Scripts
+
 The ```C:\CDSS\SNODASTools\bin\``` folder holds all SNODAS tools' scripts. In total there are five 
 scripts:   
 
@@ -121,7 +127,7 @@ scripts:
 	4. SNODAS_publishResults.py
 	5. SNODASDaily_Automated_forTaskScheduler.bat
 
-**SNODASDaily_Automated.py**	
+**1. SNODASDaily_Automated.py**	
 
 The ```SNODASDaily_Automated.py``` Python script downloads _the current date's_ SNODAS data from the SNODAS FTP site 
 and exports daily snowpack zonal statistics.   
@@ -137,7 +143,7 @@ The ```SNODASDaily_Automated.py``` script is designed to be automatically run us
 up, refer to [Task Scheduler](../deployed-env/task-scheduler) section for more information, the script downloads the daily SNODAS data on a daily timer and exports 
 the daily zonal statistics to the [processedData\ folder](#folder-snodastools_processeddata). 
  
- **SNODASDaily_Interactive.py**	
+ **2. SNODASDaily_Interactive.py**	
 
 The ```SNODASDaily_Interactive.py``` script downloads _historical_ SNODAS data from the SNODAS FTP site 
 and exports daily snowpack zonal statistics.   
@@ -178,22 +184,88 @@ The ```SNODASDaily_Interactive.py``` script is to be utilized in the following s
 	uploaded incorrect SNODAS data and then reloaded a correct set of data. The reprocessing of SNODAS data for that date would be 
 	accomplished with the ```SNODASDaily_Interactive.py``` script.
 
- **SNODAS_utilities.py**	
+ **3. SNODAS_utilities.py**	
 
 The ```SNODAS_utilities.py``` script contains all of the functions utilized in the ```SNODASDaily_Automated.py```
 and the ```SNODASDaily_Interactive.py``` scripts. For descriptions of the individual ```SNODAS_utilities.py``` 
 functions refer to the [Tool Utilities and Functions](overview.md#tool-utilities-and-functions) section.
 
-**SNODAS_publishResults.py**    
+**4. SNODAS_publishResults.py**    
 
 **TODO egiles 2017-01-19 develop publishResults.py script and explain**  
 
-**SNODASDaily_Automated_forTaskScheduler.bat**  
+**5. SNODASDaily_Automated_forTaskScheduler.bat**  
 
 The ```SNODASDaily_Automated_forTaskScheduler.bat``` is a batch file to be called by a task scheduler program. It automatically 
 runs the ```SNODASDaily_Automated.py``` script everyday. Refer to the [Task Scheduler](../deployed-env/task-scheduler) section for a tutorial on how to 
 initially set up the ```SNODASDaily_Automated_forTaskScheduler.bat``` within a task scheduler program.   
 
+#### bin\\SNODASTools.log
+
+The SNODAS Tools are set to export logging messages to aid in troubleshooting. The logging setting for the SNODAS Tools are configured with the
+[configuration file format](https://docs.python.org/2.7/library/logging.config.html#configuration-file-format). 
+
+**Levels of Logging Messages**  
+The SNODAS Tools are set to export logging messages to both the console and the SNODASTools.log file. Warning and error messages export to both the console and the
+SNODASTools.log file. Info messages are defaulted to export *solely* to the SNODASTools.log file. The logging level of messages exported to the 
+SNODASTools.log file can be changed from the defaulted ```DEBUG``` level in the [configuration file](#snodastools92snodasconfigini) under section ```logger_log02``` option ```level```.
+
+**Formatting of Logging Messages**  
+All logging messages are formatted to the default simpleFormatter. The simpleFormatter outputs the date and local time of the created log record
+ (```YYYY-MM-DD  HH:MM:SS,MSS``` where ```MSS``` refers to the three-digit millisecond value) followed by the logging message.   
+ 
+ The logging message follows the format: ```SSSS: EEEE: MMMM``` where:
+ 
+ |Format|Description|Example|
+ |----|------|---|
+ |SSSS|The name of the .py script or function for which the log message is regarding.|_SNODASDaily_Interactive.py:_|
+ |EEEE|The logging level of the log message. Only present if the logging level is a warning or an error.|_WARNING:_|
+ |MMMM|The logging message.| _SNODAS_20110217.tar has been untarred._|
+ 
+ The format of the logging messages can be changed from the defaulted ```%(asctime)s %(message)s``` in the [configuration file](#snodastools92snodasconfigini)
+ under section ```formatter_simpleFormatter``` option ```format```.
+
+
+**Timed Rotating File Handler**  
+If the SNODASTools.log logging level is set to default ```DEBUG```, all logging messages will be written to the SNODASTools.log file. For each processed day of SNODAS
+data, the size of the SNODASTools.log file will increase by approximately 12KB. The SNODAS Tools are designed to run everyday. This high frequency of processing would
+quickly cause the SNODASTools.log file to become incredibly large. To address this issue, the SNODASTools.log file is configured to run on a
+[Timed Rotating File Handler](https://docs.python.org/2/library/logging.handlers.html#timedrotatingfilehandler).
+
+The timed rotating file handler creates and updates multiple versions of the SNODASTools.log file based upon a configured temporal schedule. After an allotted amount of time
+(defaulted to 5 weeks), the oldest version of the SNODASTools.log is deleted and only the most recent log files are available. By default, a new SNODASTools.log 
+file is created every Monday, local time. The SNODASTools.log file from the previous week is assigned a suffix of ```.YYYY-MM-DD``` and saved in the processedData folder. The 
+```.YYYY-MM-DD``` refers to the day that the log file was originally created. Given the default, ```.YYYY-MM-DD``` will always be a Monday. 
+
+ - **Note:**   
+ The timed rotating file handler defaults to adding the dated suffix as an extension. For example ```SNODASTools.log``` will become ```SNODASTools.log.YYYY-MM-DD```.
+ This locks up the previous log files to be opened and viewed in *Notepad*. The previous log files can still be opened and viewed using [*Notepad++*](https://notepad-plus-plus.org/).
+ 
+The default setting saves 5 versions of the 
+SNODASTools.log file. This means that any processing from the past 5 weeks can be accessed. SNODASTools.log files older than 5 weeks are deleted. 
+The previous 5 versions of the SNODASTools.log are saved under the processedData. 
+
+As previously mentioned, each processed SNODAS date increases the individual SNODASTools.log file by approximately 12KB. Given the default setting of the timed rotating 
+file handler, each log file will be approximately 84KB (daily size of 12KB multiplied by the 7 days of the week). The total size of file space used for SNODAS Tools' 
+logging will be approximately 420KB (weekly log file size of 84KB multipled by 5 weeks of backup files).
+
+ - **Note**:  
+ The size increase of the SNODASTools.log file will be larger than 12KB for each processed date of SNODAS data if the processed date of SNODAS data is being rerun and 
+ the original files are being overwritten. 
+
+The settings of the timed rotating file handler can be changed in the [configuration file](#snodastools92snodasconfigini)
+ under section ```handler_fileHandler``` option ```args```. There are 4 arguments (filename, type of time interval, interval, and backupConut) that can be altered within the option ```args```.
+ 
+|Argument|Description|Defaulted to:|
+|-----|----|------|
+|Filename|The full pathname to the location of the log file.|../processedData/SNODASTools.log|
+|Type of Time Interval|Time interval type when a new log file is to be created. <br> <br> Options: seconds, days, weekdays, etc.|<center>'W0' Monday|
+|Interval|Time interval. <br> <br> Example (if type of time interval = 'days'): <br> 1 - every day <br> 2 - every other day <br> 5 - every five days, etc.|<center>1|
+|backupCount|The number of previous SNODASTools.log files to be saved.|<center>5|
+
+
+ Refer to the Python tutorial documentation for further information regarding the 
+ argument options of a [TimedRotatingFileHandler](https://docs.python.org/2/library/logging.handlers.html#timedrotatingfilehandler) class.
 
 ### SNODASTools\\staticData\\
 
@@ -271,22 +343,22 @@ click *Open image in new tab*.
 
 1. The originally downloaded national SNODAS .tar file  
 	- ```SNODAS_YYYYMMDD.tar``` 
-	![Download](file-structure-images/download.png)  
+	![download](file-structure-images/download.PNG) 	
 2. The reformatted national SNODAS SWE data in .tif format  
 	 - ```us_ssmv11034tS__T0001TTNATSYYYYMMDD05HP001.tif```
-	 ![SetFormat](file-structure-images/setformat.png)
+	 ![SetFormat](file-structure-images/setformat.PNG)
 3. The clipped and reprojected SNODAS SWE .tif file  
 	- ```SNODAS_SWE_ClipAndReprojYYYYMMDD.tif```  
-	![Clip](file-structure-images/clip.png)
+	![Clip](file-structure-images/clip.PNG)
 4. The clipped and reprojected snow cover binary .tif file  
 	- ```SNODAS_SnowCover_ClipAndReprojYYYYMMDD.tif```  
-	![Snow Cover](file-structure-images/snowcover.png)
+	![Snow Cover](file-structure-images/snowcover.PNG)
 5. The snowpack statistics in a .csv file organized by basin ID  
 	 - ```SnowpackStatisticsByBasin_LOCALID```  
-	 ![ByBasin](file-structure-images/statistics.png)
+	 ![ByBasin](file-structure-images/statistics.PNG)
 6. The snowpack statistics in a .csv file organized by date  
 	 - ```SnowpackStatisticsByDate_YYYYMMDD``` 
-	 ![ByDate](file-structure-images/statistics.png)
+	 ![ByDate](file-structure-images/statistics.PNG)
 
 
 The 6 output products are saved within subfolders of the processedData folder. Each subfolder is explained in further detail below. 
@@ -315,6 +387,7 @@ The SNODAS tools manipulate the ```SNODASYYYYMMDD.tar``` file to produce a SNODA
 shown below.
 
 ![nationaltif](file-structure-images/nationalTIF.png)
+*SNODAS Snow Water Equivalent Masked Grid for January 16th, 2017*
 
 Refer to the [Processing Workflow](overview/#convert-snodas-data-formats) section for a general description of the SNODAS tools' set format step. 
 Refer to [Tool Utilities and Functions](overview.md#2-convert-data-formats) for detailed information on the Python functions 
@@ -410,7 +483,10 @@ The clipped file, shown below for the Colorado dataset, is projected into the de
 [configuration file](#snodastools92snodasconfigini). The projection of the clipped .tif is defaulted to NAD83 Zone 13N. 
 It is pertinent to change the desired projection if the study area is outside the appropriate Zone 13N range.
 
-![withExtent](file-structure-images/nationalWExtent.png) = ![clippedtif](file-structure-images/clippedTIF.png)
+![withExtent](file-structure-images/nationalWExtent.png)  
+*Above: The SNODAS Snow Water Equivalent Masked Grid for January 16th, 2017 with the Colorado basin extent outline overlaid in black.*
+![clippedtif](file-structure-images/clippedTIF.png)
+*Above: The SNODAS Snow Water Equivalent Grid for January 16th, 2017 clipped to the Colorado basin extent. The skewed image is due to reprojections built into the SNODAS Tools.*
 
 The clipped and reprojected SNODAS .tif file is saved to the 3_ClipToExtent folder and is named ```SNODAS_SWE_ClipAndReprojYYYYMMDD.tif``` 
 where ```YYYYMMDD``` represents the date of data. Note that the date does not represent the download date but rather the date when the SNODAS 
@@ -438,11 +514,12 @@ the ```SNODAS_SWE_ClipAndReprojYYYYMMDD.tif``` file and assigning cell values de
 
 |SNODAS_```SWE```_ClipAndReprojYYYYMMDD|SNODAS_```SnowCover```_ClipAndReprojYYYYMMDD|
 | ---------------------------------- | ---------------------------------------- |
-| a cell has a value greater than 0 (there is snow on the ground)| the corresponding cell is assigned a value of '1' (presence of snow displayed in white)|
-| a cell has a value equal to 0 (there is no snow on the ground)| the corresponding cell is assigned a value of '0' (absence of snow displayed in black)|
-| a cell has a value equal to -9999 (a null value)| the corresponding cell is assigned a value of '-9999' (a null value)|
+| a cell has a value greater than 0 (there is snow on the ground)| the corresponding cell is assigned a value of '1' (presence of snow displayed in blue)|
+| a cell has a value equal to 0 (there is no snow on the ground)| the corresponding cell is assigned a value of '0' (absence of snow displayed in brown)|
+| a cell has a value equal to -9999 (a null value)| the corresponding cell is assigned a value of '-9999' (a null value displyed in white)|
 
 ![snowCover](file-structure-images/snowCoverTIF.png)
+*Above: The binary Colorado snow cover grid for January 16th, 2017. Blue = presence of snow. Brown = absence of snow.* 
 
 Refer to the [Processing Workflow](overview/#create-the-binary-snow-cover-raster) section for a general description of the SNODAS tools' Create Snow Cover step. 
 Refer to [Tool Utilities and Functions](overview.md#4-create-the-binary-snow-cover-raster) for detailed information on the Python functions 
@@ -542,72 +619,7 @@ This text file is used in the development of the [Map Application]().
 
 **ToDO egiles 2/7/2017 point to Kory's application and change the name of 'Map Application' to the actual title of the application**
 
-#### processedData\\SNODASTools.log
 
-The SNODAS Tools are set to export logging messages to aid in troubleshooting. The logging setting for the SNODAS Tools are configured with the
-[configuration file format](https://docs.python.org/2.7/library/logging.config.html#configuration-file-format). 
-
-**Levels of Logging Messages**  
-The SNODAS Tools are set to export logging messages to both the console and the SNODASTools.log file. Warning and error messages export to both the console and the
-SNODASTools.log file. Info messages are defaulted to export *solely* to the SNODASTools.log file. The logging level of messages exported to the 
-SNODASTools.log file can be changed from the defaulted ```DEBUG``` level in the [configuration file](#snodastools92snodasconfigini) under section ```logger_log02``` option ```level```.
-
-**Formatting of Logging Messages**  
-All logging messages are formatted to the default simpleFormatter. The simpleFormatter outputs the date and local time of the created log record
- (```YYYY-MM-DD  HH:MM:SS,MSS``` where ```MSS``` refers to the three-digit millisecond value) followed by the logging message.   
- 
- The logging message follows the format: ```SSSS: EEEE: MMMM``` where:
- 
- |Format|Description|Example|
- |----|------|---|
- |SSSS|The name of the .py script or function for which the log message is regarding.|_SNODASDaily_Interactive.py:_|
- |EEEE|The logging level of the log message. Only present if the logging level is a warning or an error.|_WARNING:_|
- |MMMM|The logging message.| _SNODAS_20110217.tar has been untarred._|
- 
- The format of the logging messages can be changed from the defaulted ```%(asctime)s %(message)s``` in the [configuration file](#snodastools92snodasconfigini)
- under section ```formatter_simpleFormatter``` option ```format```.
-
-
-**Timed Rotating File Handler**  
-If the SNODASTools.log logging level is set to default ```DEBUG```, all logging messages will be written to the SNODASTools.log file. For each processed day of SNODAS
-data, the size of the SNODASTools.log file will increase by approximately 12KB. The SNODAS Tools are designed to run everyday. This high frequency of processing would
-quickly cause the SNODASTools.log file to become incredibly large. To address this issue, the SNODASTools.log file is configured to run on a
-[Timed Rotating File Handler](https://docs.python.org/2/library/logging.handlers.html#timedrotatingfilehandler).
-
-The timed rotating file handler creates and updates multiple versions of the SNODASTools.log file based upon a configured temporal schedule. After an allotted amount of time
-(defaulted to 5 weeks), the oldest version of the SNODASTools.log is deleted and only the most recent log files are available. By default, a new SNODASTools.log 
-file is created every Monday, local time. The SNODASTools.log file from the previous week is assigned a suffix of ```.YYYY-MM-DD``` and saved in the processedData folder. The 
-```.YYYY-MM-DD``` refers to the day that the log file was originally created. Given the default, ```.YYYY-MM-DD``` will always be a Monday. 
-
- - **Note:**   
- The timed rotating file handler defaults to adding the dated suffix as an extension. For example ```SNODASTools.log``` will become ```SNODASTools.log.YYYY-MM-DD```.
- This locks up the previous log files to be opened and viewed in *Notepad*. The previous log files can still be opened and viewed using [*Notepad++*](https://notepad-plus-plus.org/).
- 
-The default setting saves 5 versions of the 
-SNODASTools.log file. This means that any processing from the past 5 weeks can be accessed. SNODASTools.log files older than 5 weeks are deleted. 
-The previous 5 versions of the SNODASTools.log are saved under the processedData. 
-
-As previously mentioned, each processed SNODAS date increases the individual SNODASTools.log file by approximately 12KB. Given the default setting of the timed rotating 
-file handler, each log file will be approximately 84KB (daily size of 12KB multiplied by the 7 days of the week). The total size of file space used for SNODAS Tools' 
-logging will be approximately 420KB (weekly log file size of 84KB multipled by 5 weeks of backup files).
-
- - **Note**:  
- The size increase of the SNODASTools.log file will be larger than 12KB for each processed date of SNODAS data if the processed date of SNODAS data is being rerun and 
- the original files are being overwritten. 
-
-The settings of the timed rotating file handler can be changed in the [configuration file](#snodastools92snodasconfigini)
- under section ```handler_fileHandler``` option ```args```. There are 4 arguments (filename, type of time interval, interval, and backupConut) that can be altered within the option ```args```.
- 
-|Argument|Description|Defaulted to:|
-|-----|----|------|
-|Filename|The full pathname to the location of the log file.|../processedData/SNODASTools.log|
-|Type of Time Interval|Time interval type when a new log file is to be created. <br> <br> Options: seconds, days, weekdays, etc.|<center>'W0' Monday|
-|Interval|Time interval. <br> <br> Example (if type of time interval = 'days'): <br> 1 - every day <br> 2 - every other day <br> 5 - every five days, etc.|<center>1|
-|backupCount|The number of previous SNODASTools.log files to be saved.|<center>5|
-
-
- Refer to the Python tutorial documentation for further information regarding the 
- argument options of a [TimedRotatingFileHandler](https://docs.python.org/2/library/logging.handlers.html#timedrotatingfilehandler) class.
 
 
 
