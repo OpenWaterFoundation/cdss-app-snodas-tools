@@ -544,17 +544,33 @@ The zonal statistics are save by date where a separate .csv file is saved for ea
 [processedData\\5_CalculateStatistics\\StatisticsbyDate\\](#processeddata925_calculatestatistics92statisticsbydate92) section for more information.
 
 
-The calculated zonal statistics are:
+The default calculated zonal statistics are:
 
 |Statistic|Description|CSV Column Header|
 |-------|------------------------|----------|
 |SWE Mean (m)| The daily SWE mean in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_Mean_m|
-|SWE Minimum (m)| The daily SWE minimum in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_Min_m|
-|SWE Maximum (m)|The daily SWE maximum in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_Max_m|
-|SWE Standard Deviation (m)|The daily SWE standard deviation in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_StdDev_m|
 |cell Count| The number of cells within each basin of the watershed basin shapefile input.|SNODAS_cell_Count|
 |Percent of Snow Coverage|The percentage of land within each basin of the watershed basin shapefile input covered by snow.|SNODAS_SnowCover_percent|
 |SWE Mean (in)| The daily SWE mean in inches for each basin of the watershed basin shapefile input.|SNODAS_SWE_Mean_in|
+
+**Todo egiles 2/9/17 clean up this section and change all other sections regarding the type of statistics created**
+
+The default calculated zonal statistics, above, cannot be configured. They will be processed and exported to 
+the csv files for every day of processed SNODAS data. There are extra statistics, however, that can be enabled in the 
+[configuration file](#snodastools92snodasconfigini). These are optional statistics that are, by default, ignored. 
+Note that the desired optional statistics must be configured before the script is run. Errors occur within the 
+[byBasin csv files](#processeddata925_calculatestatistics92statisticsbybasin92) if the enabling/disabling of the 
+optional statistics is changed within the configuration file after the script has already been ran. For information about 
+how to change the optional zonal statistics after the script has previously been run refer to the 
+[Troubleshooting](../deployed-env/troubleshooting.md#enabling-optional-swe-statistics) section. 
+
+The optional calculated zonal statistics are:
+
+|Statistic|Description|CSV Column Header|
+|-------|------------------------|----------|
+|SWE Minimum (m)| The daily SWE minimum in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_Min_m|
+|SWE Maximum (m)|The daily SWE maximum in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_Max_m|
+|SWE Standard Deviation (m)|The daily SWE standard deviation in meters for each basin of the watershed basin shapefile input.|SNODAS_SWE_StdDev_m|
 |SWE Minimum (in)| The daily SWE minimum in inches for each basin of the watershed basin shapefile input.|SNODAS_SWE_Min_in|
 |SWE Maximum (in)|The daily SWE maximum in inches for each basin of the watershed basin shapefile input.|SNODAS_SWE_Max_in|
 |SWE Standard Deviation (in)|The daily SWE standard deviation in inches for each basin of the watershed basin shapefile input.|SNODAS_SWE_StdDev_in|
@@ -659,6 +675,9 @@ the logging file is configured, reference the [processedData\SNODASTools.log](#p
 |**VectorInputExtent**<br>projection_epsg|The numerical EPSG code of the [Watershed Basin Extent Shapefile Input](#snodastools92staticdata92).|4326|
 |**QGISInstall**<br>pathname|The full pathname to the location of the [QGIS software](../dev-env/qgis.md#qgis-and-bundled-python) on the local computer.|C:/OSGeo4W/apps/qgis|
 |**SaveALLSNODAS<br>parameters**<br>value|False: SNODAS tools delete all SNODAS parameters other than SWE. <br> True: SNODAS tools save ALL extracted daily SNODAS parameter files in folder [2_SetFormat\\OtherParameters](#processeddata922_setformat92)|False|
+|**DesiredZonalStatistics**<br>swe_minimum|True: The SNODAS Tools will calculate the minimum SWE statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
+|**DesiredZonalStatistics**<br>swe_maximum|True: The SNODAS Tools will calculate the maximum SWE statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
+|**DesiredZonalStatistics**<br>swe_standard_deviation|True: The SNODAS Tools will calculate the SWE standard deviation statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
 |**SNODAS_FTPSite**<br>webstite|The SNODAS FTP site url.|sidads.colorado.edu|
 |**SNODAS_FTPSite**<br>username|The username used to access the SNODAS FTP site. The defaulted generic username does not need to be changed.|anonymous|
 |**SNODAS_FTPSite**<br>password|The password used to access the SNODAS FTP site. The defaulted generic password does not need to be changed.|None|
