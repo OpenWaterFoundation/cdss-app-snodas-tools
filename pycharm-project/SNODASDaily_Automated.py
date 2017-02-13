@@ -152,114 +152,129 @@ if __name__ == "__main__":
     today_date = SNODAS_utilities.format_date_YYYYMMDD(today)
 
     # Download today's SNODAS .tar file from SNODAS FTP site at ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/
-    SNODAS_utilities.download_SNODAS(download_path, today)
+    optstats = SNODAS_utilities.download_SNODAS(download_path, today)
 
-    # Untar today's data
-    for file in os.listdir(download_path):
-        if today_date in str(file):
-            SNODAS_utilities.untar_SNODAS_file(file, download_path, setEnvironment_path)
-
-    # Check to see if configuration file 'Save_allSNODASparameters' value is valid. If valid, script continues to run.
-    # If invalid, error message is printed to console and log file and the script is terminated.
-    if Save_allSNODASparameters.upper() == 'FALSE' or Save_allSNODASparameters.upper() == 'TRUE':
-
-        # Delete today's irrelevant files (parameters other than SWE).
-        if Save_allSNODASparameters.upper() == 'FALSE':
-            for file in os.listdir(setEnvironment_path):
-                if today_date in str(file):
-                    SNODAS_utilities.delete_irrelevant_SNODAS_files(file)
-
-        # Move irrelevant files (parameters other than SWE) to 'OtherSNODASParamaters'.
+    # Check to see if configuration values for optional statistics 'calculate_SWE_minimum, calculate_SWE_maximum,
+    # calculate_SWE_stdDev' (defined in utility function) are valid, If valid, script continues to run. If invalid,
+    # error message is printed to consol and log file and script is terminated
+    tempList = []
+    for stat in optstats:
+        if stat.upper() == 'TRUE' or stat.upper() == 'FALSE':
+            tempList.append(1)
         else:
-            parameter_path = os.path.join(setEnvironment_path, r'OtherParameters')
-            if os.path.exists(parameter_path) == False:
-                os.makedirs(parameter_path)
+            tempList.append(0)
+
+    if 0 in tempList:
+        logger.error('"ERROR: See configuration file. One or more values of the ''DesiredZonalStatistics'' section is '
+                     'not valid. Please change values to either ''True'' or ''False'' and rerun the script."')
+        logging.error('"ERROR: See configuration file. One or more values of the ''DesiredZonalStatistics'' section is '
+                     'not valid. Please change values to either ''True'' or ''False'' and rerun the script."')
+
+    else:
+        # Untar today's data
+        for file in os.listdir(download_path):
+            if today_date in str(file):
+                SNODAS_utilities.untar_SNODAS_file(file, download_path, setEnvironment_path)
+
+        # Check to see if configuration file 'Save_allSNODASparameters' value is valid. If valid, script continues to run.
+        # If invalid, error message is printed to console and log file and the script is terminated.
+        if Save_allSNODASparameters.upper() == 'FALSE' or Save_allSNODASparameters.upper() == 'TRUE':
+
+            # Delete today's irrelevant files (parameters other than SWE).
+            if Save_allSNODASparameters.upper() == 'FALSE':
+                for file in os.listdir(setEnvironment_path):
+                    if today_date in str(file):
+                        SNODAS_utilities.delete_irrelevant_SNODAS_files(file)
+
+            # Move irrelevant files (parameters other than SWE) to 'OtherSNODASParamaters'.
+            else:
+                parameter_path = os.path.join(setEnvironment_path, r'OtherParameters')
+                if os.path.exists(parameter_path) == False:
+                    os.makedirs(parameter_path)
+                for file in os.listdir(setEnvironment_path):
+                    if today_date in str(file):
+                        SNODAS_utilities.move_irrelevant_SNODAS_files(file, parameter_path)
+
+            # Extract today's .gz files. Each SNODAS parameter files are zipped within a .gz file.
             for file in os.listdir(setEnvironment_path):
                 if today_date in str(file):
-                    SNODAS_utilities.move_irrelevant_SNODAS_files(file, parameter_path)
+                    SNODAS_utilities.extract_SNODAS_gz_file(file)
 
-        # Extract today's .gz files. Each SNODAS parameter files are zipped within a .gz file.
-        for file in os.listdir(setEnvironment_path):
-            if today_date in str(file):
-                SNODAS_utilities.extract_SNODAS_gz_file(file)
+            # Convert today's SNODAS SWE .dat file into .bil format.
+            for file in os.listdir(setEnvironment_path):
+                if today_date in str(file):
+                    SNODAS_utilities.convert_SNODAS_dat_to_bil(file)
 
-        # Convert today's SNODAS SWE .dat file into .bil format.
-        for file in os.listdir(setEnvironment_path):
-            if today_date in str(file):
-                SNODAS_utilities.convert_SNODAS_dat_to_bil(file)
+            # Create today's custom .Hdr file. In order to convert today's SNODAS SWE .bil file into a usable .tif
+            # file, a custom .Hdr must be created. Refer to the function in the SNODAS_utilities.py for more
+            # information on the contents of the custom .HDR file.
+            for file in os.listdir(setEnvironment_path):
+                if today_date in str(file):
+                    SNODAS_utilities.create_SNODAS_hdr_file(file)
 
-        # Create today's custom .Hdr file. In order to convert today's SNODAS SWE .bil file into a usable .tif file, a
-        # custom .Hdr must be created. Refer to the function in the SNODAS_utilities.py for more information on the
-        # contents of the custom .HDR file.
-        for file in os.listdir(setEnvironment_path):
-            if today_date in str(file):
-                SNODAS_utilities.create_SNODAS_hdr_file(file)
+            # Convert today's .bil files to .tif files
+            for file in os.listdir(setEnvironment_path):
+                if today_date in str(file):
+                    SNODAS_utilities.convert_SNODAS_bil_to_tif(file, setEnvironment_path)
 
-        # Convert today's .bil files to .tif files
-        for file in os.listdir(setEnvironment_path):
-            if today_date in str(file):
-                SNODAS_utilities.convert_SNODAS_bil_to_tif(file, setEnvironment_path)
+            # Delete today's .bil file
+            for file in os.listdir(setEnvironment_path):
+                if today_date in str(file):
+                    SNODAS_utilities.delete_SNODAS_bil_file(file)
 
-        # Delete today's .bil file
-        for file in os.listdir(setEnvironment_path):
-            if today_date in str(file):
-                SNODAS_utilities.delete_SNODAS_bil_file(file)
+            # Copy and move today's .tif file into name_of_clip_folder
+            for file in os.listdir(setEnvironment_path):
+                if today_date in str(file):
+                    SNODAS_utilities.copy_and_move_SNODAS_tif_file(file, clip_path)
 
-        # Copy and move today's .tif file into name_of_clip_folder
-        for file in os.listdir(setEnvironment_path):
-            if today_date in str(file):
-                SNODAS_utilities.copy_and_move_SNODAS_tif_file(file, clip_path)
+            # Assign datum to today's .tif file (defaulted to WGS84)
+            for file in os.listdir(clip_path):
+                if today_date in str(file):
+                    SNODAS_utilities.assign_SNODAS_datum(file, clip_path)
 
-        # Assign projection to today's .tif file (defaulted to WGS84)
-        for file in os.listdir(clip_path):
-            if today_date in str(file):
-                SNODAS_utilities.assign_SNODAS_projection(file, clip_path)
+            # Clip today's .tif file to the extent of the basin shapefile
+            for file in os.listdir(clip_path):
+                if today_date in str(file):
+                    SNODAS_utilities.SNODAS_raster_clip(file, clip_path, basin_extent)
 
-        # Clip today's .tif file to the extent of the basin shapefile
-        for file in os.listdir(clip_path):
-            if today_date in str(file):
-                SNODAS_utilities.SNODAS_raster_clip(file, clip_path, basin_extent)
+            # Project today's .tif file into desired projection (defaulted to NAD83 UTM Zone 13N)
+            for file in os.listdir(clip_path):
+                if today_date in str(file):
+                    SNODAS_utilities.assign_SNODAS_projection(file, clip_path)
 
-        # Reproject today's .tif file into desired projection (defaulted to NAD83)
-        for file in os.listdir(clip_path):
-            if today_date in str(file):
-                SNODAS_utilities.SNODAS_raster_reproject_NAD83(file, clip_path)
+            # Create today's snow cover binary raster
+            for file in os.listdir(clip_path):
+                if today_date in str(file):
+                    SNODAS_utilities.snowCoverage(file, clip_path, snowCover_path)
 
-        # Create today's snow cover binary raster
-        for file in os.listdir(clip_path):
-            if today_date in str(file):
-                SNODAS_utilities.snowCoverage(file, clip_path, snowCover_path)
+            # Create .csv files of byBasin and byDate outputs
+            for file in os.listdir(clip_path):
+                if today_date in str(file):
+                    SNODAS_utilities.create_csv_files(file, basin_shp, results_date_path,results_basin_path)
 
-        # Create .csv files of byBasin and byDate outputs
-        for file in os.listdir(clip_path):
-            if today_date in str(file):
-                SNODAS_utilities.create_csv_files(file, basin_shp, results_date_path,results_basin_path)
+            # Delete rows from basin CSV files if the date is being reprocessed
+            for file in os.listdir(clip_path):
+                if today_date in str(file):
+                    SNODAS_utilities.delete_ByBasinCSV_repeated_rows(file, basin_shp, results_basin_path)
 
-        # Delete rows from basin CSV files if the date is being reprocessed
-        for file in os.listdir(clip_path):
-            if today_date in str(file):
-                SNODAS_utilities.delete_ByBasinCSV_repeated_rows(file, basin_shp, results_basin_path)
-
-        # Calculate zonal statistics and export results
-        for file in os.listdir(clip_path):
-            if today_date in str(file):
-                SNODAS_utilities.zStat_and_export(file, basin_shp, results_basin_path, results_date_path,
+            # Calculate zonal statistics and export results
+            for file in os.listdir(clip_path):
+                if today_date in str(file):
+                    SNODAS_utilities.zStat_and_export(file, basin_shp, results_basin_path, results_date_path,
                                                       clip_path, snowCover_path)
 
-        # Close logging including the elapsed time of the running script in seconds.
-        end = time.time()
-        elapsed = end - start
-        logger.info ('\n')
-        logger.info('\n SNODASDailyDownload.py: Completed.')
-        logger.info('Elapsed time: %d seconds' % elapsed)
-
-
-    # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
-    # script will not run and the following error message will be printed to the console and to the logging file.
-    else:
-        print "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. Please " \
-              "type in 'True' or 'False' and rerun this script."
-        logger.error("ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. "
+        # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
+        # script will not run and the following error message will be printed to the console and to the logging file.
+        else:
+            logger.error("ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid."
                       "Please type in 'True' or 'False' and rerun the script.")
-        logging.error("ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. "
+            logging.error("ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid."
                       "Please type in 'True' or 'False' and rerun the script.")
+
+    # Close logging including the elapsed time of the running script in seconds.
+    end = time.time()
+    elapsed = end - start
+    logger.info('\n')
+    logger.info('\n SNODASDailyDownload.py: Completed.')
+    logger.info('Elapsed time: %d seconds' % elapsed)
+    print ('Elapsed time: %d seconds' % elapsed)

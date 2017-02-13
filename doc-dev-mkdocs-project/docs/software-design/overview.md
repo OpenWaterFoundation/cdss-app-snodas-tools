@@ -32,17 +32,24 @@ In the original design of the SNODAS tools for CDSS, the SNODAS grids are clippe
 * Intersect basin polygons with clipped SNODAS grid to determine basin statistics including average snow water equivalent over basin
 and areal extent of snow cover (allows color-coded basin maps to be shown).
 
-	 |Statistic|Units|
+	 |Default Statistics|Units|
 	 |----------|-----|
-	 |Mean Snow Water Equivalent|meters|
-	 |Minimum Snow Water Equivalent|meters|
-	 |Maximum Snow Water Equivalent|meters|
-	 |Standard Deviation of Snow Water Equivalent|meters|
 	 |Mean Snow Water Equivalent|inches|
-	 |Minimum Snow Water Equivalent|inches|
-	 |Maximum Snow Water Equivalent|inches|
-	 |Standard Deviation of Snow Water Equivalent|inches|
+	 |Mean Snow Water Equivalent|millimeters|
 	 |Percent Area of Snow Cover|unitless|
+	 |Effective Area|acre|
+	 |Total Snow Volume|acre feet|
+	 |One Week Change in Total Snow Volume|acre feet|
+	 
+	 |Additional Optional Statistics|Units|
+	 |----------|-----|
+	 |Minimum Snow Water Equivalent|millimeters|
+	 |Minimum Snow Water Equivalent|inches|
+	 |Maximum Snow Water Equivalent|millimeters|
+	 |Maximum Snow Water Equivalent|inches|
+	 |Standard Deviation of Snow Water Equivalent|millimeters|	 
+	 |Standard Deviation of Snow Water Equivalent|inches|
+	
 	 
 * Create time series for a basin with daily history of statistics for individual basins and groups of basins
 (allow graphs to be created for current year and past years).
@@ -248,11 +255,12 @@ the input zone dataset is the [watershed basin boundary shapefile](file-structur
 
 |The zonal statistics performed on: |Compute the following statistics:|
 |---------|-----------|
-|the daily clipped and reprojected SNODAS grid|SWE mean, SWE minimum, SWE maximum, <br> SWE standard deviation, and cell count|
+|the daily clipped and *projected* SNODAS grid (WGS84)| cell count (the effective basin area statistic is computed by multiplying the cell count by the known cell area (1 km squared)|
+|the daily clipped and *reprojected* SNODAS grid (NAD83)|SWE mean (millimeters and inches), cell count|
 |the daily clipped binary snow cover grid|percent of snow coverage*|
 
 \* The percent of snow coverage is computed by dividing the basin cell count of cells valued at '1' in the daily clipped binary snow cover grid
-by the total cell count of each basin (the cell count is computed by the zonal statistics performed on the daily clipped and reprojected SNODAS
+by the total cell count of each basin (the cell count is computed by the zonal statistics performed on the daily clipped and *reprojected* SNODAS
 grid).
 
 ** Export Zonal Statistics**

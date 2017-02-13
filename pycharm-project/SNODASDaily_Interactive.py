@@ -352,20 +352,21 @@ if __name__ == "__main__":
                 if current_date in str(file):
                     SNODAS_utilities.copy_and_move_SNODAS_tif_file(file, clip_path)
 
-            # Assign projection to current date's .tif file (defaulted to WGS84)
+            # Assign datum to current date's .tif file (defaulted to WGS84)
             for file in os.listdir(clip_path):
                 if current_date in str(file):
-                    SNODAS_utilities.assign_SNODAS_projection(file, clip_path)
+                    SNODAS_utilities.assign_SNODAS_datum(file, clip_path)
 
             # Clip current date's .tif file to the extent of the basin shapefile
             for file in os.listdir(clip_path):
                 if current_date in str(file):
                     SNODAS_utilities.SNODAS_raster_clip(file, clip_path, basin_extent)
 
-            # Reproject current date's .tif file into desired projection (defaulted to NAD83)
+            # Project current date's .tif file into desired projection (defaulted to NAD83 UTM Zone 13N)
             for file in os.listdir(clip_path):
                 if current_date in str(file):
-                    SNODAS_utilities.SNODAS_raster_reproject_NAD83(file, clip_path)
+                    SNODAS_utilities.assign_SNODAS_projection(file, clip_path)
+
 
             # Create current date's snow cover binary raster
             for file in os.listdir(clip_path):
@@ -399,8 +400,6 @@ if __name__ == "__main__":
         # If config file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
         # script will not run and the following error message will be printed to the console and to the logging file.
         else:
-            print ('ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid. " \
-                              "Please type in \'True\' or \'False\' and rerun this script.')
             logging.error(
                             "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
                             "valid. Please type in 'True' or 'False' and rerun the script.")
