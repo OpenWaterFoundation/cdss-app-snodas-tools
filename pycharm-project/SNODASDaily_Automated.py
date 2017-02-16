@@ -86,7 +86,7 @@ def ConfigSectionMap(section):
 #   name_of_byBasin_folder: The name of the byBasin folder. All zonal statistic results in csv format organized by
 #   basin are contained here.
 
-root = ConfigSectionMap("RootFolder")['pathname']
+root = ConfigSectionMap("FolderNames")['root_pathname']
 basin_extent = ConfigSectionMap("VectorInputExtent")['pathname']
 basin_shp = ConfigSectionMap("VectorInputShapefile")['pathname']
 QGIS_installation = ConfigSectionMap("QGISInstall")['pathname']
@@ -98,48 +98,33 @@ name_of_createsnowcover_folder = ConfigSectionMap("FolderNames")['snow_cover']
 name_of_calculateStatistics_folder = ConfigSectionMap("FolderNames")['calculate_statistics']
 name_of_byDate_folder = ConfigSectionMap("FolderNames")['by_date']
 name_of_byBasin_folder = ConfigSectionMap("FolderNames")['by_basin']
-
+output_CRS_EPSG = ConfigSectionMap("Projections")['output_crs_epsg']
 
 if __name__ == "__main__":
 
     # Create the root folder and the 5 sub-folders (Defaulted to: 1_DownloadSNODAS, 2_SetFormat, 3_ClipToExtent,
-    # 4_CreateSnowCover, 5_CalculateStatistics [2 sub-folders: StatisticsByBasin, StatisticsByDate]). Check for folder
-    # existence. If exiting, the folder is not recreated. Refer to developer documentation for information regarding
+    # 4_CreateSnowCover, 5_CalculateStatistics [2 sub-folders: StatisticsByBasin, StatisticsByDate]).  Refer to developer documentation for information regarding
     # the types of files contained within each folder.
-
-    if os.path.exists(root) == False:
-        os.makedirs(root)
-
     download_path = os.path.join(root, name_of_download_folder)
-    if os.path.exists(download_path) == False:
-        os.makedirs(download_path)
-
     setEnvironment_path = os.path.join(root, name_of_setFormat_folder)
-    if os.path.exists(setEnvironment_path) == False:
-        os.makedirs(setEnvironment_path)
-
     clip_path = os.path.join(root, name_of_clip_folder)
-    if os.path.exists(clip_path) == False:
-        os.makedirs(clip_path)
-
     snowCover_path = os.path.join(root, name_of_createsnowcover_folder)
-    if os.path.exists(snowCover_path) == False:
-        os.makedirs(snowCover_path)
-
     results_basin_path = os.path.join(root, name_of_calculateStatistics_folder + name_of_byBasin_folder)
-    if os.path.exists(results_basin_path) == False:
-        os.makedirs(results_basin_path)
-
     results_date_path = os.path.join(root, name_of_calculateStatistics_folder + name_of_byDate_folder)
-    if os.path.exists(results_date_path) == False:
-        os.makedirs(results_date_path)
+
+    listofFolders = [root, download_path, setEnvironment_path, clip_path, snowCover_path, results_basin_path,
+                     results_date_path]
+
+    # Check for folder existence. If not exiting, the folder is created.
+    for folder in listofFolders:
+        if os.path.exists(folder) == False:
+            os.makedirs(folder)
 
 
     # Create and configures logging file
     fileConfig(Configfile)
     logger = logging.getLogger('log02')
     logger.info('SNODASDailyDownload.py: Started \n')
-
 
     # Initialize QGIS resources to utilize QGIS functionality.
     # More information at: http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html.
@@ -151,14 +136,15 @@ if __name__ == "__main__":
     today = datetime.now()
     today_date = SNODAS_utilities.format_date_YYYYMMDD(today)
 
-    # Download today's SNODAS .tar file from SNODAS FTP site at ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/
-    optstats = SNODAS_utilities.download_SNODAS(download_path, today)
+    # Download today's SNODAS .tar file from SNODAS FTP site at ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/.
+    # Returned list contains a download timestamp and information on the values of the configurable optional statistics.
+    returnedList = SNODAS_utilities.download_SNODAS(download_path, today)
 
     # Check to see if configuration values for optional statistics 'calculate_SWE_minimum, calculate_SWE_maximum,
-    # calculate_SWE_stdDev' (defined in utility function) are valid, If valid, script continues to run. If invalid,
-    # error message is printed to consol and log file and script is terminated
+    # calculate_SWE_stdDev' (defined in utility function) are valid. If valid, script continues to run. If invalid,
+    # error message is printed to console and log file and script is terminated.
     tempList = []
-    for stat in optstats:
+    for stat in returnedList[1]:
         if stat.upper() == 'TRUE' or stat.upper() == 'FALSE':
             tempList.append(1)
         else:
@@ -174,12 +160,16 @@ if __name__ == "__main__":
         # Untar today's data
         for file in os.listdir(download_path):
             if today_date in str(file):
+                download_time_start = time.time()
                 SNODAS_utilities.untar_SNODAS_file(file, download_path, setEnvironment_path)
+                download_time_end = time.time()
+                elapsed_download = download_time_end - download_time_start
 
         # Check to see if configuration file 'Save_allSNODASparameters' value is valid. If valid, script continues to run.
         # If invalid, error message is printed to console and log file and the script is terminated.
         if Save_allSNODASparameters.upper() == 'FALSE' or Save_allSNODASparameters.upper() == 'TRUE':
 
+            setEnvironment_time_start = time.time()
             # Delete today's irrelevant files (parameters other than SWE).
             if Save_allSNODASparameters.upper() == 'FALSE':
                 for file in os.listdir(setEnvironment_path):
@@ -221,7 +211,10 @@ if __name__ == "__main__":
             for file in os.listdir(setEnvironment_path):
                 if today_date in str(file):
                     SNODAS_utilities.delete_SNODAS_bil_file(file)
+            setEnvironment_time_end = time.time()
+            elapsedSetEnvironment = setEnvironment_time_end - setEnvironment_time_start
 
+            clip_time_start = time.time()
             # Copy and move today's .tif file into name_of_clip_folder
             for file in os.listdir(setEnvironment_path):
                 if today_date in str(file):
@@ -241,12 +234,18 @@ if __name__ == "__main__":
             for file in os.listdir(clip_path):
                 if today_date in str(file):
                     SNODAS_utilities.assign_SNODAS_projection(file, clip_path)
+            clip_time_end = time.time()
+            elapsed_clip = clip_time_end - clip_time_start
 
+            snowCover_time_start = time.time()
             # Create today's snow cover binary raster
             for file in os.listdir(clip_path):
                 if today_date in str(file):
                     SNODAS_utilities.snowCoverage(file, clip_path, snowCover_path)
+            snowCover_time_end = time.time()
+            elapsed_snowCover = snowCover_time_end - snowCover_time_start
 
+            manipulateCSV_time_start = time.time()
             # Create .csv files of byBasin and byDate outputs
             for file in os.listdir(clip_path):
                 if today_date in str(file):
@@ -256,12 +255,17 @@ if __name__ == "__main__":
             for file in os.listdir(clip_path):
                 if today_date in str(file):
                     SNODAS_utilities.delete_ByBasinCSV_repeated_rows(file, basin_shp, results_basin_path)
+            manipulateCSV_time_end = time.time()
+            elapsed_manipulateCSV = manipulateCSV_time_end - manipulateCSV_time_start
 
+            zStats_time_start = time.time()
             # Calculate zonal statistics and export results
             for file in os.listdir(clip_path):
                 if today_date in str(file):
                     SNODAS_utilities.zStat_and_export(file, basin_shp, results_basin_path, results_date_path,
-                                                      clip_path, snowCover_path)
+                                                      clip_path, snowCover_path, today, returnedList[0], output_CRS_EPSG)
+            zStats_time_end = time.time()
+            elapsed_zStats = zStats_time_end - zStats_time_start
 
         # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
         # script will not run and the following error message will be printed to the console and to the logging file.
@@ -274,7 +278,21 @@ if __name__ == "__main__":
     # Close logging including the elapsed time of the running script in seconds.
     end = time.time()
     elapsed = end - start
+    timePercent_download = elapsed_download / elapsed * 100
+    timePercent_setEnvironment = elapsedSetEnvironment/ elapsed * 100
+    timePercent_clip = elapsed_clip / elapsed * 100
+    timePercent_snowCover = elapsed_snowCover / elapsed * 100
+    timePercent_CSV = elapsed_manipulateCSV /elapsed * 100
+    timePercent_zStats = elapsed_zStats / elapsed * 100
     logger.info('\n')
     logger.info('\n SNODASDailyDownload.py: Completed.')
     logger.info('Elapsed time: %d seconds' % elapsed)
-    print ('Elapsed time: %d seconds' % elapsed)
+    logging.info('Elapsed time: %d seconds' % elapsed)
+    print 'Elapsed time: %d seconds \n' % elapsed
+    print 'Percentage of time allocated to each processing step:'
+    print 'Download: %d%% (%d seconds)' % (timePercent_download, elapsed_download)
+    print 'Set Environment: %d%% (%d seconds)' % (timePercent_setEnvironment, elapsedSetEnvironment)
+    print 'Clip and Project: %d%% (%d seconds)'% (timePercent_clip, elapsed_clip)
+    print 'Create Snow Cover: %d%% (%d seconds)' % (timePercent_snowCover, elapsed_snowCover)
+    print 'Create and manipulate CSV files: %d%% (%d seconds)' % (timePercent_CSV, elapsed_manipulateCSV)
+    print 'Calculate and export zonal statistics: %d%% (%d seconds)' % (timePercent_zStats, elapsed_zStats)
