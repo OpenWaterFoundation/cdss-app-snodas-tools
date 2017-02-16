@@ -26,29 +26,29 @@ The following topics are discussed in this section:<br>
 The SNODAS tools design meets the following requirements:
 
 * Download historical and new daily SNODAS grids.
-* Clip grids to [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) (```watershedBasinBoundaryExtent.shp```) 
+* Clip daily Snow Water Equivalent grids to [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) (```watershedBasinBoundaryExtent.shp```) 
 so that original SNODAS grid can be viewed as product later (results in background layer that can be shown on maps). 
 In the original design of the SNODAS tools for CDSS, the SNODAS grids are clipped to the extent of the Colorado basin boundary. 
 * Intersect basin polygons with clipped SNODAS grid to determine basin statistics including average snow water equivalent over basin
-and areal extent of snow cover (allows color-coded basin maps to be shown).
+and areal extent of snow cover (allows color-coded basin maps to be shown). The default and optional statistics are explained below.
 
-	 |Default Statistics|Units|
-	 |----------|-----|
-	 |Mean Snow Water Equivalent|inches|
-	 |Mean Snow Water Equivalent|millimeters|
-	 |Percent Area of Snow Cover|unitless|
-	 |Effective Area|acre|
-	 |Total Snow Volume|acre feet|
-	 |One Week Change in Total Snow Volume|acre feet|
+	 |Default Statistics|Units|Description|
+	 |----------|-----|---|
+	 |Mean Snow Water Equivalent|inches|Mean liquid water equivalent of the snowpack across each basin, measured in depth.|
+	 |Mean Snow Water Equivalent|millimeters|Mean liquid water equivalent of the snowpack across each basin, measured in depth.|
+	 |Effective Area|acre|Basin area. Calculated from SNODAS grid: no-data cells are excluded.|
+	 |Percent Area of Snow Cover|unitless|Percent of effective area in each basin covered by some value of snow.|
+	 |Total Snow Volume|acre feet|The liquid water equivalent stored in the entire basin snowpack, measured in volume. Calculated by multiplying the mean SWE by the effective area.|
+	 |One Week Change in Total Snow Volume|acre feet|The change of total snow volume in the past week. Calculated by subtracting last week's total snow volume value from the current date's total snow volume value.|
 	 
-	 |Additional Optional Statistics|Units|
-	 |----------|-----|
-	 |Minimum Snow Water Equivalent|millimeters|
-	 |Minimum Snow Water Equivalent|inches|
-	 |Maximum Snow Water Equivalent|millimeters|
-	 |Maximum Snow Water Equivalent|inches|
-	 |Standard Deviation of Snow Water Equivalent|millimeters|	 
-	 |Standard Deviation of Snow Water Equivalent|inches|
+	 |Additional Optional Statistics|Units|Description|
+	 |----------|-----|---|
+	 |Minimum Snow Water Equivalent|millimeters|The minimum SWE value of the SNODAS grid for each basin.|
+	 |Minimum Snow Water Equivalent|inches|The minimum SWE value of the SNODAS grid for each basin.|
+	 |Maximum Snow Water Equivalent|millimeters|The maximum SWE value of the SNODAS grid for each basin.|
+	 |Maximum Snow Water Equivalent|inches|The maximum SWE value of the SNODAS grid for each basin.|
+	 |Standard Deviation of Snow Water Equivalent|millimeters|A measure of SWE variation across each basin.|
+	 |Standard Deviation of Snow Water Equivalent|inches|A measure of SWE variation across each basin.|
 	
 	 
 * Create time series for a basin with daily history of statistics for individual basins and groups of basins
@@ -105,21 +105,21 @@ can be downloaded and processed by this script.
 
 **SNODASDaily_Interactive.py**
 
-The ```SNODASDaily_Interactive.py``` script downloads the historical dates of SNODAS data that are inputs defined by the user. When running the 
-```SNODASDaily_Interactive.py``` script, the console will print: 
+The ```SNODASDaily_Interactive.py``` script downloads the historical dates, defined by the user, of SNODAS data. When running the 
+```SNODASDaily_Interactive.py``` script, the console will first print: 
 
 	Are you interested in one date or a range of dates? Type ‘One’ or ‘Range’.
 
-The user inputs 'One' if only one historical date is to be processed. The user inputs 'Range' if multiple historical dates are to be processed. 
+The user inputs ```One``` if only one historical date is to be processed. The user inputs ```Range``` if multiple historical dates are to be processed. 
 
- - If the input is 'One', the console will print:
+ - If the input is ```One```, the console will print:
 
 		Which date are you interested in? The date must be of or between 01 October 2003 
 		and today's date.  mm/dd/yy:	
 
 	- The user inputs a date in the correct format and that date of SNODAS data will be downloaded. 
 
- - If the input is 'Range', the console will print: 
+ - If the input is ```Range```, the console will print: 
  
 		What is the STARTING date of data that you are interested in? The date must be of or
 		between 01 October 2003 and today's date.  mm/dd/yy:
@@ -132,13 +132,13 @@ The user inputs 'One' if only one historical date is to be processed. The user i
 	- The user inputs the last date of a range of historical dates in the correct format. All SNODAS data from the dates within the range will be 
 	downloaded (in sequential order).
 	
- If you are experiencing errors after your inputs, reference the [Troubleshooting](..\deployed-env\troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
+ If errors are occuring after input, reference the [Troubleshooting](..\deployed-env\troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
 	
 ----------------------------------------------------------------------------------------------------------------------
-The default setting accesses the masked SNODAS data rather than the unmasked SNODAS data. The SNODAS tools were originally designed to analyze 
+The SNODAS Tools are set by default to access the masked SNODAS data rather than the unmasked SNODAS data. The SNODAS tools were originally designed to analyze 
 the historical snowpack statistics of Colorado. The masked data entirely covers the Colorado extent and has the largest repository of historical 
 data. As mentioned above, the masked data is set as the default. This can be changed, however, in the [configuration file](file-structure.md#snodastools92snodasconfigini)
-under **section**  *SNODAS_FTPSite* **option**  *folder*.
+under **section**  ```SNODAS_FTPSite``` **option**  ```folder```. Below is a simple table explaining the main differences between the masked and unmasked SNODAS data. 
 
 ||Masked SNODAS Data|Unmasked SNODAS Data|
 |-|--------------|-----------------|
@@ -174,12 +174,13 @@ This occurs by the following steps:
 |<center>6|Create SWE .tif file|SNODAS SWE files (.tif, .bil and .Hdr)|
 |<center>7|Delete SWE .bil and .Hdr files| SNODAS SWE file (.tif)|
 
-\* The SNODAS tools are defaulted to delete all parameters, other than SWE. However, the other parameters' .gz files can 
+\* The SNODAS Tools are set by default to delete all parameters, other than SWE. However, the other parameters' .gz files can 
 be saved if previously configured. In that case, the other parameters' .gz files are moved to a separate folder. Refer
-to section [2_SetFormat\OtherParameters folder](file-structure.md#processeddata922_setformat92) of the File Structure tab for more information.
+to section [2_SetFormat\OtherParameters folder](file-structure.md#processeddata922_setformat92) of the **File Structure** tab for more information
+regarding the 8 packaged SNODAS parameters.
 
-Steps 4 and 5 are NOHRSC suggestions to ingest the data into a geographic information system. In the case of the SNODAS tools, QGIS is 
-utilized as the GIS. The documentation explaining these steps is located in *Appendix B: Instructions to Extract and Ingest SNODAS 
+Steps 4 and 5 are NOHRSC suggestions to ingest the data into a geographic information system. In the case of the SNODAS Tools, QGIS is 
+utilized as the GIS. The documentation explaining these two steps is located in *Appendix B: Instructions to Extract and Ingest SNODAS 
 Data into GIS or Image Processing Software* (page 12) of the 
 [National Operational Hydrologic Remote Sensing Center SNOw Data Assimilation System (SNODAS) Products at NSIDC Special Report #11](http://nsidc.org/pubs/documents/special/nsidc_special_report_11.pdf).
 
@@ -191,29 +192,37 @@ section for detailed information on the Python functions called to process the a
 
 ### Clip and Project SNODAS National Grids to Study Area
 
-The daily national SNODAS grid files are large and take a long time to process. Therefore the SNODAS tools clip the national grid to the extent of the study area. 
+The daily national SNODAS grid files are large and take an extended time to process. Therefore the SNODAS Tools clip the national grid to the extent of the study area. 
 The [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) (```watershedBasinBoundaryExtent.shp```) is the 
 shapefile used to clip the SNODAS daily .tif file. 
 
+This occurs by the following steps:
 
-||The SNODAS Tools:|
-|-|-----------------|
-|1.|Project the SNODAS daily grid to the same projection as the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) (defaulted to WGS84)|
-|2.|Clip the SNODAS daily grid to the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92)|
-|3.|Reproject the clipped SNODAS daily grid to the projection of the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92) (defaulted to NAD83 Zone 13N)|
+|Step|Description|Result|
+|-|-----------------|----|
+|1|Assign WGS84 datum to the SNODAS grids.|Daily national SNODAS SWE grid with datum WGS84 and undefined projection.|
+|2|Clip the SNODAS daily grid to the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92)|Daily clipped SNODAS SWE grid with datum WGS84 and undefined projection.|
+|3|Project the clipped SNODAS daily grid to the projection of the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92) (defaulted to US Contiguous Albers Equal Area Conic).|Daily clipped SNODAS SWE grid with datum NAD83 and US Albers Equal Area projection.|
+
+** TODO egiles 2/14/17 fix this section about projections**
 
 The original SNODAS grids are delivered without projection however ["the SNODAS fields are grids of point estimates of snow cover in latitude/longitude coordinates
-with the horizontal datum WGS 84"](http://nsidc.org/data/docs/noaa/g02158_snodas_snow_cover_model/index.html#2). The SNODAS tools project the SNODAS daily grids to 
-the same projection as the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92). The default projection of the Watershed
+with the horizontal datum WGS 84"](http://nsidc.org/data/docs/noaa/g02158_snodas_snow_cover_model/index.html#2). By default, the SNODAS Tools define the WGS84 datum to each daily national SNODAS daily grid.
+It is important that the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92), or extent shapefile, has the same datum as the national grid because the Extent Shapefile is used to clip the national 
+SNODAS daily grid to the study area. 
+
+The default projection of the Watershed
 Basin Extent Shapefile Input is WGS84. If the [Watershed Basin Extent Shapefile Input](file-structure.md#snodastools92staticdata92) is projected in a projection 
 other than WGS84, the projection EPSG code must be changed in the [configuration file](file-structure.md#snodastools92snodasconfigini)
-under **section** *VectorInputExtent* **option** *projection_epsg*.
+under **section** ```VectorInputExtent``` **option** ```projection_epsg```.
 
-For visualization purposes of the end product, the clipped daily SNODAS grid is reprojected into the same projection as the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92).
-The final reprojection is performed before the creation of the snow cover grid and the calculating of the zonal statistics to ensure correct final snowpack statistics. 
-The final projection is defaulted to NAD 83 Zone 13N because the SNODAS tools were originally designed to calculate snowpack statistics for the basins of Colorado. If
-the final projection is other than NAD 83 Zone 13N, the projection EPSG must be changed in the [configuration file](file-structure.md#snodastools92snodasconfigini)
-under **section** *VectorInputShapefile* **option** *projection_epsg*.
+The majority of snowpack statistics calculated by the SNODAS Tools are dependent on area. For this reason, the SNODAS Tools are defaulted to 
+project the daily clipped SNODAS SWE grids into an equal-area projection, USA Contiguous Albers Equal Area Conic. If desired, the projection can be changed
+in the [configuration file](file-structure.md#snodastools92snodasconfigini) under **section** ```VectorInputShapefile``` **option** ```projection_epsg```. 
+The zonal statistics are calculated on this projected clipped SWE SNODAS grid, so it is important that the chosen projection, if other than the default, 
+preserves measures of area specific to the study area. The [watershed basin boundary shapefile](file-structure.md#snodastools92staticdata92) must also be 
+projected in the same projection as the daily clipped SNODAS SWE grids because the watershed basin boundary shapefile is the zone input dataset for the zonal 
+statistics. 
 
 The clipped and reprojected SNODAS SWE .tif grids are saved in the 3_ClipToExtent folder. Refer to the [File Structure](file-structure.md#processeddata923_cliptoextent92) section 
 for more information regarding the clipped SWE .tif file and the 3_ClipToExtent folder. Refer to [Tool Utilities and Functions](#3-clip-and-project-snodas-national-grids-to-study-area)
@@ -226,17 +235,17 @@ section for detailed information on the Python functions called to project, clip
 ** TODO egiles 1/27/16 change snowCoverage(file, folder_input, folder_output) function in SNODAS_utilities.py
  to have null values also equal null values**
 
-The SNODAS tools calculate a daily percent snow cover statistic for each basin of the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92).
-The daily percent snow cover statistic is the percentage of land covered by snow. 
+The SNODAS Tools calculate a daily percent snow cover statistic for each basin of the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92).
+The daily percent snow cover statistic is the percentage of effective land covered by some value of snow. 
 
 To perform this calculation a daily binary snow cover grid must be created to display which cells of each basin are covered by snow.
 This grid is created by iterating through the cells of the daily clipped SNODAS SWE grid and applying the following rules:
 
-|If any cell in the daily clipped SNODAS SWE grid is:|Then the corresponding cell of the daily binary <br> snow cover grid is assigned:|
+|If any cell in the daily clipped SNODAS <br> SWE grid has a value:|Then the corresponding cell of the daily binary <br> snow cover grid is assigned:|
 |---------|-----------|
 |greater than 0 (presence of snow)|a value of 1|
-|0 (absence of snow)|a value of 0|
-|-9999 (null value)|-9999 (null value)|
+|equal to 0 (absence of snow)|a value of 0|
+|equal to -9999 (null value)|-9999 (null value)|
 
 The daily binary snow cover .tif grids are saved in the 4_CreateSnowCover folder. Refer to the [File Structure](file-structure.md#processeddata924_createsnowcover92) section 
 for more information regarding the binary snow cover .tif files and the 4_CreateSnowCover folder. Refer to [Tool Utilities and Functions](#4-create-the-binary-snow-cover-raster)
@@ -249,18 +258,17 @@ section for detailed information on the Python functions called to create the da
 **Calculate Zonal Statistics**
 
 Zonal statistics are statistics calculated by zone where the zones are defined by an input zone dataset and the values are defined by a raster grid. 
-Zonal statistics are performed on both the [daily clipped and reprojected SNODAS SWE grid](file-structure.md#processeddata923_cliptoextent92)
+Zonal statistics are performed on both the [daily clipped, projected SNODAS SWE grid](file-structure.md#processeddata923_cliptoextent92)
 and the [daily clipped binary snow cover grid](file-structure.md#processeddata924_createsnowcover92). For both,
 the input zone dataset is the [watershed basin boundary shapefile](file-structure.md#snodastools92staticdata92).   
 
 |The zonal statistics performed on: |Compute the following statistics:|
 |---------|-----------|
-|the daily clipped and *projected* SNODAS grid (WGS84)| cell count (the effective basin area statistic is computed by multiplying the cell count by the known cell area (1 km squared)|
-|the daily clipped and *reprojected* SNODAS grid (NAD83)|SWE mean (millimeters and inches), cell count|
-|the daily clipped binary snow cover grid|percent of snow coverage*|
+|the daily clipped and *projected* SNODAS grid (US Albers Equal Area Conic)|Mean SWE (mm and inches), Effective Area, Total Snow Volume, and One Week Change in Total Snow Volume|
+|the daily clipped and *projected* binary snow cover grid (US Albers Equal Area Conic)|Percent Area of Snow Cover*|
 
-\* The percent of snow coverage is computed by dividing the basin cell count of cells valued at '1' in the daily clipped binary snow cover grid
-by the total cell count of each basin (the cell count is computed by the zonal statistics performed on the daily clipped and *reprojected* SNODAS
+\* The percent area of snow cover is computed by dividing the basin cell count of cells valued at ```1``` in the daily clipped binary snow cover grid
+by the total cell count of each basin (the cell count, although not exported as a snowpack statistic, is computed by the zonal statistics performed on the daily clipped and *projected* SNODAS
 grid).
 
 ** Export Zonal Statistics**
@@ -287,6 +295,8 @@ functions called to calculate and export the daily zonal statistics.
 The functions created are organized into 5 sequential processing categories to aid in troubleshooting. If the scripts are experiencing invalid results or inconsistencies, 
 the user should identify the issue with respect to the following function categories. This allows the user to easily pinpoint the potentially-problematic function. The 
 function categories are:
+
+** Todo Egiles 2/14/17 update the functions after all final changes have been made to the scripts**
 
 |<center>Function Category|<center>Description|<center>Number<br>of <br>Functions|
 |-||----------|------------|
