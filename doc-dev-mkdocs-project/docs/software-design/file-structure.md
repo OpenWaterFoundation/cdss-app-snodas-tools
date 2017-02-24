@@ -687,22 +687,13 @@ the logging file is configured, reference the [processedData\SNODASTools.log](#p
 
 |Configuration File <br> **Section**<br>Option|Description|Defaulted <br> to:|
 |--------------------------|------------|---|
-|**RootFolder**<br> pathname|The full pathname to the folder holding the SNODAS <br> tools output data. Configurations value must end in CDSS\SNODASTools\processedData.|N/A|
-|**VectorInputShapefile**<br> pathname|The full pathname to the [Watershed Basin Shapefile Input](#snodastools92staticdata92). Configurations value must end in CDSS\SNODASTools\staticData\watershedBasinBoundary.shp.|N/A|
-|**VectorInputShapefile**<br> projection_epsg|The numerical EPSG code of the [Watershed Basin Shapefile Input](#snodastools92staticdata92).|26913|
-|**VectorInputShapefile**<br> basin_id|The attribute field name of the [Watershed Basin Shapefile Input](#snodastools92staticdata92) defining each unique feature or basin.|LOCAL_ID|
-|**VectorInputExtent**<br> pathname|The full pathname to the [Watershed Basin Extent Shapefile Input](#snodastools92staticdata92). Configurations value must end in CDSS\SNODASTools\staticData\watershedBasinBoundaryExtent.shp.|N/A|
-|**VectorInputExtent**<br>projection_epsg|The numerical EPSG code of the [Watershed Basin Extent Shapefile Input](#snodastools92staticdata92).|4326|
 |**QGISInstall**<br>pathname|The full pathname to the location of the [QGIS software](../dev-env/qgis.md#qgis-and-bundled-python) on the local computer.|C:/OSGeo4W/apps/qgis|
-|**SaveALLSNODAS<br>parameters**<br>value|False: SNODAS Tools delete all SNODAS parameters other than SWE. <br> True: SNODAS Tools save ALL extracted daily SNODAS parameter files in folder [2_SetFormat\\OtherParameters](#processeddata922_setformat92)|False|
-|**DesiredZonalStatistics**<br>swe_minimum|True: The SNODAS Tools will calculate the minimum SWE statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
-|**DesiredZonalStatistics**<br>swe_maximum|True: The SNODAS Tools will calculate the maximum SWE statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
-|**DesiredZonalStatistics**<br>swe_standard_deviation|True: The SNODAS Tools will calculate the SWE standard deviation statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
 |**SNODAS_FTPSite**<br>webstite|The SNODAS FTP site url.|sidads.colorado.edu|
 |**SNODAS_FTPSite**<br>username|The username used to access the SNODAS FTP site. The defaulted generic username does not need to be changed.|anonymous|
 |**SNODAS_FTPSite**<br>password|The password used to access the SNODAS FTP site. The defaulted generic password does not need to be changed.|None|
 |**SNODAS_FTPSite**<br>folder|The path to the folder containing the SNODAS masked data files.|/DATASETS/NOAA/G02158/masked/|
 |**SNODAS_FTPSite**<br>null_value|The SNODAS data null value. This should remain at default unless NOHRSC changes the null value.|-9999|
+|**FolderNames**<br>root_pathname|The full pathname of the [processed data folder](#snodastools92processeddata92). Configurations value must end in CDSS\SNODASTools\processedData\.|N/A|
 |**FolderNames**<br>download|The name of the [download folder](#processeddata921_downloadsnodas92) located in the processedData folder.|1_DownloadSNODAS|
 |**FolderNames**<br>setformat|The name of the [set format folder](#processeddata922_setformat92) located in the processedData folder.|2_SetFormat|
 |**FolderNames**<br>clip|The name of the [clip folder](#processeddata923_cliptoextent92) located in the processedData folder.|3_ClipToExtent|
@@ -710,6 +701,21 @@ the logging file is configured, reference the [processedData\SNODASTools.log](#p
 |**FolderNames**<br>calculate_statistics|The name of the [calculate statistics folder](#processeddata925_calculatestatistics92) located in the processedData folder.|5_CalculateStatistics|
 |**FolderNames**<br>by_date|The name of the [statistics by Date folder](#processeddata925_calculatestatistics92statisticsbydate92) located in the calculate statistics folder.|/StatisticsbyDate|
 |**FolderNames**<br>by_basin|The name of the [statistics by Basin folder](#processeddata925_calculatestatistics92statisticsbybasin92) located in the calculate statistics folder.|/StatisticsbyBasin|
+|**VectorInputShapefile**<br> pathname|The full pathname to the [Watershed Basin Shapefile Input](#snodastools92staticdata92). Configurations value must end in CDSS\SNODASTools\staticData\watershedBasinBoundary.shp.|N/A|
+|**VectorInputShapefile**<br> basin_id|The attribute field name of the [Watershed Basin Shapefile Input](#snodastools92staticdata92) defining each unique feature or basin.|LOCAL_ID|
+|**VectorInputExtent**<br> pathname|The full pathname to the [Watershed Basin Extent Shapefile Input](#snodastools92staticdata92). Configurations value must end in CDSS\SNODASTools\staticData\watershedBasinBoundaryExtent.shp.|N/A|
+|**Projections**<br>datum_epsg|The numerical EPSG CRS code to assign to the downloaded national SNODAS daily grids.|4326|
+|**Projections**<br>calcstats_proj_epsg|The numerical EPSG CRS code to project the SNODAS clipped grids. The statistics will be calculated with this projection, therefore, an equal-area projection is recommended.|102003|
+|**Projections**<br>calculate_cellsize_x|The spatial resoulution of the clipped SNODAS grid projected in the ```calculate_stats_projection_epsg``` projection (cell x axis in meters).|766.397796|
+|**Projections**<br>calculate_cellsize_y|The spatial resoulution of the clipped SNODAS grid projected in the ```calculate_stats_projection_epsg``` projection (cell y axis in meters).|766.397796|
+|**Projections**<br>output_crs_epsg|The numerical EPSG CRS code to project the final output products, the daily geoJSON and the daily shapefile. 
+|**OutputGeometry**<br>shp_zip|Exported daily shapefiles are comprised of 6 files with different extnesions. True: SNODAS Tools will compress the 6 files into 1 zipped file. False: SNODAS Tools will not compress the 6 files.|False|
+|**OutputGeometry**<br>shp_delete_originals|Exported daily shapefiles are comprised of 6 files with different extnesions. This configuration is only applied if ```shp_zip``` is set to True. True: The 6 files are deleted, leaving only the zipped file. False: The 6 files are saved alongside the zipped file.|False|
+|**OutputGeometry**<br>geojson_precision|The number of precision decimal places for the output GeoJSON file.|4|
+|**SaveALLSNODAS<br>parameters**<br>value|True: SNODAS Tools save ALL extracted daily SNODAS parameter files in folder [2_SetFormat\\OtherParameters](#processeddata922_setformat92)<br>False: SNODAS Tools delete all SNODAS parameters other than SWE.|False|
+|**DesiredZonalStatistics**<br>swe_minimum|True: The SNODAS Tools will calculate the minimum SWE statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
+|**DesiredZonalStatistics**<br>swe_maximum|True: The SNODAS Tools will calculate the maximum SWE statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
+|**DesiredZonalStatistics**<br>swe_standard_deviation|True: The SNODAS Tools will calculate the SWE standard deviation statistic (in both inches and millemeters) and export the results to the csv files. False: This statistic will not be calculated or exported.|False|
 |**loggers**<br>keys|The available SNODASTools logs. This should not be changed unless a new log configration is to be created.|root, log02|
 |**handlers**<br>keys|The available SNODASTools handlers. This should not be changed unless a new handler is to be created.|fileHandler, consoleHandler|
 |**formatters**<br>keys|The available SNODASTools formatters. This should not be changed unless a new formatter is to be created.|simpleFormatter|
