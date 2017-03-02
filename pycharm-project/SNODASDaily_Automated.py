@@ -45,13 +45,6 @@ def ConfigSectionMap(section):
 #
 #   root: The root folder is the folder housing all output files from this script.
 #
-#   basin_extent: The full pathname to the shapefile of the EXTENT of the vector input. The extent is a
-#   rectangular feature representing the bounding box of the input shapefile (watershed basin boundaries). The
-#   basin_extent shapefile should be projected in the same projection as the assigned projection of the SNODAS raster.
-#   The downloaded SNODAS raster does not have a projection however the "SNODAS fields are grids of point estimates
-#   of snow cover in latitude/longitude coordinates with the horizontal datum WGS84." The script is defaulted to
-#   assign WGS84 projection to the SNODAS data but this can be changed in the configuration file.
-#
 #   basin_shp: This is the full pathname to the shapefile holding the vector input(watershed basin boundaries).
 #   The zonal statistics will be calculated for each feature of this layer. The shapefile must be projected into
 #   NAD83 Zone 13N. This script was originally developed to process Colorado Watershed Basins as the input shapefile.
@@ -87,7 +80,6 @@ def ConfigSectionMap(section):
 #   basin are contained here.
 
 root = ConfigSectionMap("FolderNames")['root_pathname']
-basin_extent = ConfigSectionMap("VectorInputExtent")['pathname']
 basin_shp = ConfigSectionMap("VectorInputShapefile")['pathname']
 QGIS_installation = ConfigSectionMap("QGISInstall")['pathname']
 Save_allSNODASparameters = ConfigSectionMap("SaveAllSNODASparameters")['value']
@@ -98,13 +90,19 @@ name_of_createsnowcover_folder = ConfigSectionMap("FolderNames")['snow_cover']
 name_of_calculateStatistics_folder = ConfigSectionMap("FolderNames")['calculate_statistics']
 name_of_byDate_folder = ConfigSectionMap("FolderNames")['by_date']
 name_of_byBasin_folder = ConfigSectionMap("FolderNames")['by_basin']
+name_of_static_folder = ConfigSectionMap("FolderNames")['static']
 output_CRS_EPSG = ConfigSectionMap("Projections")['output_crs_epsg']
+delete_shp_orig = ConfigSectionMap("OutputGeometry")['shp_delete_originals']
+zip_shp = ConfigSectionMap("OutputGeometry")['shp_zip']
+
 
 if __name__ == "__main__":
 
-    # Create the root folder and the 5 sub-folders (Defaulted to: 1_DownloadSNODAS, 2_SetFormat, 3_ClipToExtent,
-    # 4_CreateSnowCover, 5_CalculateStatistics [2 sub-folders: StatisticsByBasin, StatisticsByDate]).  Refer to developer documentation for information regarding
-    # the types of files contained within each folder.
+    # Define static folder and extent shapefile
+    static_path = os.path.join(root, name_of_static_folder)
+    extent_shapefile = static_path + 'studyAreaExtent_prj.shp'
+
+    # Create the root folder and the 6 sub-folders
     download_path = os.path.join(root, name_of_download_folder)
     setEnvironment_path = os.path.join(root, name_of_setFormat_folder)
     clip_path = os.path.join(root, name_of_clip_folder)
@@ -214,6 +212,10 @@ if __name__ == "__main__":
             setEnvironment_time_end = time.time()
             elapsedSetEnvironment = setEnvironment_time_end - setEnvironment_time_start
 
+            # Create the extent shapefile if not already created.
+            if not os.path.exists(extent_shapefile):
+                SNODAS_utilities.create_extent(basin_shp, static_path)
+
             clip_time_start = time.time()
             # Copy and move today's .tif file into name_of_clip_folder
             for file in os.listdir(setEnvironment_path):
@@ -228,9 +230,9 @@ if __name__ == "__main__":
             # Clip today's .tif file to the extent of the basin shapefile
             for file in os.listdir(clip_path):
                 if today_date in str(file):
-                    SNODAS_utilities.SNODAS_raster_clip(file, clip_path, basin_extent)
+                    SNODAS_utilities.SNODAS_raster_clip(file, clip_path, extent_shapefile)
 
-            # Project today's .tif file into desired projection (defaulted to NAD83 UTM Zone 13N)
+            # Project today's .tif file into desired projection (defaulted to Albers Equal Area)
             for file in os.listdir(clip_path):
                 if today_date in str(file):
                     SNODAS_utilities.assign_SNODAS_projection(file, clip_path)
@@ -266,6 +268,13 @@ if __name__ == "__main__":
                                                       clip_path, snowCover_path, today, returnedList[0], output_CRS_EPSG)
             zStats_time_end = time.time()
             elapsed_zStats = zStats_time_end - zStats_time_start
+
+            # If desired, zip files of output shapefile.
+            if zip_shp.upper() == 'TRUE':
+                for file in os.listdir(results_date_path):
+                    if today_date in str(file) and file.endswith('.shp'):
+                        SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
+                        break
 
         # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
         # script will not run and the following error message will be printed to the console and to the logging file.
