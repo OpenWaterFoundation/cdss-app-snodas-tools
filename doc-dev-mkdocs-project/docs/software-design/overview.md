@@ -71,7 +71,7 @@ Before running the SNODAS Tools, the input file must be defined and the configur
 
 ### Input File
 
-The SNODAS Tools require only one input file, a shapefile representing the watershed basins of interest. Throughout this documentation, the input file is refered to as 
+The SNODAS Tools require only one input file, a shapefile representing the watershed basins of interest. Throughout this documentation, the input file is referred to as 
 the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92). 
 
 Below is an example of the Watershed Basin Shapefile Input for the state of Colorado. The Watershed Basin Shapefile Input is displayed in green and the Colorado state 
@@ -109,7 +109,7 @@ the Watershed Basin Shapefile Input, Projections, Output Folders, Output Layers,
 |-------------|-------|----------|
 |host|The FTP site hosting the SNODAS data.|sidads.colorado.edu|
 |username|Sidads.colorado.edu is a public site so the <br> username can remain 'anonymous'.|anonymous|
-|password|Sidads.colorado.edu is a public site so the <br> password can raemain 'None'.|None|
+|password|Sidads.colorado.edu is a public site so the <br> password can remain 'None'.|None|
 |folder_path| The pathname to the SNODAS data <br> (defaulted to 'masked' data).|/DATASETS/NOAA/G02158/masked/|
 |null_value|The no data value of the SNODAS data. This information can be found in this [PDF]( http://nsidc.org/pubs/documents/special/nsidc_special_report_11.pdf).|-9999|
 
@@ -125,7 +125,7 @@ the Watershed Basin Shapefile Input, Projections, Output Folders, Output Layers,
 |Configurable <br> Parameter|Description|Defaulted to:|
 |-------------|-------|----------|
 |datum_epsg|The EPSG code of the datum used to define the national SNODAS daily grid. WGS84 (EPSG 4326) is recommended.|4326|
-|calcstats_proj_epsg|The EPSG code of the projection used to calcualte the zonal statistics, an equal-area projection is recommended. This should be the same projection as that of the Watershed Basin Shapefile Input.|102003|
+|calcstats_proj_epsg|The EPSG code of the projection used to calculatethe zonal statistics, an equal-area projection is recommended. This should be the same projection as that of the Watershed Basin Shapefile Input.|102003|
 |calculate_cellsize_x|The desired cell size (x axis) to resample the daily SNODAS grid before calculating the zonal statistics. Remember to apply units used in the calcstats_proj_epsg projection.|463.1475|
 |calculate_cellsize_y|The desired cell size (y axis) to resample the daily SNODAS grid before calculating the zonal statistics. Remember to apply units used in the calcstats_proj_epsg projection.|463.1475|
 |output_proj_epsg|The EPSG code of the desired projection for the output layers, the daily GeoJSON and the daily shapefile.|26913|
@@ -137,22 +137,22 @@ the Watershed Basin Shapefile Input, Projections, Output Folders, Output Layers,
 |-------------|-------|----------|
 |root_pathname|Location and name of root folder. Contains the following 2 folders.|D:/SNODAS/|
 |static_data_folder|Name of folder containing the static data, including the Watershed Basin Shapefile Input.|staticData/|
-|processed_data_folder|Name of folder containg all of the processed data. Contains the following 5 folders.|processedData/|
+|processed_data_folder|Name of folder containing all of the processed data. Contains the following 5 folders.|processedData/|
 |download_snodas_tar_folder|Name of folder containing all daily SNODAS .tar files downloaded from FTP site.|1_DownloadSNODAS|
 |untar_snodas_tif_folder|Name of folder containing national daily SNODAS .tif files.|2_SetFormat|1_DownloadSNODAS|
 |clip_proj_snodas_tif_folder|Name of folder containing clipped and projected daily SNODAS .tif files.|3_ClipToExtent|
 |create_snowvover_tif_folder|Name of folder containing clipped binary snow cover .tif files.|4_CreateSnowCover|
 |calculate_stats_folder|Name of folder containing the output products. Contains the following 2 folders.|5_CalculateStatistics/|
-|output_stats_by_date_folder|Name of folder containing the output zonal snowpack statistics organized by date. Also contatins the daily output GeoJSONs & shapefiles.|SnowpackStatisticsByDate|
-|output_stats_by_basin_folder|Name of folder containing the output zonal snopack statistics organized by basin.|SnowpackStatisticsByBasin|
+|output_stats_by_date_folder|Name of folder containing the output zonal snowpack statistics organized by date. Also containsthe daily output GeoJSONs & shapefiles.|SnowpackStatisticsByDate|
+|output_stats_by_basin_folder|Name of folder containing the output zonal snowpack statistics organized by basin.|SnowpackStatisticsByBasin|
 
 
 **Output Layers - Configuration File Section: OutputLayers**  
 
 |Configurable <br> Parameter|Description|Defaulted to:|
 |-------------|-------|----------|
-|shp_zip|Boolean logic to determine if the output shapefile files should be zipped. <br><br> True: Shapefile files are zipped. <br> False: Shapfile files are left independent.|True|
-|shp_delete_orginals|Boolean logic to determine if unzipped shapefile files should be deleted. Only applied if shp_zip = True. <br><br> True: Independent shapefile files are deleted. <br> False: Independent shapefile files are saved alongwith the zipped file.|True|
+|shp_zip|Boolean logic to determine if the output shapefile files should be zipped. <br><br> True: Shapefile files are zipped. <br> False: Shapefile files are left independent.|True|
+|shp_delete_orginals|Boolean logic to determine if unzipped shapefile files should be deleted. Only applied if shp_zip = True. <br><br> True: Independent shapefile files are deleted. <br> False: Independent shapefile files are saved along with the zipped file.|True|
 |geojson_precision|The number of decimal places included in the GeoJSON output geometry. The more decimal places, the more accurate the geometry and the larger the file size.|5|
 
 **Daily SNODAS Parameters - Configuration File Section: SNODASparameters**  
@@ -174,7 +174,7 @@ the Watershed Basin Shapefile Input, Projections, Output Folders, Output Layers,
 
 The configuration of the logging files is set up with multiple sections. The configuration format was developed following the guidelines 
 provided by [the Python Software Foundation - Logging HOWTO](https://docs.python.org/2/howto/logging.html#configuring-logging). The 
-logging sections and the corresping default values are described in more detail in the [File Structure](file-structure/#snodastools92snodasconfigini) section of the developer documentation.
+logging sections and thecorrespondingdefault values are described in more detail in the [File Structure](file-structure/#snodastools92snodasconfigini) section of the developer documentation.
 
 
 ## Processing Workflow
@@ -185,7 +185,7 @@ diagram displaying the entire SNODAS Tools processing workflow (to view the imag
 image in a new tab - for example, in Chrome right click and ***Open image in new tab***). Throughout each following section of the processing 
 workflow documentation, the flow diagram is split into individual processing steps and explained in detail. 
 
-![processing workflow overveiw](overview-images/overview.png)
+![processing workflow overview](overview-images/overview.png)
 
 
 ### Download SNODAS Data
@@ -227,7 +227,7 @@ The user inputs ```One``` if only one historical date is to be processed. The us
 	- The user inputs the last date of a range of historical dates in the correct format. All SNODAS data from the dates within the range will be 
 	downloaded (in sequential order).
 	
- If errors are occuring after input, reference the [Troubleshooting](..\deployed-env\troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
+ If errors are occurring after input, reference the [Troubleshooting](..\deployed-env\troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
 	
 ----------------------------------------------------------------------------------------------------------------------
 The SNODAS Tools are set by default to access the masked SNODAS data rather than the unmasked SNODAS data. The SNODAS tools were originally designed to analyze 
@@ -311,14 +311,14 @@ preserves measures of area specific to the study area. The [watershed basin boun
 projected in the same projection as the daily clipped SNODAS SWE grids because the watershed basin boundary shapefile is the zone input dataset for the zonal 
 statistics. 
 
-In step 4, the SNODAS Tools also offer flexibility to the user to resample the SNODAS grid to represent a different spatial resolution, or cell size. This flexibilty would be desirable if the features 
-of the Waterhsed Basin Boundary Shapefile are relatively small with many fine edge details. Remember that the majority of snowpack statistics are based on correct area calcutions 
+In step 4, the SNODAS Tools also offer flexibility to the user to resample the SNODAS grid to represent a different spatial resolution, or cell size. This flexibility would be desirable if the features 
+of the Watershed Basin Boundary Shapefile are relatively small with many fine edge details. Remember that the majority of snowpack statistics are based on correct area calculations 
 (the area of a basin is calculated by multiplying the number of cells within that basin by the cell size of the resampled SNODAS clipped and projected grid). If the spatial resolution of
 the SNODAS daily grid is relatively large compared to the edge details of the basins in the Watershed Basin Boundary Shapefile, then large error margins could occur in the areal computations. 
 
-The clipped and reprojected SNODAS SWE .tif grids are saved in the 3_ClipToExtent folder. Refer to the [File Structure](file-structure.md#processeddata923_cliptoextent92) section 
+The clipped and projected SNODAS SWE .tif grids are saved in the 3_ClipToExtent folder. Refer to the [File Structure](file-structure.md#processeddata923_cliptoextent92) section 
 for more information regarding the clipped SWE .tif file and the 3_ClipToExtent folder. Refer to [Tool Utilities and Functions](#3-clip-and-project-snodas-national-grids-to-study-area)
-section for detailed information on the Python functions called to project, clip and reproject the national SNODAS SWE grid.
+section for detailed information on the Python functions called to project, clip and project the national SNODAS SWE grid.
 
 ![clip-workflow](overview-images/clip.png)
 
@@ -550,8 +550,8 @@ function categories are:
 	
 	Arguments
 
-		file: clipped file with original projection to be reprojected into desired projection
-		folder: full pathname of folder where both the originally clipped rasters and the reprojected 
+		file: clipped file with original projection to be projected into desired projection
+		folder: full pathname of folder where both the originally clipped rasters and the projected 
 		clipped rasters are contained
 
 ### 4. Create the Binary Snow Cover Raster
@@ -581,7 +581,7 @@ function categories are:
 
 	Arguments:
 
-		file: daily .tif file  to be processed with zonal statistics (clipped, reprojected)
+		file: daily .tif file  to be processed with zonal statistics (clipped, projected)
 		vFile: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal 
 		stats calculations)
 		csv_byDate: full pathname of folder containing the results by date (.csv file)
@@ -595,7 +595,7 @@ function categories are:
 	
 	Arguments: 
 	
-		file: daily .tif file  to be processed with zonal statistics (clipped, reprojected)
+		file: daily .tif file  to be processed with zonal statistics (clipped, projected)
 		vFile: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal 
 		stats calculations)
 		csv_byBasin: full pathname of folder containing the results by basin (.csv file)
@@ -608,7 +608,7 @@ function categories are:
 	 Arguments: 
 	 
 		file: daily raster .tif SNODAS file that is to be processed in the zonal statistics tool 
-		(clipped, reprojected)
+		(clipped, projected)
 		vfile: the shapefile of the basin boundaries (these boundaries are used as the polygons in 
 		the zonal statistics calculations)
 		csv_byDate: full pathname to the folder containing results by date (.csv file)
