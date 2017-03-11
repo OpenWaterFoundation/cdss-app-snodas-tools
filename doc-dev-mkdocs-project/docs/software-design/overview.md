@@ -94,87 +94,9 @@ The SNODAS Tools require the input file to follow the specifications below:
 ### Configuration File 
 
 The configuration file sets all parameters and options for the SNODAS Tools. Each setting is explained in detail as comments inside the configuration file, 
-as well as in the tables below. Each table represents a unique section within the configuration file - QGIS Installation, the NSIDC FTP Site, 
-the Watershed Basin Shapefile Input, Projections, Output Folders, Output Layers, Daily SNODAS Parameters, Optional Statistics, and the Logging Files.
-
-**QGIS Installation - Configuration File Section: QGISInstall**  
-
-|Configurable <br> Parameter|Description|Defaulted to:|
-|-------------|-------|----------|
-|pathname|The full location to the QGIS installation on the local desktop.|C:/OSGeo4W/apps/qgis|
-
-**NSIDC FTP Site - Configuration File Section: SNODAS_FTPSite**  
-
-|Configurable <br> Parameter|Description|Defaulted to:|
-|-------------|-------|----------|
-|host|The FTP site hosting the SNODAS data.|sidads.colorado.edu|
-|username|Sidads.colorado.edu is a public site so the <br> username can remain 'anonymous'.|anonymous|
-|password|Sidads.colorado.edu is a public site so the <br> password can remain 'None'.|None|
-|folder_path| The pathname to the SNODAS data <br> (defaulted to 'masked' data).|/DATASETS/NOAA/G02158/masked/|
-|null_value|The no data value of the SNODAS data. This information can be found in this [PDF]( http://nsidc.org/pubs/documents/special/nsidc_special_report_11.pdf).|-9999|
-
-**The Watershed Basin Shapefile Input - Configuration File Section: BasinBoundaryShapefile**  
-
-|Configurable <br> Parameter|Description|Defaulted to:|
-|-------------|-------|----------|
-|pathname|Location and name of the Watershed Basin Shapefile Input. The shapefile should be stored in the [Static Data Folder](file-structure.md#snodastools92staticdata92).|N/A|
-|basin_id_fieldname|The name of the field in the shapefile attribute table that uniquely identifies each basin. The values of this field will be exported to the output statistics csv files.|LOCAL_ID|
-
-**Projections  - Configuration File Section: Projections**  
-
-|Configurable <br> Parameter|Description|Defaulted to:|
-|-------------|-------|----------|
-|datum_epsg|The EPSG code of the datum used to define the national SNODAS daily grid. WGS84 (EPSG 4326) is recommended.|4326|
-|calcstats_proj_epsg|The EPSG code of the projection used to calculatethe zonal statistics, an equal-area projection is recommended. This should be the same projection as that of the Watershed Basin Shapefile Input.|102003|
-|calculate_cellsize_x|The desired cell size (x axis) to resample the daily SNODAS grid before calculating the zonal statistics. Remember to apply units used in the calcstats_proj_epsg projection.|463.1475|
-|calculate_cellsize_y|The desired cell size (y axis) to resample the daily SNODAS grid before calculating the zonal statistics. Remember to apply units used in the calcstats_proj_epsg projection.|463.1475|
-|output_proj_epsg|The EPSG code of the desired projection for the output layers, the daily GeoJSON and the daily shapefile.|26913|
-
-
-**Output Folders  - Configuration File Section: Folders**  
-
-|Configurable <br> Parameter|Description|Defaulted to:|
-|-------------|-------|----------|
-|root_pathname|Location and name of root folder. Contains the following 2 folders.|D:/SNODAS/|
-|static_data_folder|Name of folder containing the static data, including the Watershed Basin Shapefile Input.|staticData/|
-|processed_data_folder|Name of folder containing all of the processed data. Contains the following 5 folders.|processedData/|
-|download_snodas_tar_folder|Name of folder containing all daily SNODAS .tar files downloaded from FTP site.|1_DownloadSNODAS|
-|untar_snodas_tif_folder|Name of folder containing national daily SNODAS .tif files.|2_SetFormat|1_DownloadSNODAS|
-|clip_proj_snodas_tif_folder|Name of folder containing clipped and projected daily SNODAS .tif files.|3_ClipToExtent|
-|create_snowvover_tif_folder|Name of folder containing clipped binary snow cover .tif files.|4_CreateSnowCover|
-|calculate_stats_folder|Name of folder containing the output products. Contains the following 2 folders.|5_CalculateStatistics/|
-|output_stats_by_date_folder|Name of folder containing the output zonal snowpack statistics organized by date. Also containsthe daily output GeoJSONs & shapefiles.|SnowpackStatisticsByDate|
-|output_stats_by_basin_folder|Name of folder containing the output zonal snowpack statistics organized by basin.|SnowpackStatisticsByBasin|
-
-
-**Output Layers - Configuration File Section: OutputLayers**  
-
-|Configurable <br> Parameter|Description|Defaulted to:|
-|-------------|-------|----------|
-|shp_zip|Boolean logic to determine if the output shapefile files should be zipped. <br><br> True: Shapefile files are zipped. <br> False: Shapefile files are left independent.|True|
-|shp_delete_orginals|Boolean logic to determine if unzipped shapefile files should be deleted. Only applied if shp_zip = True. <br><br> True: Independent shapefile files are deleted. <br> False: Independent shapefile files are saved along with the zipped file.|True|
-|geojson_precision|The number of decimal places included in the GeoJSON output geometry. The more decimal places, the more accurate the geometry and the larger the file size.|5|
-
-**Daily SNODAS Parameters - Configuration File Section: SNODASparameters**  
-
-|Configurable <br> Parameter|Description|Defaulted to:|
-|-------------|-------|----------|
-|save_all_parameters|The downloaded daily SNODAS .tar file contains 8 snowpack parameters. The SNODAS Tools only compute statistics from the SWE parameter. Boolean logic to determine whether or not to delete the other 7 national grids of SNODAS parameters. <br><br> True: The daily 7 national grids of SNODAS parameters (other than SWE) are saved in a folder called download_snodas_tar_folder/OtherParameters. <br> False: The daily 7 national grids of SNODAS parameters are deleted.|False|
-
-
-**Optional Statistics - Configuration File Section: OptionalZonalStatistics**  
-
-|Configurable <br> Parameter|Description|Defaulted to:|
-|-------------|-------|----------|
-|calculate_swe_minimum|Boolean logic to enable calculation of the daily minimum SWE zonal statistic (mm and in). <br><br> True: Enable. <br> False: Disable.|False|
-|calculate_swe_maximum|Boolean logic to enable calculation of the daily maximum SWE zonal statistic (mm and in). <br><br> True: Enable. <br> False: Disable.|False|
-|calculate_swe_standard_deviation|Boolean logic to enable calculation of the SWE standard deviation zonal statistic (mm and in). <br><br> True: Enable. <br> False: Disable.|False|
-
-**The Logging Files**  
-
-The configuration of the logging files is set up with multiple sections. The configuration format was developed following the guidelines 
-provided by [the Python Software Foundation - Logging HOWTO](https://docs.python.org/2/howto/logging.html#configuring-logging). The 
-logging sections and thecorrespondingdefault values are described in more detail in the [File Structure](file-structure/#snodastools92snodasconfigini) section of the developer documentation.
+as well as in the [Configuration File](file-structure#snodastools92snodasconfigini) section of the File Structure page. It is important to review
+the [Configuration File documentation](file-structure#snodastools92snodasconfigini) before running the SNODAS Tools to ensure that all settings and options are 
+properly set. 
 
 
 ## Processing Workflow
