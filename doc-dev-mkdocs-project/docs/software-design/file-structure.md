@@ -21,7 +21,7 @@ The following topics are discussed in this section:<br>
 			
 		
 	+ [SNODASTools\\SNODASTools\.log](#snodastools92snodastoolslog)
-	+ [SNODASTools\\SNODASconfig\.ini](#snodastools92snodasconfigini)  
+	+ [SNODASTools\\SNODASconfig\.ini](#snodastools92snodas-tools-configini)  
 	
 	
 
@@ -50,10 +50,8 @@ and avoiding re-downloads should the full analysis period need to be rerun due t
 (each daily download of the SNODAS national files takes approximately 7 seconds). 
 
 The following illustrates the overall folder structure for the SNODAS Tools, including software and data
-files, for Windows. The software is configured using the system\SNODASconfig.ini file, which specifies 
+files, for Windows. The software is configured using the system\SNODAS-Tools-Config.ini file, which specifies 
 locations of folders and files on the operational system. 
-
-**TODO egiles 2017-03-10 Change SNODASconfig.ini file to correct name throughout document**     
   
 *```Nested folders``` are represented by: '---'. *  
 *```Files``` are represented by: '--->'.*
@@ -94,15 +92,14 @@ locations of folders and files on the operational system.
 - - - - - - - - - - - > ```ListOfDates.txt``` 
 
 
---> ```SNODASconfig.ini```  
+--> ```SNODAS-Tools-Config.ini```  
 --> ```SNODASTools.log``` 
-
 
 ## OSGeo4W64\\
 
 **TODO egiles 2017-01-23 need to add content to OSGeo4W64\\ **  
 
-## CDSS\\TsTool-Version\\
+##  CDSS\\TsTool-Version\\
 
 **TODO egiles 2017-01-23 need to add content to CDSS\\TsTool-Version\\ **  
 
@@ -170,15 +167,15 @@ The ```SNODASDaily_Interactive.py``` script is to be utilized in the following s
 
 
 1. The historical SNODAS repository has not yet been processed. 
-	* The temporal coverage of the SNODAS data is Septemeber 28th, 2003 to the current date. The ```SNODASDaily_Automated.py``` 
+	* The temporal coverage of the SNODAS data is September 28th, 2003 to the current date. The ```SNODASDaily_Automated.py``` 
 	script automatically creates an ongoing export of SNODAS zonal statistics, once the 
-	```SNODASDaily_Automated_forTaskScheduler.bat``` has been set up with  a task scheduler program. The SNODAS historical repository,
+	```SNODASDaily_Automated_forTaskScheduler.bat``` has been set up with a task scheduler program. The SNODAS historical repository,
 	however, must be created with the ```SNODASDaily_Interactive.py``` script.
 	
 	
 2. The ```SNODASDaily_Automated_forTaskScheduler.bat``` failed to run. 
 	* The ```SNODASDaily_Automated_forTaskScheduler.bat``` is designed to automatically run ```SNODASDaily_Automated.py``` 
-	everyday. There are instances, however, when the task could fail to run for a single or range of days. This could occur, for 
+	every day. There are instances, however, when the task could fail to run for a single or range of days. This could occur, for 
 	example, if the task properties are set to run only when the user is signed in and the user was signed off for one or a range 
 	of days. The missed days must then be manually processed with the ```SNODASDaily_Interactive.py``` script.
 	
@@ -201,17 +198,31 @@ functions refer to the [Tool Utilities and Functions](overview.md#tool-utilities
 **5. SNODASDaily_Automated_forTaskScheduler.bat**  
 
 The ```SNODASDaily_Automated_forTaskScheduler.bat``` is a batch file to be called by a task scheduler program. It automatically 
-runs the ```SNODASDaily_Automated.py``` script everyday with the correct enviroment settings. Refer to the 
+runs the ```SNODASDaily_Automated.py``` script every day with the correct environment settings. Refer to the 
 [Task Scheduler](../deployed-env/task-scheduler) section for a tutorial on how to 
 initially set up the ```SNODASDaily_Automated_forTaskScheduler.bat``` within a task scheduler program.    
  
-** ToDO egiles 2/14/2016 explain the components of the TaskScheduler.bat file**  
+Components of the SNODASDaily_Automated_forTaskScheduler.bat File
 
-### SNODASTools\\staticData\\
+|Code|Description|Defaulted to:|
+|----|----|-----|
+|SET OSGEO4W_ROOT=|Set the base install folder for OSGEO4W.|C:\OSGeo4W64|
+|SET QGISNAME=|Set the install folder name for QGIS.|qgis|
+|SET QGIS=|Set the full pathname to the install folder for QGIS.|%OSGEO4W_ROOT%\apps\%QGISNAME%|
+|SET QGIS_PREFIX_PATH=|Set the QGIS prefix path to the full pathname to the install folder for QGIS.|%QGIS%|
+|SET GDAL_DATA=|Set the install folder for GDAL.|%OSGEO4W_ROOT%\share\gdal\|
+|SET PATH=|Set paths to OSGEO4W bin and QGIS bin.|%OSGEO4W_ROOT%\bin;%QGIS%\bin;%PATH%|
+|SET PYTHONHOME=|Set the install folder for Python.|%OSGEO4W_ROOT%\apps\Python27|
+|SET PYTHONPATH=|Set up the default search path for Python module files.|%QGIS%\python;%PYTHONPATH%|
+|SET PYCHARM=|Set full pathname to location of PyCharm program.|"C:\Program Files (x86)\JetBrains\PyCharm Community Edition 2016.2.3\bin\pycharm.exe"|
+|SET PYTHON_JOB=|Set the full pathname to the location of the Python script.|D:\SNODAS\bin\SNODASDaily_Automated.py|
+|python %PYTHON_JOB%|Launch the Python program.|N/A|
+
+#### SNODASTools\\staticData\\
 
 There are two files that will are contained within the ```SNODASTools\staticData\``` folder.
 The first file, the watershed basin shapefile input, must be provided by the user of the SNODAS Tools before
-any scripts are run. The second file, the waterhsed basin extent shapefile, is produced by the SNODAS Tools after
+any scripts are run. The second file, thewatershedbasin extent shapefile, is produced by the SNODAS Tools after
 the first script of the SNODAS Tools is run. The user of the tool does not provide this shapefile - it is created automatically by the SNODAS
 Tools.  
 
@@ -237,7 +248,7 @@ outline is the Colorado state boundary.
 
 ![colorado Basins Shapefile](file-structure-images/CO_basin_boundaries.png)
 
-**The Waterhsed Basin Extent Shapefile**  
+**ThewatershedBasin Extent Shapefile**  
 
 The Watershed Basin **Extent** Shapefile (```studyAreaExtent_prj.shp```), referred to as _extent shapefile_ from this point onward, is a single-feature bounding-box shapefile that extends 
 to the extent of the watershed basin shapefile input. The extent shapefile is used within the SNODAS Tools to clip the daily SNODAS data to 
@@ -271,8 +282,6 @@ All output products of ```SNODASDaily_Automated.py``` and ```SNODASDaily_Interac
 For each processed day of data, 8 output products are created. To see a larger view of the images below, right-click on the image and 
 click *Open image in new tab*.
 
-**TODO egiles 2017-03-10 change out the workflow images to the correct format**
-
 1. The originally downloaded national SNODAS .tar file  
 	- ```SNODAS_YYYYMMDD.tar``` 
 	![download](file-structure-images/download.PNG) 	
@@ -287,12 +296,12 @@ click *Open image in new tab*.
 	![Snow Cover](file-structure-images/snowcover.PNG)
 5. The snowpack statistics organized by basin ID
 	 - ```SnowpackStatisticsByBasin_LOCALID.csv``` (a .csv file)
-	 ![ByBasin](file-structure-images/statistics.PNG)
+	 ![ByBasin](file-structure-images/statisticsByBasin.PNG)
 6. The snowpack statistics organized by date  
 	 - ```SnowpackStatisticsByDate_YYYYMMDD.csv``` (a .csv file)
 	 - ```SnowpackStatisticsByDate_YYYYMMDD.GeoJSON``` (a .GeoJSON file)
 	 - ```SnowpackStatisticsByDate_YYYYMMDD.shp``` (a shapefile, with required extensions)
-	 ![ByDate](file-structure-images/statistics.PNG)
+	 ![ByDate](file-structure-images/statisticsByDate.PNG)
 
 
 The 8 output products are saved within subfolders of the processedData folder. Each subfolder is explained in further detail below. 
@@ -447,9 +456,9 @@ the ```SNODAS_SWE_ClipAndProjYYYYMMDD.tif``` file and assigning cell values depe
 
 |SNODAS_```SWE```_ClipAndProjYYYYMMDD|SNODAS_```SnowCover```_ClipAndProjYYYYMMDD|
 | ---------------------------------- | ---------------------------------------- |
-| If a cell has a value greater than 0 (there is snow on the ground)|then the correspoding cell is assigned a value of '1' (presence of snow displayed in blue)|
-| If a cell has a value equal to 0 (there is no snow on the ground)|then the correspoding cell is assigned a value of '0' (absence of snow displayed in brown)|
-| If a cell has a value equal to -9999 (a null value)|then the correspoding cell is assigned a value of '-9999' (a null value displyed in white)|
+| If a cell has a value greater than 0 (there is snow on the ground)|then the corresponding cell is assigned a value of '1' (presence of snow displayed in blue)|
+| If a cell has a value equal to 0 (there is no snow on the ground)|then the corresponding cell is assigned a value of '0' (absence of snow displayed in brown)|
+| If a cell has a value equal to -9999 (a null value)|then the corresponding cell is assigned a value of '-9999' (a null value displayed in white)|
 
 ![snowCover](file-structure-images/snowCoverTIF.png)
 *Above: The binary Colorado snow cover grid for January 16th, 2017. Blue = presence of snow. Brown = absence of snow.* 
@@ -481,10 +490,10 @@ that can be added to the output results if configured in the [configuration file
 
 ** Snowpack Statistics organized By Basin **  
 
-There are multiple basins in the watershed basin shapefile input. For every day of proecessed SNODAS data, new daily statistics
+There are multiple basins in the watershed basin shapefile input. For every day of processedSNODAS data, new daily statistics
 are produced for each individual basin. The output snowpack statistics organized by basin are contained within .csv files. There is one
 .csv file for each basin of the watershed basin shapefile input. Each row of the byBasin .csv file represents the daily snowpack statistics.
-As a new date of SNODAS data is processed by the SNODAS Tools, a new row is appended to each byBsin .csv file with the newly 
+As a new date of SNODAS data is processed by the SNODAS Tools, a new row is appended to each byBasin .csv file with the newly 
 calculated statistics. 
 
 Refer to the [processedData\\5_CalculateStatistics\\StatisticsbyBasin\\](#processeddata925_calculatestatistics92statisticsbybasin92)
@@ -502,15 +511,12 @@ data are exported each day.
 |----|----|
 |CSV file|Tabular data.|
 |GeoJSON file|Spatial data with statistics stored in the attribute table.|
-|Shapefile|Spatial data with statisitcs stored in the attribute table.|
+|Shapefile|Spatial data with statisticsstored in the attribute table.|
 
 A new file of each byDate format is created for every day of processed SNODAS data completed by the SNODAS Tools. 
 
 Refer to the [processedData\\5_CalculateStatistics\\StatisticsbyDate\\](#processeddata925_calculatestatistics92statisticsbydate92) 
 section for more information.
-
-
-
 
 Refer to the [Processing Workflow](overview/#intersect-snodas-colorado-grid-with-colorado-basins-and-calculate-statistics) section for a general description of the SNODAS Tools' calculate statistics step. 
 Refer to [Tool Utilities and Functions](overview.md#5-calculate-and-export-zonal-statistics) for detailed information on the Python functions called to create 
@@ -525,7 +531,7 @@ The statistics organized by basin provide change analysis capabilities - the dat
 throughout time.  
 
 *'XXXX'* is the unique ID identifying each basin feature. This ID is located as a field within the attribute table of the [Watershed Basin Shapefile Input](#snodastools92staticdata92)
-(```watershedBasinBoundary.shp```). Before rurnning the SNODAS Tools, it is important to assign the name of the attribute field holding the basin ID information in 
+(```watershedBasinBoundary.shp```). Before running the SNODAS Tools, it is important to assign the name of the attribute field holding the basin ID information in 
 **section** ```BasinBoundaryShapefile``` **option** ```basin_id_fieldname``` of the [configuration file](#snodastools92snodasconfigini). 
  
 	Example: 
@@ -538,8 +544,6 @@ SnowpackStatisticsByBasin_XXXX.csv file is updated with a new row of statistics.
 An example of a SnowpackStatisticsByBasin_XXXX.csv file is shown below. You can see that the dates, January 1st through January 5th, 2017, have been 
 processed by the SNODAS Tools. The red circle shows that all values under the Local_ID column (the watershed basin ID) are equivalent.
 Right-click on the image and click *Open image in new tab* to see a larger view. 
-
-**TODO egiles 03/11/17 update the csv screen shot to an accurate version Jan 1 - Jan 5**
 
 ![statsByBasin](file-structure-images/statsbybasin.png)
 
@@ -569,13 +573,9 @@ An example of a SnowpackStatisticsByDate_YYYYMMDD.csv file is shown below. The d
 [Watershed Basin Shapefile Input](#snodastools92staticdata92) (```watershedBasinBoundary.shp```) are represented. The red circle shows that all 
 values under the Date_YYYYMMDD column are equivalent. Right-click on the image and click *Open image in new tab* to see a larger view. 
 
-**TODO egiles 03/11/17 update the csv screen shot to an accurate version Oct 15, 2014**
-
 ![statsByBasin](file-structure-images/statsbydate.png)
 
 **The GeoJSON File and the Shapefile**  
-
-
 
 The by date snowpack statistics are also exported in formats that can be spatially rendered. The GeoJSON and
 Shapefile exports obtain the geometry from the [Watershed Basin Shapefile Input](#snodastools92staticdata92) (```watershedBasinBoundary.shp```)
@@ -585,10 +585,7 @@ A GeoJSON is [an open standard format designed for representing simple geographi
 A Shapefile is [a popular geospatial vector data format for GIS software developed and regulated by ESRI.](https://en.wikipedia.org/wiki/Shapefile)  
 
 One GeoJSON file and one shapefile are produced for each date of processed SNODAS data. The exports have the same name as the by date csv
-file, SnowpackSatisticsByDate_YYYYMMDD, but different extensions (GeoJSON: .geojson, Shapefile: .shp **).
-
-**TODO egiles 2017-03-11 add the other shapefile extensions**
-**TODO egiles 2017-03-11 after completing all of the other todo requirements, pull text into word to review for grammar and spelling errors**
+file, SnowpackSatisticsByDate_YYYYMMDD, but different extensions (GeoJSON: .geojson, Shapefile: .cpg, .dbf, .prj, .qpj, .shp, and .sgx).
 
 A shapefile is made up of many separate files with different extensions. The SNODAS Tools, by default, will zip up all of the shapefile component files
 for each day into one zipped file. Under **section** ```OutputLayers``` **option** ```shp_zip``` of the [configuration file](#snodastools92snodasconfigini),
@@ -624,7 +621,7 @@ in the following format" ```YYYY-MM-DD  HH:MM:SS,MSS``` where:
  |YYYY|The year when the logging message is created with century as a decimal number.|2017|
  |MM|The month, as a  zero-padded decimal number, when the logging message is created.|02|
  |DD|The day, as a  zero-padded decimal number, when the logging message is created.|04|
- |HH|The hour, as a  zero-padded decimal number, when the logging message is created.**Todo egiles 2/14/17 Check to see if (24-hour clock or 12-hour clock)**|05|
+ |HH|The hour (24-hour clock), as a  zero-padded decimal number, when the logging message is created.|13|
  |MM|The minute, as a  zero-padded decimal number, when the logging message is created.|26|
  |SS|The second, as a  zero-padded decimal number, when the logging message is created.|21|
  |MSS|The millisecond,  as a three-digit zero-padded decimal number, when the logging message is created.|000|
@@ -643,16 +640,14 @@ in the following format" ```YYYY-MM-DD  HH:MM:SS,MSS``` where:
 
 **Timed Rotating File Handler**  
 If the SNODASTools.log logging level is set to default ```DEBUG```, all logging messages will be written to the SNODASTools.log file. For each processed day of SNODAS
-data, the size of the SNODASTools.log file will increase by approximately 12KB. The SNODAS Tools are designed to run everyday. This high frequency of processing would
+data, the size of the SNODASTools.log file will increase by approximately 12KB. The SNODAS Tools are designed to run every day. This high frequency of processing would
 quickly cause the SNODASTools.log file to become incredibly large. To address this issue, the SNODASTools.log file is configured to run on a
 [Timed Rotating File Handler](https://docs.python.org/2/library/logging.handlers.html#timedrotatingfilehandler).
 
 The timed rotating file handler creates and updates multiple versions of the SNODASTools.log file based upon a configured temporal schedule. After an allotted amount of time
 (defaulted to 5 weeks), the oldest version of the SNODASTools.log is deleted and only the most recent log files are available. By default, a new SNODASTools.log 
 file is created every Monday, local time. The SNODASTools.log file from the previous week is assigned a suffix of ```.YYYY-MM-DD``` and saved in the ```CDSS\SNODASTools\``` folder. The 
-```.YYYY-MM-DD``` refers to the day that the log file was originally created. Given the default, ```.YYYY-MM-DD``` will always be a Monday. 
-
-** TODO egiles 2017-03-10 check validity of above statement**
+```.YYYY-MM-DD``` refers to the day that the log file was originally created. 
 
  - **Note:**   
  The timed rotating file handler defaults to adding the dated suffix as an extension. For example ```SNODASTools.log``` will become ```SNODASTools.log.YYYY-MM-DD```.
@@ -664,7 +659,7 @@ The previous 5 versions of the SNODASTools.log are saved under the ```CDSS\SNODA
 
 As previously mentioned, each processed SNODAS date increases the individual SNODASTools.log file by approximately 12KB. Given the default setting of the timed rotating 
 file handler, each log file will be approximately 84KB (daily size of 12KB multiplied by the 7 days of the week). The total size of file space used for SNODAS Tools' 
-logging will be approximately 420KB (weekly log file size of 84KB multipled by 5 weeks of backup files).
+logging will be approximately 420KB (weekly log file size of 84KB multiplied by 5 weeks of backup files).
 
  - **Note**:  
  The size increase of the SNODASTools.log file will be larger than 12KB for each processed date of SNODAS data if the processed date of SNODAS data is being rerun and 
@@ -677,7 +672,7 @@ The settings of the timed rotating file handler can be changed in the [configura
  
 |Argument|Description|Defaulted to:|
 |-----|----|------|
-|Filename|The full pathname to the location of the log file.|..SNODASTools/SNODASTools.log **TODO egiles 2/14/17 check to make sure this is accurate**|
+|Filename|The full pathname to the location of the log file.|'..\SNODASTools.log'|
 |Type of Time Interval|Time interval type when a new log file is to be created. <br> <br> Options: seconds, days, weekdays, etc.|<center>'W0' Monday|
 |Interval|Time interval. <br> <br> Example (if type of time interval = 'days'): <br> 1 - every day <br> 2 - every other day <br> 5 - every five days, etc.|<center>1|
 |backupCount|The number of previous SNODASTools.log files to be saved.|<center>5|
@@ -689,18 +684,18 @@ The settings of the timed rotating file handler can be changed in the [configura
 
 
 
-### SNODASTools\\SNODASconfig.ini	
+### SNODASTools\\SNODAS-Tools-Config.ini	
 
-The ```SNODASconfig.ini``` is located in the ```SNODASTools``` folder and contains Python input variables and logging settings for the SNODAS Tools.  
+The ```SNODAS-Tools-Config.ini``` is located in the ```SNODASTools``` folder and contains Python input variables and logging settings for the SNODAS Tools.  
 
 ####Design of the Configuration File 
  
-The configuration file is divided into **sections**. The **sections** are the broad categories of SNODAS configurables
-and are recognizable by the brackets - [] - that surrond them. 
+The configuration file is divided into **sections**. The **sections** are the broad categories of SNODAS configurable variables
+and are recognizable by the brackets - [] - that surround them. 
 
 	Example: 
 	
-	['BasinBoundaryShapefile'] is the section header for all configurables related to the  
+	['BasinBoundaryShapefile'] is the section header for all configurable variables related to the  
 	Watershed Basin Shapefile Input.   
 
 Under each section, there are corresponding **options** that relate to the **section**.  
@@ -750,7 +745,7 @@ Configuration File Section: [Projections]
 |Configurable <br> Parameter|Description|Defaulted to:|
 |-------------|-------|----------|
 |datum_epsg|The EPSG code of the datum used to define the national SNODAS daily grid. WGS84 (EPSG 4326) is recommended.|4326|
-|calcstats_proj_epsg|The EPSG code of the projection used to calculatethe zonal statistics, an equal-area projection is recommended. This should be the same projection as that of the Watershed Basin Shapefile Input.|102003|
+|calcstats_proj_epsg|The EPSG code of the projection used to calculate the zonal statistics, an equal-area projection is recommended. This should be the same projection as that of the Watershed Basin Shapefile Input.|102003|
 |calculate_cellsize_x|The desired cell size (x axis) to resample the daily SNODAS grid before calculating the zonal statistics. Remember to apply units used in the calcstats_proj_epsg projection.|463.1475|
 |calculate_cellsize_y|The desired cell size (y axis) to resample the daily SNODAS grid before calculating the zonal statistics. Remember to apply units used in the calcstats_proj_epsg projection.|463.1475|
 |output_proj_epsg|The EPSG code of the desired projection for the output layers, the daily GeoJSON and the daily shapefile.|26913|
@@ -769,7 +764,7 @@ Configuration File Section: [Folders]
 |clip_proj_snodas_tif_folder|Name of folder containing clipped and projected daily SNODAS .tif files.|3_ClipToExtent|
 |create_snowvover_tif_folder|Name of folder containing clipped binary snow cover .tif files.|4_CreateSnowCover|
 |calculate_stats_folder|Name of folder containing the output products. Contains the following 2 folders.|5_CalculateStatistics/|
-|output_stats_by_date_folder|Name of folder containing the output zonal snowpack statistics organized by date. Also containsthe daily output GeoJSONs & shapefiles.|SnowpackStatisticsByDate|
+|output_stats_by_date_folder|Name of folder containing the output zonal snowpack statistics organized by date. Also contains the daily output GeoJSONs & shapefiles.|SnowpackStatisticsByDate|
 |output_stats_by_basin_folder|Name of folder containing the output zonal snowpack statistics organized by basin.|SnowpackStatisticsByBasin|
 
 
@@ -800,7 +795,7 @@ Configuration File Section: [OptionalZonalStatistics]
 |calculate_swe_standard_deviation|Boolean logic to enable calculation of the SWE standard deviation zonal statistic (mm and in). <br><br> True: Enable. <br> False: Disable.|False|
 
 **The Logging Files**  
-The configuraton of the [logging files](#snodastools92snodastoolslog) is slightly more complicated than the other **sections** of the configuration file. 
+The configuration of the [logging files](#snodastools92snodastoolslog) is slightly more complicated than the other **sections** of the configuration file. 
 The configuration of the logging files is set up with multiple **sections**, following the design provided by 
 [the Python Software Foundation - Logging HOWTO](https://docs.python.org/2/howto/logging.html#configuring-logging).
 
@@ -810,7 +805,7 @@ All of the **sections** and **options** in the following table are in reference 
 
 |**Section**<br>Option|Description|Defaulted <br> to:|
 |--------------------------|------------|---|
-|**loggers**<br>keys|The available SNODASTools logs. This should not be changed unless a new log configration is to be created.|root, log02|
+|**loggers**<br>keys|The available SNODASTools logs. This should not be changed unless a new log configuration is to be created.|root, log02|
 |**handlers**<br>keys|The available SNODASTools handlers. This should not be changed unless a new handler is to be created.|fileHandler, consoleHandler|
 |**formatters**<br>keys|The available SNODASTools formatters. This should not be changed unless a new formatter is to be created.|simpleFormatter|
 |**logger_root**<br>level|The log level of the 'root' logger.|WARNING|
