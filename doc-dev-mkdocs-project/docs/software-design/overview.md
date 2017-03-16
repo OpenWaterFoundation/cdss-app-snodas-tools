@@ -131,20 +131,20 @@ The user inputs ```One``` if only one historical date is to be processed. The us
 
  - If the input is ```One```, the console will print:
 
-		Which date are you interested in? The date must be of or between 01 October 2003 
-		and today's date.  mm/dd/yy:	
-
+		Which date are you interested in? The date must be of or between 30 September 2003 and   
+		today's date. mm/dd/yy:
+		
 	- The user inputs a date in the correct format and that date of SNODAS data will be downloaded. 
 
  - If the input is ```Range```, the console will print: 
  
-		What is the STARTING date of data that you are interested in? The date must be of or
-		between 01 October 2003 and today's date.  mm/dd/yy:
-		
+		What is the STARTING (earliest) date of data that you are interested in? The date must be of  
+		or between 30 September 2003 and today's date. mm/dd/yy:
+				
 	- The user inputs the first date of a range of historical dates in the correct format. The console will print:
 
-			What is the ENDING date of data that you are interested in? The date must be between
-			[date entered from previous prompt] and today's date. mm/dd/yy: 
+			What is the ENDING (most recent) date of data that you are interested in? The date must be  
+			between [date entered from previous prompt] and today's date. mm/dd/yy:
 			
 	- The user inputs the last date of a range of historical dates in the correct format. All SNODAS data from the dates within the range will be 
 	downloaded (in sequential order).
@@ -290,7 +290,7 @@ the 5_CalculateStatistics folder.
 
 Along with the two .csv files, two output layers are also exported for each day of processed SNODAS data - a shapefile and a GeoJSON file. Both of these files use the geometry from the 
 Watershed Basin Input Shapefile. Note that the projection of the output layers could be different from the Watershed Basin Input Shapefile. The projection of the two output products is 
-configured in the configuration file under **section**  ```Projections``` **option**  ```output_proj_epsg```. 
+configured in the configuration file under **section**  ```Projections``` **option**  ```output_proj_epsg``` (defaulted to NAD83 Zone 13N).
 The statistics in the SnowpackStatisticsbyDate csv file are appended to both geometries in the attribute tables. 
 
 For more information on the two types of exported .csv files, the two output layers, and the 
@@ -467,8 +467,8 @@ function categories are:
 		(defaulted to WGS84).
 
 5. __assign_SNODAS_projection (file, folder)__   
-	Project clipped raster from original (defaulted to WGS84) to desired projection (defaulted
-    to US Contiguous Albers Equal Area).
+	Project clipped raster from original (defaulted to WGS84 datum) to desired projection (defaulted
+    to NAD83 US Contiguous Albers Equal Area).
 	
 	Arguments
 

@@ -1,11 +1,11 @@
 # Task Scheduler Overview
 
-Task Scheduler is a Windows application allowing a user to automatically run programs on a timed schedule. This application is
-beneficial to the SNODAS tools because new SNODAS data must be downloaded and processed everyday. 
+Task Scheduler is a Windows application allowing a program to automatically run on a timed schedule. This application is
+beneficial to the SNODAS Tools because new SNODAS data must be downloaded and processed daily. 
 
 The ```SNODASDaily_Automated.py```
 script is designed to be programmed on a timed schedule. It will download the current day's SNODAS data from the SNODAS FTP site 
-and export the daily zonal statistics in the [processedData](../software-design/file-structure.md#snodastools92processeddata92) folder on the local computer. 
+and export the daily zonal snowpack statistics in the [processedData](../software-design/file-structure.md#snodastools92processeddata92) folder on the local computer. 
 
 For information on the data processing steps of ```SNODASDaily_Automated.py```, refer to the 
 [Processing Workflow](../software-design/overview.md#processing-workflow) section. For information on the SNODAS FTP site, refer to the
@@ -13,11 +13,15 @@ For information on the data processing steps of ```SNODASDaily_Automated.py```, 
 the output snowpack products, refer to the [SNODAS Tools Products](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/products/overview/)
 section of the user guide.
 
-**TODO egiles 2017-01-19 fix the broken links that direct to the user manual**
-
 #  SNODASDaily_Automated_forTaskScheduler.bat
 
-** TODO egiles 2017-01-19 add information about SNODASDaily_Automated_forTaskScheduler.bat**
+The ```SNODASDaily_Automated_forTaskScheduler.bat``` batch file sets the environment variables and launches the Python program to run the 
+```SNODASDaily_Automated.py```. The task scheduler program, as described below, runs the ```SNODASDaily_Automated_forTaskScheduler.bat``` 
+batch file instead of directly running the ```SNODASDaily_Automated.py``` Python script. The advantage of packaging the ```SNODASDaily_Automated.py``` script
+within the ```SNODASDaily_Automated_forTaskScheduler.bat``` batch file is that the environment variables are automatically set. 
+
+For more information about the contents of the ```SNODASDaily_Automated_forTaskScheduler.bat``` batch file, refer to the 
+[5. SNODASDaily_Automated_forTaskScheduler.bat](../software-design/file-structure.md#snodastools92bin92) section of the File Structure page. 
 
 # How to Set Up the Task Scheduler to Run SNODASDaily_Automated.py
 
