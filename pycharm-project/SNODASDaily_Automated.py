@@ -23,7 +23,7 @@ start = time.time()
 # Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
 Config = configparser.ConfigParser()
-Configfile = "..\SNODASconfig.ini"
+Configfile = "../SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
 # Helper function to obtain option values of config file sections.
@@ -79,22 +79,25 @@ def ConfigSectionMap(section):
 #   name_of_byBasin_folder: The name of the byBasin folder. All zonal statistic results in csv format organized by
 #   basin are contained here.
 
-root = ConfigSectionMap("FolderNames")['root_pathname']
-basin_shp = ConfigSectionMap("VectorInputShapefile")['pathname']
-QGIS_installation = ConfigSectionMap("QGISInstall")['pathname']
-Save_allSNODASparameters = ConfigSectionMap("SaveAllSNODASparameters")['value']
-name_of_download_folder = ConfigSectionMap("FolderNames")['download']
-name_of_setFormat_folder = ConfigSectionMap("FolderNames")['setformat']
-name_of_clip_folder = ConfigSectionMap("FolderNames")['clip']
-name_of_createsnowcover_folder = ConfigSectionMap("FolderNames")['snow_cover']
-name_of_calculateStatistics_folder = ConfigSectionMap("FolderNames")['calculate_statistics']
-name_of_byDate_folder = ConfigSectionMap("FolderNames")['by_date']
-name_of_byBasin_folder = ConfigSectionMap("FolderNames")['by_basin']
-name_of_static_folder = ConfigSectionMap("FolderNames")['static']
-output_CRS_EPSG = ConfigSectionMap("Projections")['output_crs_epsg']
-delete_shp_orig = ConfigSectionMap("OutputGeometry")['shp_delete_originals']
-zip_shp = ConfigSectionMap("OutputGeometry")['shp_zip']
 
+root = ConfigSectionMap("Folders")['root_pathname']
+basin_shp = ConfigSectionMap("BasinBoundaryShapefile")['pathname']
+QGIS_installation = ConfigSectionMap("ProgramInstall")['qgis_pathname']
+Save_allSNODASparameters = ConfigSectionMap("SNODASparameters")['save_all_parameters']
+name_of_download_folder = ConfigSectionMap("Folders")['download_snodas_tar_folder']
+name_of_setFormat_folder = ConfigSectionMap("Folders")['untar_snodas_tif_folder']
+name_of_clip_folder = ConfigSectionMap("Folders")['clip_proj_snodas_tif_folder']
+name_of_createsnowcover_folder = ConfigSectionMap("Folders")['create_snowcover_tif_folder']
+name_of_calculateStatistics_folder = ConfigSectionMap("Folders")['calculate_stats_folder']
+name_of_byDate_folder = ConfigSectionMap("Folders")['output_stats_by_date_folder']
+name_of_byBasin_folder = ConfigSectionMap("Folders")['output_stats_by_basin_folder']
+name_of_processed_folder = ConfigSectionMap("Folders")['processed_data_folder']
+name_of_static_folder = ConfigSectionMap("Folders")['static_data_folder']
+output_CRS_EPSG = ConfigSectionMap("Projections")['output_proj_epsg']
+delete_shp_orig = ConfigSectionMap("OutputLayers")['shp_delete_originals']
+zip_shp = ConfigSectionMap("OutputLayers")['shp_zip']
+name_of_timeSeries_folder = ConfigSectionMap("Folders")['timeseries_folder']
+name_of_GraphsbyBasin_folder = ConfigSectionMap("Folders")['timeseries_graph_png_folder']
 
 if __name__ == "__main__":
 
@@ -102,22 +105,22 @@ if __name__ == "__main__":
     static_path = os.path.join(root, name_of_static_folder)
     extent_shapefile = static_path + 'studyAreaExtent_prj.shp'
 
-    # Create the root folder and the 6 sub-folders
-    download_path = os.path.join(root, name_of_download_folder)
-    setEnvironment_path = os.path.join(root, name_of_setFormat_folder)
-    clip_path = os.path.join(root, name_of_clip_folder)
-    snowCover_path = os.path.join(root, name_of_createsnowcover_folder)
-    results_basin_path = os.path.join(root, name_of_calculateStatistics_folder + name_of_byBasin_folder)
-    results_date_path = os.path.join(root, name_of_calculateStatistics_folder + name_of_byDate_folder)
+    # Create the root folder and the 7 sub-folders
+    download_path = os.path.join(root, name_of_processed_folder, name_of_download_folder)
+    setEnvironment_path = os.path.join(root, name_of_processed_folder, name_of_setFormat_folder)
+    clip_path = os.path.join(root, name_of_processed_folder, name_of_clip_folder)
+    snowCover_path = os.path.join(root, name_of_processed_folder, name_of_createsnowcover_folder)
+    results_basin_path = os.path.join(root, name_of_processed_folder, name_of_calculateStatistics_folder + name_of_byBasin_folder)
+    results_date_path = os.path.join(root, name_of_processed_folder, name_of_calculateStatistics_folder + name_of_byDate_folder)
+    timeSeries_path = os.path.join(root, name_of_processed_folder, name_of_timeSeries_folder + name_of_GraphsbyBasin_folder)
 
     listofFolders = [root, download_path, setEnvironment_path, clip_path, snowCover_path, results_basin_path,
-                     results_date_path]
+                     results_date_path, timeSeries_path]
 
     # Check for folder existence. If not exiting, the folder is created.
     for folder in listofFolders:
         if os.path.exists(folder) == False:
             os.makedirs(folder)
-
 
     # Create and configures logging file
     fileConfig(Configfile)
@@ -148,13 +151,16 @@ if __name__ == "__main__":
         else:
             tempList.append(0)
 
+
     if 0 in tempList:
-        logger.error('"ERROR: See configuration file. One or more values of the ''DesiredZonalStatistics'' section is '
+        logger.error('"ERROR: See configuration file. One or more values of the ''OptionalZonalStatistics'' section is '
                      'not valid. Please change values to either ''True'' or ''False'' and rerun the script."')
         logging.error('"ERROR: See configuration file. One or more values of the ''DesiredZonalStatistics'' section is '
                      'not valid. Please change values to either ''True'' or ''False'' and rerun the script."')
 
+
     else:
+
         # Untar today's data
         for file in os.listdir(download_path):
             if today_date in str(file):
@@ -210,7 +216,7 @@ if __name__ == "__main__":
                 if today_date in str(file):
                     SNODAS_utilities.delete_SNODAS_bil_file(file)
             setEnvironment_time_end = time.time()
-            elapsedSetEnvironment = setEnvironment_time_end - setEnvironment_time_start
+            elapsed_setEnvironment = setEnvironment_time_end - setEnvironment_time_start
 
             # Create the extent shapefile if not already created.
             if not os.path.exists(extent_shapefile):
@@ -276,6 +282,12 @@ if __name__ == "__main__":
                         SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
                         break
 
+            # Create SNODAS SWE time series graph with TsTool program.
+            TsTool_time_start = time.time()
+            SNODAS_utilities.create_SNODAS_SWE_graphs()
+            TsTool_time_end = time.time()
+            elapsed_TsTool = TsTool_time_end - TsTool_time_start
+
         # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
         # script will not run and the following error message will be printed to the console and to the logging file.
         else:
@@ -284,24 +296,27 @@ if __name__ == "__main__":
             logging.error("ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid."
                       "Please type in 'True' or 'False' and rerun the script.")
 
+
+
     # Close logging including the elapsed time of the running script in seconds.
     end = time.time()
     elapsed = end - start
-    timePercent_download = elapsed_download / elapsed * 100
-    timePercent_setEnvironment = elapsedSetEnvironment/ elapsed * 100
-    timePercent_clip = elapsed_clip / elapsed * 100
-    timePercent_snowCover = elapsed_snowCover / elapsed * 100
-    timePercent_CSV = elapsed_manipulateCSV /elapsed * 100
-    timePercent_zStats = elapsed_zStats / elapsed * 100
-    logger.info('\n')
+    elapsedMinutes = elapsed/60
+    elapsedSeconds = elapsed%60
+
     logger.info('\n SNODASDailyDownload.py: Completed.')
     logger.info('Elapsed time: %d seconds' % elapsed)
     logging.info('Elapsed time: %d seconds' % elapsed)
-    print 'Elapsed time: %d seconds \n' % elapsed
+    print 'Elapsed time: %d minutes and %d seconds \n' % (elapsedMinutes, elapsedSeconds)
     print 'Percentage of time allocated to each processing step:'
-    print 'Download: %d%% (%d seconds)' % (timePercent_download, elapsed_download)
-    print 'Set Environment: %d%% (%d seconds)' % (timePercent_setEnvironment, elapsedSetEnvironment)
-    print 'Clip and Project: %d%% (%d seconds)'% (timePercent_clip, elapsed_clip)
-    print 'Create Snow Cover: %d%% (%d seconds)' % (timePercent_snowCover, elapsed_snowCover)
-    print 'Create and manipulate CSV files: %d%% (%d seconds)' % (timePercent_CSV, elapsed_manipulateCSV)
-    print 'Calculate and export zonal statistics: %d%% (%d seconds)' % (timePercent_zStats, elapsed_zStats)
+
+    # Print elapsed times for each processing section
+    section_dict = {' 1 Download':elapsed_download, ' 2 Set Environment':elapsed_setEnvironment, ' 3 Clip and Project':
+        elapsed_clip, ' 4 Create Snow Cover': elapsed_snowCover, ' 5 Create and manipulate CSV files':
+        elapsed_manipulateCSV, ' 6 Calculate and export zonal statistics': elapsed_zStats,
+                    ' 7 Create Time Series Graphs': elapsed_TsTool}
+    for key, value in sorted(section_dict.items()):
+        timePercent = value / elapsed * 100
+        print '%s: %d%% (%d seconds)' % (key, timePercent, value)
+
+
