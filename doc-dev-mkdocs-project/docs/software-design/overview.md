@@ -107,7 +107,7 @@ diagram displaying the entire SNODAS Tools processing workflow (to view the imag
 image in a new tab - for example, in Chrome right click and ***Open image in new tab***). Throughout each following section of the processing 
 workflow documentation, the flow diagram is split into individual processing steps and explained in detail. 
 
-![processing workflow overview](overview-images/overview.png)
+![processing workflow overview](overview-images/workflow_overview.png)
 
 
 ### Download SNODAS Data
@@ -172,7 +172,7 @@ saved in the 1_DownloadSNODAS folder as a .tar file. Refer to the [File Structur
 for more information regarding the downloaded SNODAS .tar file and the 1_DownloadSNODAS folder. Refer to the [Tool Utilities and Functions](#1-download-snodas-data)
 section for detailed information on the Python function called to download the SNODAS data.
 
-![download-workflow](overview-images/download.png)
+![download-workflow](overview-images/workflow_download.png)
 
 ### Convert SNODAS Data Formats
 
@@ -205,7 +205,7 @@ The daily SNODAS national SWE .tif grid is saved in the 2_SetFormat folder. Refe
 for more information regarding the national SWE .tif file and the 2_SetFormat folder. Refer to [Tool Utilities and Functions](#2-convert-data-formats)
 section for detailed information on the Python functions called to process the above 7 steps.
 
-![setFormat-workflow](overview-images/setFormat.png)
+![setFormat-workflow](overview-images/workflow_setFormat.png)
 
 ### Clip and Project SNODAS National Grids to Study Area
 
@@ -242,7 +242,7 @@ The clipped and projected SNODAS SWE .tif grids are saved in the 3_ClipToExtent 
 for more information regarding the clipped SWE .tif file and the 3_ClipToExtent folder. Refer to [Tool Utilities and Functions](#3-clip-and-project-snodas-national-grids-to-study-area)
 section for detailed information on the Python functions called to project, clip and project the national SNODAS SWE grid.
 
-![clip-workflow](overview-images/clip.png)
+![clip-workflow](overview-images/workflow_clip.png)
 
 ### Create the Binary Snow Cover Raster
 
@@ -262,7 +262,7 @@ The daily binary snow cover .tif grids are saved in the 4_CreateSnowCover folder
 for more information regarding the binary snow cover .tif files and the 4_CreateSnowCover folder. Refer to [Tool Utilities and Functions](#4-create-the-binary-snow-cover-raster)
 section for detailed information on the Python functions called to create the daily binary snow cover grids.
 
-![snowcover-workflow](overview-images/snowcover.png)
+![snowcover-workflow](overview-images/workflow_snowcover.png)
 
 ### Calculate and Export Zonal Statistics
 
@@ -298,11 +298,40 @@ For more information on the two types of exported .csv files, the two output lay
 Refer to [Tool Utilities and Functions](#5-calculate-and-export-zonal-statistics) section for detailed information on the Python 
 functions called to calculate and export the daily zonal statistics.
 
-![statistics-workflow](overview-images/statistics.png)
+![statistics-workflow](overview-images/workflow_statistics.png)
 
 ### Generate Time Series Products
 
+Time series graphs of the snowpack statistics are created with [TSTool](../dev-env/tstool). Four snowpack time series graphs are created for each basin of the 
+[watershed basin boundary shapefile](file-structure.md#snodastools92staticdata92). Each time series graph displays the change in a snowpack 
+statistic over time. 
+
+|<center>The snowpack statistics displayed with the time series graphs are:|
+|-|
+|<center>Mean Snow Water Equivalent (inches)|
+|<center>Percent of Snow Cover|
+|<center>SWE Volume (acft)|
+|<center>1 Week Change in SWE Volume (acft)|
+
+**Mean Snow Water Equivalent**  
+
+![timeseries-mean](overview-images/TSGraph_mean.png)
+
+**Percent of Snow Cover**  
+
+![timeseries-snowcover](overview-images/TSGraph_snowcover.png)
+
+**SWE Volume**  
+
+![timeseries-volume](overview-images/TSGraph_volume.png)
+
+**1 Week Change in SWE Volume**  
+
+![timeseries-changeInVolume](overview-images/TSGraph_changeInVolume.png)
+
 **TODO smalers 2016-12-06 need to fill this in...describe how to run Python program and what it does**
+
+![timeseries-workflow](overview-images/workflow_timeseries.png)
 
 ### Publish Results
 
@@ -321,7 +350,7 @@ function categories are:
 |2. Convert Data Formats|Converts data into useable formats for statistical processing.|<center>9|
 |3. Clip and Project SNODAS Data|Clips and projects SNODAS raster data for statistical processing.|<center>5|
 |4. Create Snow Cover Data|Creates a new binary raster representing presence or absence of snow.|<center>1|
-|5. Calculate and Export Statistics|Calculates zonal statistics and exports statistics into .csv files.|<center>3|
+|5. Calculate and Export Statistics|Calculates zonal statistics and exports statistics into .csv files, .GeoJSON files and shapefiles. Time series graphs of the snowpack statistics are also created.|<center>4|
 
 
 ### 1. Download SNODAS Data
@@ -535,5 +564,9 @@ function categories are:
 		the zonal statistics calculations)
 		csv_byDate: full pathname to the folder containing results by date (.csv file)
 		csv_byBasin: full pathname to the folder containing results by basin (.csv file)
-		DirClip: full pathname to the folder containing all daily clipped, Albers Equal Area .tif SNODAS rasters
+		DirClip: full pathname to the folder containing all daily clipped, Albers Equal Area .tif 
+		SNODAS rasters
 		DirSnow: full pathname to the folder containing all binary snow coverage rasters
+
+4. __create_SNODAS_SWE_graphs()__  
+	Create, or update, the snowpack time series graphs from the by basin data. No arguments. 
