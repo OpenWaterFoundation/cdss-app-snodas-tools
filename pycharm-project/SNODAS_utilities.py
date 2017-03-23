@@ -1292,6 +1292,23 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             # Close edits and save changes to the shapefile.
             vectorFile.commitChanges()
 
+            # Delete attribute fields of the shapefile used in the calculations but not important for export to final
+            # product shapefile.
+            indexForCellCount = vectorFile.dataProvider().fieldNameIndex('CellCount')
+            indexForSCoversum = vectorFile.dataProvider().fieldNameIndex('SCoversum')
+            vectorFile.dataProvider().deleteAttributes([indexForCellCount, indexForSCoversum])
+
+            # Update shapefile with its newly-named attribute fields.
+            vectorFile.updateFields()
+
+
+            # Create daily shapefile and daily geoJSON
+            shapefile_name = 'SnowpackStatisticsByDate_' + date_name + '.shp'
+            geojson_name = 'SnowpackStatisticsByDate_' + date_name + '.geojson'
+            shapefile_name_full = os.path.join(csv_byDate, shapefile_name)
+            geojson_name_full = os.path.join(csv_byDate, geojson_name)
+
+
             # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
             indexForSWE_mean = vectorFile.dataProvider().fieldNameIndex('SWE_mean')
             vectorFile.dataProvider().renameAttributes({indexForSWE_mean: 'SWEMean_mm'})
@@ -1308,31 +1325,61 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                 indexForSStdDev = vectorFile.dataProvider().fieldNameIndex('SWE_stdev')
                 vectorFile.dataProvider().renameAttributes({indexForSStdDev: 'SWESDev_mm'})
 
-
             vectorFile.updateFeature(feature)
 
-            # Create daily shapefile and daily geoJSON
-            shapefile_name = 'SnowpackStatisticsByDate_' + date_name + '.shp'
-            geojson_name = 'SnowpackStatisticsByDate_' + date_name + '.geojson'
-            shapefile_name_full = os.path.join(csv_byDate, shapefile_name)
-            geojosn_name_full = os.path.join(csv_byDate, geojson_name)
-
-            # Delete attribute fields of the shapefile used in the calculations but not important for export to final
-            # product shapefile.
-            indexForCellCount = vectorFile.dataProvider().fieldNameIndex('CellCount')
-            indexForSCoversum = vectorFile.dataProvider().fieldNameIndex('SCoversum')
-            vectorFile.dataProvider().deleteAttributes([indexForCellCount, indexForSCoversum])
-
-            # Update shapefile with its newly-named attribute fields.
-            vectorFile.updateFields()
 
             # Export geojson and shapefile. (layer, full output pathname, file encoding, destination reference system,
             # output file type, layer options (GeoJSON): number of decimal places used in GeoJSON geometry)
-            QgsVectorFileWriter.writeAsVectorFormat(vectorFile, geojosn_name_full, "utf-8",
+            QgsVectorFileWriter.writeAsVectorFormat(vectorFile, geojson_name_full, "utf-8",
                                                     QgsCoordinateReferenceSystem(output_CRS), "GeoJSON",
-                                                    layerOptions = ['COORDINATE_PRECISION=%s'% geoJSON_precision])
+                                                    layerOptions=['COORDINATE_PRECISION=%s' % geoJSON_precision])
             QgsVectorFileWriter.writeAsVectorFormat(vectorFile, shapefile_name_full, "utf-8",
                                                     QgsCoordinateReferenceSystem(output_CRS), "ESRI Shapefile")
+
+            # Change fieldnames of output GeoJSON file
+            # Envelop GeoJSON file as a QGS object vector layer.
+            newName = geojson_name.replace(".geojson", "_intermediate.geojson")
+            int_geojson_name_full = os.path.join(csv_byDate, newName)
+            os.rename(geojson_name_full, int_geojson_name_full)
+
+            vectorFile_GeoJson = QgsVectorLayer(int_geojson_name_full, 'GeoJsonStatistics', 'ogr')
+
+            if vectorFile_GeoJson.isValid() == True:
+
+            # Open vectorFile for editing
+            vectorFile_GeoJson.startEditing()
+
+            # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
+            fieldDict = {'SWE_mean': 'SNODAS_SWE_Mean_mm', 'SWEVolC_af': 'SNODAS_SWE_Volume_1WeekChange_acft',
+                         'SWEMean_in': 'SNODAS_SWE_Mean_in', 'Area_sqmi': 'SNODAS_EffectiveArea_sqmi',
+                         'SWEVol_af': 'SNODAS_SWE_Volume_acft', 'SCover_pct': 'SNODAS_SnowCover_percent'}
+
+            if calculate_SWE_minimum.upper() == 'TRUE':
+                fieldDict.update({'SWEMin_mm': 'SNODAS_SWE_Min_mm', 'SWEMin_in': 'SNODAS_SWE_Min_in'})
+
+            if calculate_SWE_maximum.upper() == 'TRUE':
+                fieldDict.update({'SWEMax_mm': 'SNODAS_SWE_Max_mm', 'SWEMax_in': 'SNODAS_SWE_Max_in'})
+
+            if calculate_SWE_stdDev.upper() == 'TRUE':
+                fieldDict.update({'SWESDev_mm': 'SNODAS_SWE_StdDev_mm', 'SWESDev_in': 'SNODAS_SWE_StdDev_in'})
+
+            for key, value in fieldDict.items():
+                index = vectorFile_GeoJson.dataProvider().fieldNameIndex(key)
+                vectorFile_GeoJson.dataProvider().renameAttributes({index: value})
+
+            # Update the changes to the field names and remove the intermediate GeoJSON file (with shapefile fieldnames)
+            vectorFile_GeoJson.updateFeature(feature)
+            vectorFile_GeoJson.updateFields()
+            os.remove(int_geojson_name_full)
+
+            # Export geojson. (layer, full output pathname, file encoding, destination reference system,
+            # output file type, layer options (GeoJSON): number of decimal places used in GeoJSON geometry)
+            QgsVectorFileWriter.writeAsVectorFormat(vectorFile_GeoJson, geojson_name_full, "utf-8",
+                                                    QgsCoordinateReferenceSystem(output_CRS), "GeoJSON",
+                                                    layerOptions=['COORDINATE_PRECISION=%s' % geoJSON_precision])
+
+
+
 
             # Delete attribute fields of the shapefile related to the daily calculated zonal statistics.
             listOfFieldNames = ['SWEMean_mm', 'SCover_pct', 'SWEMean_in', 'Area_sqmi', 'SWEVolC_af', 'SWEVol_af']
@@ -1375,6 +1422,8 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                     csvwriter.writerow(row)
             csvfile.close()
 
+
+
             # Return working directory back to its original setting before the script began.
             os.chdir(currdir)
 
@@ -1387,13 +1436,25 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             logger.info('zStat_and_export: %s is not a .tif file and the zonal statistics were not processed.' % file)
 
 def create_SNODAS_SWE_graphs():
+    """Create, or update, the snowpack time series graphs from the by basin data."""
+
+    # Refer to configuration file. If true, update the time series graphs weekly. If false, update the TS graphs daily.
     if weekly_update.upper() == 'TRUE':
+
+        # Check that today is the set weekday to update the time series graphs.
         if str(datetime.today().weekday()) == str(weekly_update_date):
-            logger.info('create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS SWE graphs. TsTool file pathname: %s' % TsToolCreateTimeSeries)
-            print 'Running TsTool file to create SNODAS SWE graphs. TsTool file pathname: %s' % TsToolCreateTimeSeries
+
+            logger.info('create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS SWE graphs. TsTool '
+                        'file pathname: %s' % TsToolCreateTimeSeries)
+
+            # Run the TsTool command file, 'TsToolCreateTimeSeries', in the background. Wait for the subprocess
+            # to complete before continuing.
             Popen([TsToolInstall, '-commands', TsToolCreateTimeSeries]).wait()
     else:
         logger.info(
-            'create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS SWE graphs. TsTool file pathname: %s' % TsToolCreateTimeSeries)
-        print 'Running TsTool file to create SNODAS SWE graphs. TsTool file pathname: %s' % TsToolCreateTimeSeries
+            'create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS SWE graphs. TsTool '
+            'file pathname: %s' % TsToolCreateTimeSeries)
+
+        # Run the TsTool command file, 'TsToolCreateTimeSeries', in the background. Wait for the subprocess
+        # to complete before continuing.
         Popen([TsToolInstall, '-commands', TsToolCreateTimeSeries]).wait()
