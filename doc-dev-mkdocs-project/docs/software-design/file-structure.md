@@ -295,7 +295,7 @@ of the daily SNODAS data grids (defaulted to WGS84).
 ### SNODASTools\\processedData\\
 
 All output products of ```SNODASDaily_Automated.py``` and ```SNODASDaily_Interactive.py``` are saved within the processedData\ folder. 
-For each processed day of data, 8 output products are created. To see a larger view of the images below, right-click on the image and 
+For each processed day of data, 12 output products are created. To see a larger view of the images below, right-click on the image and 
 click *Open image in new tab*.
 
 1. The originally downloaded national SNODAS .tar file  

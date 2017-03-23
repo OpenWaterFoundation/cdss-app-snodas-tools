@@ -10,6 +10,7 @@ The following topics are discussed in this section:
 * [Handling Missing Values](#handling-missing-snodas-values)
 * [Handling Elevation Zones](#handling-elevation-zones)
 * [Handling the One Week Change in Total Snow Volume Statistic](#handling-the-one-week-change-in-total-snow-volume-statistic)
+* [Creating the basin boundary GeoJSON file for the Web Application](#creating-the-basin-boundary-geojson-file-for-the-web-application)
 
 
 # Handling Overlapping Basin Boundaries
@@ -120,3 +121,39 @@ Snow Volume* will be filled with ```NULL```.
 If one is using the SNODAS Tools to populate the repository of all available historical data, then the SNODAS Tools MUST be run from the 
 most historical date to the most recent date. If the SNODAS Tools are run in sections starting with the most recent data, some *One Week 
 Change in Total Snow Volume* statistics will not be calculated. 
+
+# Creating the basin boundary GeoJSON file for the Web Application
+
+The web application for the Colorado data uses Leaflet to dispaly a choropleth map of the daily snopwack statistics. In building the web application,
+a GeoJSON file of the basin boundary shapefile is required. This GeoJSON file provides the geometry for the basin boundaries that are displayed in 
+the web application. The snowpack statistics are imported from the daily csv files (organized by date) and are appended to the GeoJSON file by the foreign key, LOCAL_ID.
+
+If the [watershed basin shapefile input](file-structure.md#snodastools92staticdata92) is changed, the basin boundary GeoJSON file must be recreated and 
+reloaded into the web application. Below are the step-by-step instructions on how to create a GeoJSON file from an exisiting shapefile. 
+
+1. Open QGIS Desktop. 
+ <center>![QGIS Desktop](key-processing-images/0_Qgis.png)</center>   
+2. Add the basin boundary shapefile layer. Click _Layer_ in the top menu bar. Mouse-over _Add Layer >_ and click _Add Vector Layer…_. 
+ <center>![Add Vector Layer](key-processing-images/1_AddVL.png)</center>  
+ Browse to the basin boundary shapefile layer and click _Open_.
+3. The shapefile should display in the main screen and the layer name should appear in the Layers Panel in the left side-panel. 
+ <center>![Shapefile in Desktop](key-processing-images/2_Shapefile.png)</center> 
+4. Right-click on the layer name in the Layers Panel. A pop-up menu will appear. Click _Save As…_
+ <center>![Save As](key-processing-images/3_SaveAs.png)</center> 
+5. The _Save vector layer as …_ window will appear. 
+ <center>![Save VL As Window](key-processing-images/4_SaveVLas.png)</center> 
+
+ Change the following settings and then click _OK_
+
+|Setting|Change to:|
+|-|-|
+|Format|GeoJSON|
+|Save as |Browse to storage location and give the GeoJSON an appropriate name.|
+|CRS|Browse to desired output coordinate reference system.  Ensure CRS is WGS84 EPSG:4326 if using the GeoJSON in Leaflet application.|
+|Layer Options-Coordinate_Precision|Set to 5 or other desired output coordinate precision.|
+|Select fields to export and their export options |Optional. Default exports all attribute fields. Deselect attribute fields that are not be included in the final GeoJSON output.|
+
+
+
+
+ 
