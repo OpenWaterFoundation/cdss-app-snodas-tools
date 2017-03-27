@@ -259,7 +259,7 @@ This grid is created by iterating through the cells of the daily clipped SNODAS 
 |equal to -9999 (null value)|-9999 (null value)|
 
 The daily binary snow cover .tif grids are saved in the 4_CreateSnowCover folder. Refer to the [File Structure](file-structure.md#processeddata924_createsnowcover92) section 
-for more information regarding the binary snow cover .tif files and the 4_CreateSnowCover folder. Refer to [Tool Utilities and Functions](#4-create-the-binary-snow-cover-raster)
+for more information regarding the binary snow cover .tif files and the 4_CreateSnowCover folder. Refer to the [Tool Utilities and Functions](#4-create-the-binary-snow-cover-raster)
 section for detailed information on the Python functions called to create the daily binary snow cover grids.
 
 ![snowcover-workflow](overview-images/workflow_snowcover.png)
@@ -306,18 +306,22 @@ Time series graphs of the snowpack statistics are created with [TSTool](../dev-e
 [watershed basin boundary shapefile](file-structure.md#snodastools92staticdata92). Each time series graph displays the change in a snowpack 
 statistic over time. 
 
-|<center>The snowpack statistics displayed with the time series graphs are:|
-|-|
-|<center>Mean Snow Water Equivalent (inches)|
-|<center>Percent of Snow Cover|
-|<center>SWE Volume (acft)|
-|<center>1 Week Change in SWE Volume (acft)|
+
+|Snowpack Statistic|Range of Dates in the Time Series Graph|
+|-|-|
+|Mean Snow Water Equivalent (inches)|All processed historical dates.|
+|Percent of Snow Cover|All processed historical dates <br> from *current water year*.|
+|SWE Volume (acft)|All processed historical dates.|
+|1 Week Change in SWE Volume (acft)|All processed historical dates.|
+
 
 **Mean Snow Water Equivalent**  
 
 ![timeseries-mean](overview-images/TSGraph_mean.png)
 
 **Percent of Snow Cover**  
+
+The time series graph representing a basin's change in percent of snow cover is the only graph solely containg data from the current year. 
 
 ![timeseries-snowcover](overview-images/TSGraph_snowcover.png)
 
@@ -329,7 +333,21 @@ statistic over time.
 
 ![timeseries-changeInVolume](overview-images/TSGraph_changeInVolume.png)
 
-**TODO smalers 2016-12-06 need to fill this in...describe how to run Python program and what it does**
+The time series graphs take approximately 3 minutes to create/update, given the 332 basins of the Colorado [watershed basin input shapefile](file-structure.md#snodastools92staticdata92).  
+
+ - *Note:* A watershed basin input shapefile with *less* features will processes quicker. Similarily so, a watershed basin input shapefile with 
+*more* features will have process slower.     
+
+The SNODAS Tools, therefore, have a configuration setting to allow flexibilty on when the time series graphs are updated. By default,
+the time series graphs are updated every Monday. The user can choose to update the time series daily or weekly (with a different update day of the week.) Refer to the 
+[configuration file](file-structure.md#snodastools92snodas-tools-configini) for more specifics on these settings. 
+
+Refer to the [File Structure](file-structure.md#processeddata926_createtimeseriesproducts92) section 
+for more information regarding the time series .png files and the 6_CreateTimeSeriesProducts folder. Refer to the 
+[Tool Utilities and Functions](#5-calculate-and-export-zonal-statistics)
+section for detailed information on the Python functions called to create the daily binary snow cover grids. Refer to the
+ [6.create-snodas-swe-graphs.TsTool](file-structure/#snodastools92bin92) section for information about the TsTool command file 
+ used to create the time series graphs.  
 
 ![timeseries-workflow](overview-images/workflow_timeseries.png)
 
@@ -350,7 +368,7 @@ function categories are:
 |2. Convert Data Formats|Converts data into useable formats for statistical processing.|<center>9|
 |3. Clip and Project SNODAS Data|Clips and projects SNODAS raster data for statistical processing.|<center>5|
 |4. Create Snow Cover Data|Creates a new binary raster representing presence or absence of snow.|<center>1|
-|5. Calculate and Export Statistics|Calculates zonal statistics and exports statistics into .csv files, .GeoJSON files and shapefiles. Time series graphs of the snowpack statistics are also created.|<center>4|
+|5. Calculate and Export Statistics|Calculates zonal statistics and exports statistics into .csv files, .GeoJSON files and shapefiles. Time series graphs of the snowpack statistics are also created.|<center>5|
 
 
 ### 1. Download SNODAS Data
@@ -525,9 +543,9 @@ function categories are:
 1.	__create_csv_files (file, vFile, csv_byDate, csv_byBasin)__   
 	 Create empty csv files for output - both by date and by basin. The empty csv files have a header row with
      each column represented by a different field name (refer to 'fieldnames' section of the function for actual
-     fieldnames). Csv files by date contain one .csv file for each date and is titled 'SnowpackByDate_YYYYMMDD.csv'.
+     fieldnames). Csv files by date contain one .csv file for each date and is titled 'SnowpackStatisiticsByDate_YYYYMMDD.csv'.
      Each byDate file contains the zonal statistics for each basin on that date. Csv files by basin contain one .csv
-     file for each watershed basin and is titled 'SnowpackByBasin_BasinId)'. Each byBasin file contains the zonal
+     file for each watershed basin and is titled 'SnowpackStatisticsByBasin_LOCALID)'. Each byBasin file contains the zonal
      statistics for that basin for each date that has been processed. 
 
 	Arguments:
@@ -551,9 +569,9 @@ function categories are:
 		stats calculations)
 		csv_byBasin: full pathname of folder containing the results by basin (.csv file)
 		
-3. __zStat_and_export (file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow)__  
+3. __zStat_and_export (file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, today_date, timestamp, output_CRS_EPSG)__  
 	Calculate zonal statistics of basin boundary shapefile and the current file. The zonal stats export to
-	both the byDate and the byBasin csv files.
+	both the byDate and the byBasin csv files. Statistics are also exported as spatial data in GeoJSON and shapefile format. 
     
 	 
 	 Arguments: 
@@ -567,6 +585,29 @@ function categories are:
 		DirClip: full pathname to the folder containing all daily clipped, Albers Equal Area .tif 
 		SNODAS rasters
 		DirSnow: full pathname to the folder containing all binary snow coverage rasters
+		today_date: date of processed SNODAS data in datetime format
+		timestamp: the download timestamp in datetime format (returned in download_SNODAS function)
+		output_CRS_EPSG: the desired projection of the output shapefile and geoJSON
+		(configured in configuration file)
 
-4. __create_SNODAS_SWE_graphs()__  
-	Create, or update, the snowpack time series graphs from the by basin data. No arguments. 
+		
+4. __zipShapefile(file, csv_byDate, delete_original)__  
+	Zip output shapefile files by date. If configured, delete the remaining unzipped shapefile files. 
+	
+	Arguments: 
+	
+		file: the output shapefile (any extension). All other extensions will be included by means of the
+		function.
+		csv_byDate: full pathname of folder containing the results by date (.csv files, GeoJSON,
+		and shapefiles)
+		delete_original: boolean string to determine if the original unzipped shapefile files
+		should be deleted  
+		
+		
+5. __create_SNODAS_SWE_graphs()__  
+	Create, or update, the snowpack time series graphs from the by basin data. Option to update 
+	daily or weekly depending on the settings of the configuration file.   
+	
+	Arguments: 
+	
+		None
