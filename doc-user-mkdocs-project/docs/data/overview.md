@@ -10,7 +10,7 @@ The following topics are discussed in this section:
 
 # Overview
 
-The SNODAS Tools calculate snow pack statistics based on the published values of the SNOw Data Assimilation System 
+The SNODAS Tools calculate snowpack statistics based on the published values of the SNOw Data Assimilation System 
 (SNODAS) national data grids. 
 
 ## SNODAS Data Grids
@@ -23,18 +23,18 @@ relevant information regarding this specific project will be explained. All of t
 in detail at
 [http://nsidc.org/data/docs/noaa/g02158_snodas_snow_cover_model/](http://nsidc.org/data/docs/noaa/g02158_snodas_snow_cover_model/).
 
-Multiple national raster grids have been and continue to be created for each day. 
+NOHRSC creates multiple national SNODAS raster grids each day.  
 
 |<center>The 8 parameters of SNODAS data <br> that are produced daily:|
 |-----|
 |Snow Water Equivalent (SWE)|
 |Snow Depth|
-|Snow Melt Runoff at the Base of Snow Pack|
-|Sublimation from the Snow Pack|
+|Snow Melt Runoff at the Base of snowpack|
+|Sublimation from the snowpack|
 |Sublimation of Blowing Snow|
 |Solid Precipitation|
 |Liquid Precipitation|
-|Snow Pack Average Temperature|
+|snowpack Average Temperature|
 
 For the purpose of this project, the only parameter of interest is Snow Water Equivalent (SWE). The daily SWE grid values are
 snapshots of SWE for a specific date at *6:00 AM UTC* (*11:00 PM previous day MST*). Below is an image of a daily SNODAS grid
@@ -78,7 +78,9 @@ naming convention of ```SNODAS_YYYYMMDD.tar``` where YYYYMMDD represents the dat
 
 ![FTPday](overview-images/dayDirectory.png)
 
-**TODO smalers 2016-12-10 provide SNODAS resources and links and explain generally what SNODAS is,
+**TODO smalers 2016-12-10 explain the difference between SNODAS and SNOTEL data**  
+
+  - **provide SNODAS resources and links and explain generally what SNODAS is,
 as well as benefits and limitations, mention that SNODAS is distributed whereas SNOTEL and snow course are measurements at sites.
 Note that people want to correlate SNOTEL with SNODAS but that can be difficult.
 Explain how SNODAS model and data file format has changed over time and this project converts to consistent format.
@@ -94,7 +96,7 @@ and the values are defined by a raster grid. The raster grid is [the daily
 SNODAS SWE grid](#snodas-data-grids). The input zone dataset is a watershed basin boundary shapefile. One set of daily
 snowpack statistics is calculated for each basin, or feature, of the watershed basin boundary shapefile. 
 
-The SNODAS tools were originally designed to calculate snowpack statistics of the basins of Colorado. The
+The SNODAS Tools were originally designed to calculate snowpack statistics of Colorado basins. The
 next section explains the specifications of the original Colorado watershed basin boundary shapefile. 
 
 ### Colorado Basins
@@ -102,10 +104,10 @@ next section explains the specifications of the original Colorado watershed basi
 ![CoBasins](overview-images/COBasins.png)
 
 **TODO smalers 2016-12-11 explain that basins are small HUC-?? and align with National Weather Service (NWS) forecast basins.
-Smaller basins are aggregated to larger totals.
-Elevation zones are used in the basins included in the Northern Colorado Water Conservancy District boundary (Upper Colorado and Poudre Basins),
+Smaller basins are aggregated to larger totals. Elevation zones are used in the basins included in the Northern Colorado Water Conservancy District boundary (Upper Colorado and Poudre Basins),
 and are also accumulated to produce a total for a basin.  Provide a screen shot and ability to download.**
-The basin boundaries for Colorado were defined using input from four NWS River Forecast Centers.
+
+The basin boundaries for Colorado were defined using input from five NWS River Forecast Centers.
 The separate boundary spatial data layers were adjusted to ensure that basin boundaries did not overlap or have gaps.
 This ensures that SNODAS values are not under or over-counted.
 Where adjustments were made, edits were documented in the **TODO smalers need to indicate how the edits are tracked**.

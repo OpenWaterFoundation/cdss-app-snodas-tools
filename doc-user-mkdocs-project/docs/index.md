@@ -13,13 +13,28 @@ for the [Colorado Water Conservation Board](http://cdss.state.co.us).
 
 ## Overview of SNODAS Tools
 
-The SNODAS Tools calculate daily approximate snowpack zonal statistics of a given input basin boundary shapefile. They estimate 
-daily mean Snow Water Equivalence (SWE), daily minimum SWE, daily maximum SWE, daily SWE standard deviation, pixel count of the basin (with respect 
-to the properties of the SNODAS raster), and daily percentage of land covered by snow. The results of the toolset can be manipulated to produce 
-visually-enticing choropleth maps displaying the various snowpack statistics. Graphs can also be formed to display temporal changes in the SWE statistics 
-across the landscape. These two final visual products are available to display the snowpack landscape over space and time. 
+The SNODAS Tools calculate daily approximate snowpack zonal statistics of a given input basin boundary shapefile. For each feature, or basin, of the 
+input basin boundary shapefile, the SNODAS Tools estimate the following statistics:
 
-Although the toolset was specifically designed for Colorado watersheds, it can also be utilized to estimate the snowpack statistics of any area in the 
+|<center>Daily Statistic|<center>Default <br> or <br> Optional</center>|<center>Description|<center>Units|
+|-|-|-|-|
+|Mean Snow Water Equivalent (SWE)|Default|The mean amount of water contained within the snowpack.|Inches and Millimeters|
+|Effective Area|Default|The approximate area excluding large bodies of water.|Square Miles|
+|Percent of Snow Cover|Default|The percent of effective area covered by snow.|unitless|
+|Snow Volume|Default|The amount of water contained in the entire basin's snowpack. Calculated by multiplying the daily mean SWE value by the daily effective area value.|Acre Feet|
+|1 Week Change in Snow Volume|Default|The difference in the current snow volume value from the snow volume value calculated 7 days prior. If positive, the snowpack volume has increased. If negative, the snowpack volume has decreased.| Acre Feet|
+|Minimum SWE|Optional|The daily minimum SWE value.| Inches and Millimeters|
+|Maximum SWE|Optional|The daily maximum SWE value.|Inches and Millimeters|
+|Standard Deviation of SWE|Optional|A measurement of variation in the basin's daily SWE values.|Inches and Millimeters|
+
+*Note* - *The optional statistics will not be calculated unless they are configured in the [configuration file](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/file-structure/#snodastools92snodasconfigini)
+prior to utilizing the SNODAS Tools.*
+
+The results of the SNODAS Tools can be manipulated to produce 
+visually-enticing choropleth maps displaying the various snowpack statistics. The SNODAS tools also create time-series graphs
+displaying changes in the snowpack statistics over time.  
+
+Although the SNODAS Tools were specifically designed for Colorado watersheds, they can be utilized to estimate the snowpack statistics for any area in the 
 contiguous United States (the bounds of the masked SNODAS data limit the extent of statistical processing – see [SNODAS Data](../data/overview#snodas-data-grids)). 
 
 ## About the Colorado Water Conservation Board
