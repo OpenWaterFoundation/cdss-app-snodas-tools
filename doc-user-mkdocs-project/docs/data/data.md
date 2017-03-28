@@ -146,7 +146,7 @@ The Colorado watershed basin shapefile, as well as the original source data file
 
 |Layer|File Format|Download Link|
 |-|-|-|
-|Final Colorado Watershed Basin Input|Shapefile (.zip)|[Final CCO Watershed Basin Shapefile](http://projects.openwaterfoundation.org/owf-proj-co-cwcb-2016-snodas/prototype/StaticData/SNODAS_CO_BasinBoundaries.zip)|
+|Final Colorado Watershed Basin Input|Shapefile (.zip)|[Final CO Watershed Basin Shapefile](http://projects.openwaterfoundation.org/owf-proj-co-cwcb-2016-snodas/prototype/StaticData/SNODAS_CO_BasinBoundaries.zip)|
 |Final Colorado Watershed Basin Input|.GeoJSON|[Final CO Watershed Basin GeoJSON](http://projects.openwaterfoundation.org/owf-proj-co-cwcb-2016-snodas/prototype/json/SNODAS_geometry.geojson)|
 |Original Basin Layer - ABRFC|Shapefile (.tar.gz)|[Original Basin Layer - ABRFC](https://www.nohrsc.noaa.gov/data/vector/master/b_abrfc.tar.gz)|
 |Original Basin Layer - CBRFC|Shapefile (.tar.gz)|[Original Basin Layer - CBRFC](http://www.cbrfc.noaa.gov/downloads/files/gis/cbrfcBasins20110601.tar.gz)|

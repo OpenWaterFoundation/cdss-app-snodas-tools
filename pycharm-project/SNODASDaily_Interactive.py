@@ -397,6 +397,7 @@ if __name__ == "__main__":
                             SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
                             break
 
+
                 # The time series graphs will only be produced after the last date of data is processed.
                 if current == endDate.date():
                     SNODAS_utilities.create_SNODAS_SWE_graphs()

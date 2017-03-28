@@ -8,8 +8,8 @@ The following topics are discussed in this section:
  - [2. Clip National SNODAS Grid to Colorado](#2-clip-national-snodas-grid-to-colorado)
  - [3. Intersect SNODAS Colorado Grid with Colorado Basins and Calculate Statistics](#3-intersect-snodas-colorado-grid-with-colorado-basins-and-calculate-statistics)
  - [4. Generate Time Series Snowpack Products](#4-generate-time-series-snowpack-products)
-	- [Snowpack Statistics Exported as Tabular Data](#snowpack-statistics-in-tables)
-	- [Snowpack Statistics Exported as Spatial Data](#snowpack-statistics-in-choropleth-maps)
+	- [Snowpack Statistics Exported as Tabular Data](#snowpack-statistics-exported-as-tabular-data)
+	- [Snowpack Statistics Exported as Spatial Data](#snowpack-statistics-exported-as-spatial-data)
 	
 # 1. Download SNODAS Data
 
@@ -24,7 +24,7 @@ contain many grids of snowpack parameters, the SNODAS Tools are designed to spec
 Water Equivalent (SWE) grid. Below is an image of a daily SNODAS grid representing SWE values across the nation. The areas of higher SWE are represented 
 by blue while the areas with lower, or no SWE values, are represented by brown. 
 
-![nationalSNODASgrid](overview-images/nationalTIF.png)
+![nationalSNODASgrid](processing-steps-images/nationalTIF.png)
 *SNODAS Snow Water Equivalent Masked Grid for January 16th, 2017*
 
 
@@ -66,16 +66,16 @@ downloaded daily national grids are clipped to a boundary that contains the exte
 Note that some of the Colorado basins extend beyond the Colorado state boundary. Therefore,
 the Colorado basin extent extends partially into other states. 
 
-![COBasins](overview-images/CO_basin_boundaries.png)
+![COBasins](processing-steps-images/CO_basin_boundaries.png)
 *Above: The Colorado basins displayed in green. The outline of the Colorado state boundary is overlaid in balck.*
 
-![COExtent](overview-images/CO_basin_extent.png)
+![COExtent](processing-steps-images/CO_basin_extent.png)
 *Above: The Colorado basin extent displayed in green. The outline of the Colorado basins are overlaid in black.*
 
-![NationalGridWithExtentOverlay](overview-images/nationalWExtent.png)
+![NationalGridWithExtentOverlay](processing-steps-images/nationalWExtent.png)
 *Above: The SNODAS Snow Water Equivalent Masked Grid for January 16th, 2017 with the Colorado basin extent outline overlaid in black.*
 
-![ClippedSWEtoColorado](overview-images/clipSWE.png)
+![ClippedSWEtoColorado](processing-steps-images/clipSWE.png)
 *Above: The SNODAS Snow Water Equivalent Grid for January 16th, 2017 clipped to the Colorado basin extent. 
 
 For a more detailed description on the clipping of the SNODAS daily grids 
@@ -125,7 +125,7 @@ Below is an example of the Colorado snowpack statistics organized by date CSV fi
 Right-click on the image and click *Open image 
 in new tab* to see a larger view. The red circle indicates the date column. Note that the date is unchanging throughout the entire CSV file. 
 
-![StatsByDate](overview-images/statsbydate.png)
+![StatsByDate](processing-steps-images/statsbydate.png)
 
 **Colorado Snowpack Statistics organized By Basin**  
 In this repository a separate csv file is 
@@ -140,7 +140,7 @@ Right-click on the
 image and click *Open image in new tab* to see a larger view. The red circle indicates the 
 unique Colorado basin ID (LOCAL_ID). Note that the LOCAL_ID is unchanging throughout the entire CSV file. 
 
-![StatsByBasin](overview-images/statsbybasin.png)
+![StatsByBasin](processing-steps-images/statsbybasin.png)
 
 ## Snowpack Statistics Exported as Spatial Data
 
@@ -156,10 +156,10 @@ per default snowpack statistic).
 
 
 1. Mean Snow Water Equivalent (SWE), inches
-![Time Series Graph - SWE Mean](overview-images/TSGraph_mean.png)
+![Time Series Graph - SWE Mean](processing-steps-images/TSGraph_mean.png)
 2. Snow Coverage, percent - This time series graph is the only graph that excludes past years of snowpack data.  
-![Time Series Graph - Percent Snow Cover](overview-images/TSGraph_snowcover.png)
+![Time Series Graph - Percent Snow Cover](processing-steps-images/TSGraph_snowcover.png)
 3. SWE Volume, acre feet
-![Time Series Graph - Volume](overview-images/TSGraph_volume.png)
+![Time Series Graph - Volume](processing-steps-images/TSGraph_volume.png)
 4. 1 Week Change in SWE Volume, acre feet
-![Time Series Graph - Change in Volume](overview-images/TSGraph_changeInVolume.png)
+![Time Series Graph - Change in Volume](processing-steps-images/TSGraph_changeInVolume.png)

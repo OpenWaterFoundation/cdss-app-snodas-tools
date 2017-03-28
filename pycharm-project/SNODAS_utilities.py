@@ -126,6 +126,8 @@ def download_SNODAS(downloadDir, singleDate):
     day = singleDate.strftime('%d')
 
     # Iterate through files in FTP folder and save singleDate's data as a file in download folder
+    # Create empty list to track if a download is available
+    no_download_available = []
     filenames = ftp.nlst()
     for file in filenames:
         if file.endswith('%s.tar' % day):
@@ -133,9 +135,22 @@ def download_SNODAS(downloadDir, singleDate):
             ftp.retrbinary('RETR ' + file, localfile.write, 1024)
 
             logger.info('download_SNODAS: Downloaded %s' % singleDate)
+            # If SNODAS data is available for download, append a '1'
+            no_download_available.append(1)
+        else:
+            # If SNODAS data is not available for download, append a '0'
+            no_download_available.append(0)
+
 
     logger.info('download_SNODAS: Finished %s \n' % singleDate)
-    print 'Download complete for %s.' % singleDate
+    # Report error if download marker '1' is not in the list
+    if 1 not in no_download_available:
+        logger.error('ERROR: download_SNODAS: Download unsuccessful for %s' % singleDate)
+        logging.error('ERROR: download_SNODAS: Download unsuccessful for %s' % singleDate)
+    # Report success if download marker '1' is in the list
+    else:
+        print 'Download complete for %s.' % singleDate
+        logger.info('download_SNODAS: Download complete for %s.' % singleDate)
 
     # Retrieve a timestamp to later export to the statistical results
     timestamp = datetime.now().isoformat()
@@ -725,8 +740,8 @@ def snowCoverage(file, folder_input, folder_output):
         # Check for previous processing of file.
         if os.path.exists(file_full_output_snow):
 
-            logger.warning('snowCoverage: WARNING: %s has been previously created. Overwriting the file now.' % snow_file)
-            logging.warning('snowCoverage: WARNING: %s has been previously created. Overwriting the file now.' % snow_file)
+            logger.warning('snowCoverage: WARNING: %s has been previously created. Overwriting.' % snow_file)
+            logging.warning('snowCoverage: WARNING: %s has been previously created. Overwriting.' % snow_file)
 
         logger.info('snowCoverage: Enveloping %s as a QGS raster object layer' % file)
 
@@ -998,7 +1013,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
     DirSnow: full pathname to the folder containing all binary snow coverage rasters
     today_date: date of processed SNODAS data in datetime format
     timestamp: the download timestamp in datetime format (returned in download_SNODAS function)
-    output_CRS_EPSG: the desired projeciton of the output shapefile and geoJSON (configured in configuration file)"""
+    output_CRS_EPSG: the desired projection of the output shapefile and geoJSON (configured in configuration file)"""
 
     # Create empty dictionary to hold the zonal statistic outputs before they are written to the .csv files.
     # Shapefiles have a limited number of fields available in the attribute table so the statistics must be calculated,
@@ -1078,24 +1093,24 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             # ('None' for outputs of zonal statistics because a new field does not need to be created)]
             OutputDict = {ID_Field_Name: [ID_Field_Name, 'None'],
                           'LOCAL_NAME': ['LOCAL_NAME', 'None'],
-                          'SNODAS_SWE_Mean_in': ['SWEMean_in', QVariant.Int],
+                          'SNODAS_SWE_Mean_in': ['SWEMean_in', QVariant.Double],
                           'SNODAS_SWE_Mean_mm': ['SWE_mean', 'None'],
-                          'SNODAS_EffectiveArea_sqmi': ['Area_sqmi', QVariant.Int],
+                          'SNODAS_EffectiveArea_sqmi': ['Area_sqmi', QVariant.Double],
                           'SNODAS_SWE_Volume_acft': ['SWEVol_af', QVariant.Int],
                           'SNODAS_SWE_Volume_1WeekChange_acft': ['SWEVolC_af', QVariant.Int],
-                          'SNODAS_SnowCover_percent': ['SCover_pct',QVariant.Int]}
+                          'SNODAS_SnowCover_percent': ['SCover_pct',QVariant.Double]}
 
             if calculate_SWE_minimum.upper() == 'TRUE':
                 OutputDict.update({'SNODAS_SWE_Min_mm': ['SWE_min', 'None'],
-                                   'SNODAS_SWE_Min_in': ['SWEMin_in', QVariant.Int]})
+                                   'SNODAS_SWE_Min_in': ['SWEMin_in', QVariant.Double]})
 
             if calculate_SWE_maximum.upper() == 'TRUE':
                 OutputDict.update({'SNODAS_SWE_Max_mm': ['SWE_max', 'None'],
-                                   'SNODAS_SWE_Max_in': ['SWEMax_in', QVariant.Int]})
+                                   'SNODAS_SWE_Max_in': ['SWEMax_in', QVariant.Double]})
 
             if calculate_SWE_stdDev.upper() == 'TRUE':
                 OutputDict.update({'SNODAS_SWE_StdDev_mm': ['SWE_stdev', 'None'],
-                                   'SNODAS_SWE_StdDev_in': ['SWESDev_in', QVariant.Int]})
+                                   'SNODAS_SWE_StdDev_in': ['SWESDev_in', QVariant.Double]})
 
             # Create new fields in shapefile attribute table. Ignore fields that are already populated by zstats plugin.
             for key, value in OutputDict.items():
@@ -1283,7 +1298,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
 
                 # Export the daily date array to a .csv file. Overwrite the .csv file if it already exists.
                 # Reference: http://stackoverflow.com/questions/28555112/export-a-simple-dictionary-into-excel-file-in-python
-                with open(results_basin, 'ab') as csvfile:
+                with open(results_basin, 'a') as csvfile:
                     csvwriter = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
                     for row in array_basin:
                         csvwriter.writerow(row)
@@ -1325,7 +1340,8 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                 indexForSStdDev = vectorFile.dataProvider().fieldNameIndex('SWE_stdev')
                 vectorFile.dataProvider().renameAttributes({indexForSStdDev: 'SWESDev_mm'})
 
-            vectorFile.updateFeature(feature)
+            vectorFile.updateFields()
+            vectorFile.commitChanges()
 
 
             # Export geojson and shapefile. (layer, full output pathname, file encoding, destination reference system,
@@ -1343,8 +1359,6 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             os.rename(geojson_name_full, int_geojson_name_full)
 
             vectorFile_GeoJson = QgsVectorLayer(int_geojson_name_full, 'GeoJsonStatistics', 'ogr')
-
-            if vectorFile_GeoJson.isValid() == True:
 
             # Open vectorFile for editing
             vectorFile_GeoJson.startEditing()
@@ -1368,9 +1382,8 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                 vectorFile_GeoJson.dataProvider().renameAttributes({index: value})
 
             # Update the changes to the field names and remove the intermediate GeoJSON file (with shapefile fieldnames)
-            vectorFile_GeoJson.updateFeature(feature)
             vectorFile_GeoJson.updateFields()
-            os.remove(int_geojson_name_full)
+            vectorFile_GeoJson.commitChanges()
 
             # Export geojson. (layer, full output pathname, file encoding, destination reference system,
             # output file type, layer options (GeoJSON): number of decimal places used in GeoJSON geometry)
@@ -1378,7 +1391,9 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                                                     QgsCoordinateReferenceSystem(output_CRS), "GeoJSON",
                                                     layerOptions=['COORDINATE_PRECISION=%s' % geoJSON_precision])
 
-
+            # Close the vectorFile_GeoJSON so that the vectorFile can open
+            os.remove(int_geojson_name_full)
+            vectorFile.startEditing()
 
 
             # Delete attribute fields of the shapefile related to the daily calculated zonal statistics.
@@ -1396,6 +1411,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
 
             # Update shapefile with its newly-deleted attribute fields.
             vectorFile.updateFields()
+            vectorFile.commitChanges()
 
             # Create a string variable to be used as the title for the outputed .csv file - By Date
             results_date = 'SnowpackStatisticsByDate_' + date_name + '.csv'

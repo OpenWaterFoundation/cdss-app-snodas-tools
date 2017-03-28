@@ -14,7 +14,8 @@ pages:
   - 'Additional Details' : process/additional-details.md
 - 'SNODAS Tools Products':
   - 'Overview': products/overview.md
-  - 'Products': products/products.md
+  - 'CDSS SNODAS Tools Web Application': products/webApp.md
+  - 'Products and Downloads': products/products.md
 theme: readthedocs
 repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (User Manual) 

@@ -282,6 +282,7 @@ if __name__ == "__main__":
                         SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
                         break
 
+
             # Create SNODAS SWE time series graph with TsTool program.
             TsTool_time_start = time.time()
             SNODAS_utilities.create_SNODAS_SWE_graphs()
@@ -308,15 +309,23 @@ if __name__ == "__main__":
     logger.info('Elapsed time: %d seconds' % elapsed)
     logging.info('Elapsed time: %d seconds' % elapsed)
     print 'Elapsed time: %d minutes and %d seconds \n' % (elapsedMinutes, elapsedSeconds)
-    print 'Percentage of time allocated to each processing step:'
 
-    # Print elapsed times for each processing section
-    section_dict = {' 1 Download':elapsed_download, ' 2 Set Environment':elapsed_setEnvironment, ' 3 Clip and Project':
-        elapsed_clip, ' 4 Create Snow Cover': elapsed_snowCover, ' 5 Create and manipulate CSV files':
-        elapsed_manipulateCSV, ' 6 Calculate and export zonal statistics': elapsed_zStats,
-                    ' 7 Create Time Series Graphs': elapsed_TsTool}
-    for key, value in sorted(section_dict.items()):
-        timePercent = value / elapsed * 100
-        print '%s: %d%% (%d seconds)' % (key, timePercent, value)
+
+    # Only print elapsed time statistics if the file for today was successfully downloaded
+    for file in os.listdir(download_path):
+        if today_date in str(file):
+
+            print 'Percentage of time allocated to each processing step:'
+
+            # Print elapsed times for each processing section
+            section_dict = {' 1 Download':elapsed_download, ' 2 Set Environment':elapsed_setEnvironment,
+                            ' 3 Clip and Project': elapsed_clip, ' 4 Create Snow Cover': elapsed_snowCover,
+                            ' 5 Create and manipulate CSV files': elapsed_manipulateCSV,
+                            ' 6 Calculate and export zonal statistics': elapsed_zStats,
+                            ' 7 Create Time Series Graphs': elapsed_TsTool}
+            for key, value in sorted(section_dict.items()):
+                timePercent = value / elapsed * 100
+                print '%s: %d%% (%d seconds)' % (key, timePercent, value)
+
 
 
