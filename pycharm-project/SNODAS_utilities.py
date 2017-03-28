@@ -1298,7 +1298,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
 
                 # Export the daily date array to a .csv file. Overwrite the .csv file if it already exists.
                 # Reference: http://stackoverflow.com/questions/28555112/export-a-simple-dictionary-into-excel-file-in-python
-                with open(results_basin, 'a') as csvfile:
+                with open(results_basin, 'ab') as csvfile:
                     csvwriter = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
                     for row in array_basin:
                         csvwriter.writerow(row)
