@@ -28,7 +28,7 @@ from shutil import copy
 # Reads the configuration file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
 Config = configparser.ConfigParser()
-Configfile = "../SNODAS-Tools-Config.ini"
+Configfile = "../test-CDSS/config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
 # Create and configures logging file

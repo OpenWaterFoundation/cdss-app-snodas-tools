@@ -1,0 +1,591 @@
+2017-03-29 13:48:33,867 SNODASDailyDownload.py: Started 
+
+2017-03-29 13:48:35,023 format_date_YYYYMMDD: Starting 2017-03-29 13:48:35.023000
+2017-03-29 13:48:35,023 format_date_YYYYMMDD: Finished 2017-03-29 13:48:35.023000 
+
+2017-03-29 13:48:35,023 download_SNODAS: Starting 2017-03-29 13:48:35.023000
+2017-03-29 13:48:35,039 download_SNODAS: Connected to FTP server. Routing to 2017-03-29 13:48:35.023000
+2017-03-29 13:48:43,898 download_SNODAS: Downloaded 2017-03-29 13:48:35.023000
+2017-03-29 13:48:43,898 download_SNODAS: Finished 2017-03-29 13:48:35.023000 
+
+2017-03-29 13:48:43,898 download_SNODAS: Download complete for 2017-03-29 13:48:35.023000.
+2017-03-29 13:48:43,946 untar_SNODAS_file: Starting SNODAS_20170329.tar
+2017-03-29 13:48:44,164 untar_SNODAS_file: SNODAS_20170329.tar has been untarred.
+2017-03-29 13:48:44,164 untar_SNODAS_file: Finished SNODAS_20170329.tar 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv01025SlL00T0024TTNATS2017032905DP001.dat.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv01025SlL00T0024TTNATS2017032905DP001.dat.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv01025SlL00T0024TTNATS2017032905DP001.Hdr.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv01025SlL00T0024TTNATS2017032905DP001.Hdr.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv01025SlL01T0024TTNATS2017032905DP001.dat.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv01025SlL01T0024TTNATS2017032905DP001.dat.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv01025SlL01T0024TTNATS2017032905DP001.Hdr.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv01025SlL01T0024TTNATS2017032905DP001.Hdr.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz has the unique code 1034 and has not been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz has the unique code 1034 and has not been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11036tS__T0001TTNATS2017032905HP001.dat.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11036tS__T0001TTNATS2017032905HP001.dat.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11036tS__T0001TTNATS2017032905HP001.Hdr.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11036tS__T0001TTNATS2017032905HP001.Hdr.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11038wS__A0024TTNATS2017032905DP001.dat.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11038wS__A0024TTNATS2017032905DP001.dat.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11038wS__A0024TTNATS2017032905DP001.Hdr.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11038wS__A0024TTNATS2017032905DP001.Hdr.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11039lL00T0024TTNATS2017032905DP000.dat.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11039lL00T0024TTNATS2017032905DP000.dat.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11039lL00T0024TTNATS2017032905DP000.Hdr.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11039lL00T0024TTNATS2017032905DP000.Hdr.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11044bS__T0024TTNATS2017032905DP000.dat.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11044bS__T0024TTNATS2017032905DP000.dat.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11044bS__T0024TTNATS2017032905DP000.Hdr.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11044bS__T0024TTNATS2017032905DP000.Hdr.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11050lL00T0024TTNATS2017032905DP000.dat.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11050lL00T0024TTNATS2017032905DP000.dat.gz 
+
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: us_ssmv11050lL00T0024TTNATS2017032905DP000.Hdr.gz has been deleted.
+2017-03-29 13:48:44,164 delete_irrelevant_SNODAS_files: Finished us_ssmv11050lL00T0024TTNATS2017032905DP000.Hdr.gz 
+
+2017-03-29 13:48:44,164 extract_SNODAS_gz_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz
+2017-03-29 13:48:44,805 extract_SNODAS_gz_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz has been extracted
+2017-03-29 13:48:44,805 extract_SNODAS_gz_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz 
+
+2017-03-29 13:48:44,805 extract_SNODAS_gz_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz
+2017-03-29 13:48:44,805 extract_SNODAS_gz_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz has been extracted
+2017-03-29 13:48:44,805 extract_SNODAS_gz_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz 
+
+2017-03-29 13:48:44,805 convert_SNODAS_dat_to_bil: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.dat
+2017-03-29 13:48:44,821 convert_SNODAS_dat_to_bil: us_ssmv11034tS__T0001TTNATS2017032905HP001.dat has been converted into .bil format
+2017-03-29 13:48:44,821 convert_SNODAS_dat_to_bil: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.dat 
+
+2017-03-29 13:48:44,821 convert_SNODAS_dat_to_bil: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr
+2017-03-29 13:48:44,821 convert_SNODAS_dat_to_bil: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr is not a .dat file and has not been converted into .bil format
+2017-03-29 13:48:44,821 convert_SNODAS_dat_to_bil: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr 
+
+2017-03-29 13:48:44,821 create_SNODAS_hdr_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.bil
+2017-03-29 13:48:44,821 create_SNODAS_hdr_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.bil now has a created .Hdr file.
+2017-03-29 13:48:44,821 create_SNODAS_hdr_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.bil 
+
+2017-03-29 13:48:44,821 create_SNODAS_hdr_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr
+2017-03-29 13:48:44,821 create_SNODAS_hdr_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr is not a .bil file and an .Hdr component file has not been created.
+2017-03-29 13:48:44,821 create_SNODAS_hdr_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr 
+
+2017-03-29 13:48:44,821 convert_SNODAS_bil_to_tif: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.bil
+2017-03-29 13:48:45,805 convert_SNODAS_bil_to_tif: us_ssmv11034tS__T0001TTNATS2017032905HP001.bil has been converted into a .tif file.
+2017-03-29 13:48:45,805 convert_SNODAS_bil_to_tif: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.bil 
+
+2017-03-29 13:48:45,805 convert_SNODAS_bil_to_tif: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr
+2017-03-29 13:48:45,805 convert_SNODAS_bil_to_tif: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr is not a .bil file and has not been converted into a .tif file.
+2017-03-29 13:48:45,805 convert_SNODAS_bil_to_tif: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr 
+
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.bil
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.bil has been deleted.
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.bil 
+
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr has been deleted.
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr 
+
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.tif
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.tif is not a .bil file or a .hdr file. It has not been deleted.
+2017-03-29 13:48:45,805 delete_SNODAS_bil_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.tif 
+
+2017-03-29 13:50:40,846 SNODASDailyDownload.py: Started 
+
+2017-03-29 13:50:42,003 format_date_YYYYMMDD: Starting 2017-03-29 13:50:42.003000
+2017-03-29 13:50:42,003 format_date_YYYYMMDD: Finished 2017-03-29 13:50:42.003000 
+
+2017-03-29 13:50:42,003 download_SNODAS: Starting 2017-03-29 13:50:42.003000
+2017-03-29 13:50:42,019 download_SNODAS: Connected to FTP server. Routing to 2017-03-29 13:50:42.003000
+2017-03-29 13:50:50,836 download_SNODAS: Downloaded 2017-03-29 13:50:42.003000
+2017-03-29 13:50:50,836 download_SNODAS: Finished 2017-03-29 13:50:42.003000 
+
+2017-03-29 13:50:50,836 download_SNODAS: Download complete for 2017-03-29 13:50:42.003000.
+2017-03-29 13:50:50,851 untar_SNODAS_file: Starting SNODAS_20170329.tar
+2017-03-29 13:50:50,914 untar_SNODAS_file: SNODAS_20170329.tar has been untarred.
+2017-03-29 13:50:50,914 untar_SNODAS_file: Finished SNODAS_20170329.tar 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv01025SlL00T0024TTNATS2017032905DP001.dat.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv01025SlL00T0024TTNATS2017032905DP001.dat.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv01025SlL00T0024TTNATS2017032905DP001.Hdr.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv01025SlL00T0024TTNATS2017032905DP001.Hdr.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv01025SlL01T0024TTNATS2017032905DP001.dat.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv01025SlL01T0024TTNATS2017032905DP001.dat.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv01025SlL01T0024TTNATS2017032905DP001.Hdr.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv01025SlL01T0024TTNATS2017032905DP001.Hdr.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz has the unique code 1034 and has not been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz has the unique code 1034 and has not been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11036tS__T0001TTNATS2017032905HP001.dat.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11036tS__T0001TTNATS2017032905HP001.dat.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11036tS__T0001TTNATS2017032905HP001.Hdr.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11036tS__T0001TTNATS2017032905HP001.Hdr.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11038wS__A0024TTNATS2017032905DP001.dat.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11038wS__A0024TTNATS2017032905DP001.dat.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11038wS__A0024TTNATS2017032905DP001.Hdr.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11038wS__A0024TTNATS2017032905DP001.Hdr.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11039lL00T0024TTNATS2017032905DP000.dat.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11039lL00T0024TTNATS2017032905DP000.dat.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11039lL00T0024TTNATS2017032905DP000.Hdr.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11039lL00T0024TTNATS2017032905DP000.Hdr.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11044bS__T0024TTNATS2017032905DP000.dat.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11044bS__T0024TTNATS2017032905DP000.dat.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11044bS__T0024TTNATS2017032905DP000.Hdr.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11044bS__T0024TTNATS2017032905DP000.Hdr.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11050lL00T0024TTNATS2017032905DP000.dat.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11050lL00T0024TTNATS2017032905DP000.dat.gz 
+
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: us_ssmv11050lL00T0024TTNATS2017032905DP000.Hdr.gz has been deleted.
+2017-03-29 13:50:50,914 delete_irrelevant_SNODAS_files: Finished us_ssmv11050lL00T0024TTNATS2017032905DP000.Hdr.gz 
+
+2017-03-29 13:50:50,914 extract_SNODAS_gz_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz
+2017-03-29 13:50:51,446 extract_SNODAS_gz_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz has been extracted
+2017-03-29 13:50:51,446 extract_SNODAS_gz_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.dat.gz 
+
+2017-03-29 13:50:51,461 extract_SNODAS_gz_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz
+2017-03-29 13:50:51,461 extract_SNODAS_gz_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz has been extracted
+2017-03-29 13:50:51,461 extract_SNODAS_gz_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr.gz 
+
+2017-03-29 13:50:51,461 convert_SNODAS_dat_to_bil: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.dat
+2017-03-29 13:50:51,461 convert_SNODAS_dat_to_bil: us_ssmv11034tS__T0001TTNATS2017032905HP001.dat has been converted into .bil format
+2017-03-29 13:50:51,461 convert_SNODAS_dat_to_bil: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.dat 
+
+2017-03-29 13:50:51,461 convert_SNODAS_dat_to_bil: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr
+2017-03-29 13:50:51,461 convert_SNODAS_dat_to_bil: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr is not a .dat file and has not been converted into .bil format
+2017-03-29 13:50:51,461 convert_SNODAS_dat_to_bil: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr 
+
+2017-03-29 13:50:51,461 create_SNODAS_hdr_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.bil
+2017-03-29 13:50:51,461 create_SNODAS_hdr_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.bil now has a created .Hdr file.
+2017-03-29 13:50:51,461 create_SNODAS_hdr_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.bil 
+
+2017-03-29 13:50:51,461 create_SNODAS_hdr_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr
+2017-03-29 13:50:51,461 create_SNODAS_hdr_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr is not a .bil file and an .Hdr component file has not been created.
+2017-03-29 13:50:51,461 create_SNODAS_hdr_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr 
+
+2017-03-29 13:50:51,461 convert_SNODAS_bil_to_tif: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.bil
+2017-03-29 13:50:51,571 convert_SNODAS_bil_to_tif: us_ssmv11034tS__T0001TTNATS2017032905HP001.bil has been converted into a .tif file.
+2017-03-29 13:50:51,571 convert_SNODAS_bil_to_tif: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.bil 
+
+2017-03-29 13:50:51,571 convert_SNODAS_bil_to_tif: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr
+2017-03-29 13:50:51,571 convert_SNODAS_bil_to_tif: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr is not a .bil file and has not been converted into a .tif file.
+2017-03-29 13:50:51,571 convert_SNODAS_bil_to_tif: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr 
+
+2017-03-29 13:50:51,571 delete_SNODAS_bil_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.bil
+2017-03-29 13:50:51,586 delete_SNODAS_bil_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.bil has been deleted.
+2017-03-29 13:50:51,586 delete_SNODAS_bil_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.bil 
+
+2017-03-29 13:50:51,586 delete_SNODAS_bil_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr
+2017-03-29 13:50:51,586 delete_SNODAS_bil_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr has been deleted.
+2017-03-29 13:50:51,586 delete_SNODAS_bil_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.Hdr 
+
+2017-03-29 13:50:51,586 delete_SNODAS_bil_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.tif
+2017-03-29 13:50:51,586 delete_SNODAS_bil_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.tif is not a .bil file or a .hdr file. It has not been deleted.
+2017-03-29 13:50:51,586 delete_SNODAS_bil_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.tif 
+
+2017-03-29 13:50:51,618 copy_and_move_SNODAS_tif_file: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.tif
+2017-03-29 13:50:51,680 copy_and_move_SNODAS_tif_file: us_ssmv11034tS__T0001TTNATS2017032905HP001.tif has been copied and moved to C:\Users\intern1\cdss-dev\CDSS-SNODAS-Tools\git-repos\cdss-app-snodas-tools\test-CDSS\processedDataUpdated/3_ClipToExtent
+2017-03-29 13:50:51,680 copy_and_move_SNODAS_tif_file: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.tif 
+
+2017-03-29 13:50:51,680 assign_SNODAS_datum: Starting us_ssmv11034tS__T0001TTNATS2017032905HP001.tif
+2017-03-29 13:50:51,789 assign_SNODAS_datum: us_ssmv11034tS__T0001TTNATS2017032905HP001.tif has been assigned projection of EPSG:4326.
+2017-03-29 13:50:51,789 assign_SNODAS_datum: C:\Users\intern1\cdss-dev\CDSS-SNODAS-Tools\git-repos\cdss-app-snodas-tools\test-CDSS\processedDataUpdated/3_ClipToExtent\20170329WGS84.tif has projection None and datum WGS 84
+2017-03-29 13:50:51,789 assign_SNODAS_datum: Finished us_ssmv11034tS__T0001TTNATS2017032905HP001.tif 
+
+2017-03-29 13:50:51,789 SNODAS_raster_clip: Starting 20170329WGS84.tif
+2017-03-29 13:50:51,868 SNODAS_raster_clip: C:\Users\intern1\cdss-dev\CDSS-SNODAS-Tools\git-repos\cdss-app-snodas-tools\test-CDSS\processedDataUpdated/3_ClipToExtent\Clip20170329.tif has projection None and datum WGS 84
+2017-03-29 13:50:51,868 SNODAS_raster_clip: 20170329WGS84.tif has been clipped.
+2017-03-29 13:50:51,868 SNODAS_raster_clip: Finished 20170329WGS84.tif 
+
+2017-03-29 13:50:51,868 assign_SNODAS_projection: Starting Clip20170329.tif
+2017-03-29 13:50:52,102 assign_SNODAS_projection: Clip20170329.tif has been projected from EPSG:4326 to EPSG:102003
+2017-03-29 13:50:52,118 assign_SNODAS_projection: C:\Users\intern1\cdss-dev\CDSS-SNODAS-Tools\git-repos\cdss-app-snodas-tools\test-CDSS\processedDataUpdated/3_ClipToExtent\SNODAS_SWE_ClipAndProj20170329.tif has projection USA_Contiguous_Albers_Equal_Area_Conic and datum NAD83
+2017-03-29 13:50:52,118 assign_SNODAS_projection: Finished Clip20170329.tif 
+
+2017-03-29 13:50:52,118 snowCoverage: Starting SNODAS_SWE_ClipAndProj20170329.tif
+2017-03-29 13:50:52,118 snowCoverage: Enveloping SNODAS_SWE_ClipAndProj20170329.tif as a QGS raster object layer
+2017-03-29 13:50:52,227 snowCoverage: Snow calculations for SNODAS_SWE_ClipAndProj20170329.tif complete.
+2017-03-29 13:50:52,227 snowCoverage: Finished SNODAS_SWE_ClipAndProj20170329.tif 
+
+2017-03-29 13:50:52,227 create_csv_files: Starting SNODAS_SWE_ClipAndProj20170329.tif
+2017-03-29 13:50:52,243 create_csv_files: Creating SnowpackStatisticsByDate_20170329.csv
+2017-03-29 13:50:52,243 create_csv_files: Creating SnowpackStatisticsByBasin_3286.csv
+2017-03-29 13:50:52,243 create_csv_files: Creating SnowpackStatisticsByBasin_3278.csv
+2017-03-29 13:50:52,243 create_csv_files: Creating SnowpackStatisticsByBasin_3297.csv
+2017-03-29 13:50:52,259 create_csv_files: Creating SnowpackStatisticsByBasin_CDMC2.csv
+2017-03-29 13:50:52,259 create_csv_files: Creating SnowpackStatisticsByBasin_ARCC2.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_LXHC2.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_FWRC2U.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_BONC2U.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_LAMC2U.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_LARC2U.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_NPTC2U.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_FSEC2U.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_CSNC2U.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_THTC2U.csv
+2017-03-29 13:50:52,273 create_csv_files: Creating SnowpackStatisticsByBasin_SCVC2U.csv
+2017-03-29 13:50:52,305 create_csv_files: Creating SnowpackStatisticsByBasin_PNNC2U.csv
+2017-03-29 13:50:52,305 create_csv_files: Creating SnowpackStatisticsByBasin_FHAC2U.csv
+2017-03-29 13:50:52,305 create_csv_files: Creating SnowpackStatisticsByBasin_PBAC2U.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_CBVC2.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_ABVC2.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_CLVC2L.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_GCWC2.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_BCHC2.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_PGWC2L.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_PGWC2U.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_CLRC2.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_CHKC2.csv
+2017-03-29 13:50:52,321 create_csv_files: Creating SnowpackStatisticsByBasin_AERK1N.csv
+2017-03-29 13:50:52,368 create_csv_files: Creating SnowpackStatisticsByBasin_NMIC2.csv
+2017-03-29 13:50:52,368 create_csv_files: Creating SnowpackStatisticsByBasin_THTC2L.csv
+2017-03-29 13:50:52,368 create_csv_files: Creating SnowpackStatisticsByBasin_DWSC2.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_HMCC2.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_TDDC2.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_PTRC2.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_FNEC2.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_PDLC2.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_CCAC2.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_CBAC2.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_HMZC2L.csv
+2017-03-29 13:50:52,384 create_csv_files: Creating SnowpackStatisticsByBasin_FCAC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_PRTC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_PNNC2L.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_PBAC2L.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_PDAC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_FCHC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_HMZC2U.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_SALC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_ARNC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_WSVC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_CSNC2L.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_KENO2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_FWRC2L.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_TBTC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_PGMC2.csv
+2017-03-29 13:50:52,398 create_csv_files: Creating SnowpackStatisticsByBasin_CNCC2.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_FHAC2L.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_LARC2L.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_LAPC2.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_SCVC2L.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_CLVC2U.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_NPTC2L.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_ADLC2.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_BONC2L.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_LAMC2L.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_EHTK1.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_COOK1.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_FSEC2L.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_DRFK1.csv
+2017-03-29 13:50:52,414 create_csv_files: Creating SnowpackStatisticsByBasin_GCKK1.csv
+2017-03-29 13:50:52,430 create_csv_files: Creating SnowpackStatisticsByBasin_JMCC2.csv
+2017-03-29 13:50:52,430 create_csv_files: Creating SnowpackStatisticsByBasin_LMAC2.csv
+2017-03-29 13:50:52,430 create_csv_files: Creating SnowpackStatisticsByBasin_DDCK1.csv
+2017-03-29 13:50:52,430 create_csv_files: Creating SnowpackStatisticsByBasin_SYRK1.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_KENK1.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_FRGO2.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_TQLC2.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_LEDC2.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_TINC2.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_ABEC2.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_TLRC2.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_ARGC2.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_BTNFDRLO.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_BTNFDRM.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_BTNFDRUP.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_BTCANYLO.csv
+2017-03-29 13:50:52,461 create_csv_files: Creating SnowpackStatisticsByBasin_BTCANYUP.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_BTABESLO.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_BTABESM.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_BTABESUP.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_TCFC2H_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_SKEC2H_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_BSWC2L_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_NAVC2H_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_ENMC2H_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_TRAC2H_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_TPIC2L_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_DRRC2H_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_SJAC2H_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_DIRC2L_F.csv
+2017-03-29 13:50:52,477 create_csv_files: Creating SnowpackStatisticsByBasin_WFLC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_CRCC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_FPTC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_LPHC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_APNC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_LEMC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_CSSC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_LFGC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_TOMC2L_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_RURC2L_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_VCRC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_PSBC2H_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_BMDC2L_F.csv
+2017-03-29 13:50:52,493 create_csv_files: Creating SnowpackStatisticsByBasin_WORC2H_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_FISC2H_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_DCKC2H_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_MPSC2L_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_CLSC2L_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_SMPC2H_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_PSPC2H_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_LCCC2H_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_RCYC2H_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_UCRC2H_F.csv
+2017-03-29 13:50:52,509 create_csv_files: Creating SnowpackStatisticsByBasin_LSRC2H_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_WETC2H_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_RBSC2L_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_SLFC2H_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_DRGC2H_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_PRSC2H_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_GPSC2L_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_LSDW4L_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_CGGC2L_F.csv
+2017-03-29 13:50:52,525 create_csv_files: Creating SnowpackStatisticsByBasin_GCOC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_WHIC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_LNAC2H_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_NVRN5L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_SNMC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_LILC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_YDLC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_WHBC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_WATU1L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_MCEC2H_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_DLAC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_GJNC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_ALEC2H_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_GUSC2L_F.csv
+2017-03-29 13:50:52,539 create_csv_files: Creating SnowpackStatisticsByBasin_SCCC2H_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_DELC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_DOLC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_JESU1L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_MPHC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_DBDC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_GWSC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_WRMC2H_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_RERC2H_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_GMRC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_SOMC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_ALTC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_CLOC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_CGYC2L_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_CCUC2R_F.csv
+2017-03-29 13:50:52,555 create_csv_files: Creating SnowpackStatisticsByBasin_CAWC2L_F.csv
+2017-03-29 13:50:52,571 create_csv_files: Creating SnowpackStatisticsByBasin_RCAC2H_F.csv
+2017-03-29 13:50:52,571 create_csv_files: Creating SnowpackStatisticsByBasin_EGLC2L_F.csv
+2017-03-29 13:50:52,571 create_csv_files: Creating SnowpackStatisticsByBasin_WFDC2L_F.csv
+2017-03-29 13:50:52,571 create_csv_files: Creating SnowpackStatisticsByBasin_KRMC2L_F.csv
+2017-03-29 13:50:52,586 create_csv_files: Creating SnowpackStatisticsByBasin_SMUC2L_F.csv
+2017-03-29 13:50:52,586 create_csv_files: Creating SnowpackStatisticsByBasin_DOLU1L_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_STMC2L_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_MBLC2L_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_HMAC2H_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_HMSC2L_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_RRGC2H_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_CAMC2L_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_VEGC2H_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_PCCC2L_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_GRVC2H_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_EALC2L_F.csv
+2017-03-29 13:50:52,602 create_csv_files: Creating SnowpackStatisticsByBasin_SJCC2L_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_PIDC2H_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_LOSC2L_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_CDRC2L_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_LPFN5L_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_LPSC2L_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_MRTC2L_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_YASC2H_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_SCHC2R_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_RBPC2H_F.csv
+2017-03-29 13:50:52,618 create_csv_files: Creating SnowpackStatisticsByBasin_HTSC2L_F.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_MNRC2H_F.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_BUEC2H_F.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_ELHC2H_F.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_DGOC2R_F.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_GEPC2R_F.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_FRASER-U.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_FRASER-L.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_FRASER-DW.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_403.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_405.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_406.csv
+2017-03-29 13:50:52,634 create_csv_files: Creating SnowpackStatisticsByBasin_3202.csv
+2017-03-29 13:50:52,648 create_csv_files: Creating SnowpackStatisticsByBasin_3203.csv
+2017-03-29 13:50:52,648 create_csv_files: Creating SnowpackStatisticsByBasin_3204.csv
+2017-03-29 13:50:52,648 create_csv_files: Creating SnowpackStatisticsByBasin_3205.csv
+2017-03-29 13:50:52,648 create_csv_files: Creating SnowpackStatisticsByBasin_3130.csv
+2017-03-29 13:50:52,648 create_csv_files: Creating SnowpackStatisticsByBasin_3101.csv
+2017-03-29 13:50:52,648 create_csv_files: Creating SnowpackStatisticsByBasin_3175.csv
+2017-03-29 13:50:52,648 create_csv_files: Creating SnowpackStatisticsByBasin_3176.csv
+2017-03-29 13:50:52,648 create_csv_files: Creating SnowpackStatisticsByBasin_3187.csv
+2017-03-29 13:50:54,101 create_csv_files: Creating SnowpackStatisticsByBasin_3225.csv
+2017-03-29 13:50:54,101 create_csv_files: Creating SnowpackStatisticsByBasin_3222.csv
+2017-03-29 13:50:54,101 create_csv_files: Creating SnowpackStatisticsByBasin_3201.csv
+2017-03-29 13:50:54,101 create_csv_files: Creating SnowpackStatisticsByBasin_3228.csv
+2017-03-29 13:50:54,101 create_csv_files: Creating SnowpackStatisticsByBasin_3227.csv
+2017-03-29 13:50:54,101 create_csv_files: Creating SnowpackStatisticsByBasin_3226.csv
+2017-03-29 13:50:54,101 create_csv_files: Creating SnowpackStatisticsByBasin_3284.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_3232.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_3283.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_409.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_408.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_501.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_506.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_507.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_502.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_503.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_504.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_505.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_530.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_531.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_552.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_553.csv
+2017-03-29 13:50:54,117 create_csv_files: Creating SnowpackStatisticsByBasin_554.csv
+2017-03-29 13:50:54,131 create_csv_files: Creating SnowpackStatisticsByBasin_555.csv
+2017-03-29 13:50:54,131 create_csv_files: Creating SnowpackStatisticsByBasin_556.csv
+2017-03-29 13:50:54,131 create_csv_files: Creating SnowpackStatisticsByBasin_549.csv
+2017-03-29 13:50:54,131 create_csv_files: Creating SnowpackStatisticsByBasin_550.csv
+2017-03-29 13:50:54,131 create_csv_files: Creating SnowpackStatisticsByBasin_551.csv
+2017-03-29 13:50:54,131 create_csv_files: Creating SnowpackStatisticsByBasin_559.csv
+2017-03-29 13:50:54,131 create_csv_files: Creating SnowpackStatisticsByBasin_3291.csv
+2017-03-29 13:50:54,131 create_csv_files: Creating SnowpackStatisticsByBasin_3290.csv
+2017-03-29 13:50:54,163 create_csv_files: Creating SnowpackStatisticsByBasin_3288.csv
+2017-03-29 13:50:54,163 create_csv_files: Creating SnowpackStatisticsByBasin_3289.csv
+2017-03-29 13:50:54,163 create_csv_files: Creating SnowpackStatisticsByBasin_3287.csv
+2017-03-29 13:50:54,163 create_csv_files: Creating SnowpackStatisticsByBasin_3235.csv
+2017-03-29 13:50:54,163 create_csv_files: Creating SnowpackStatisticsByBasin_3214.csv
+2017-03-29 13:50:54,178 create_csv_files: Creating SnowpackStatisticsByBasin_3240.csv
+2017-03-29 13:50:54,178 create_csv_files: Creating SnowpackStatisticsByBasin_3285.csv
+2017-03-29 13:50:54,178 create_csv_files: Creating SnowpackStatisticsByBasin_3215.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3292.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3271.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3272.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3295.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3279.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3276.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3213.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3216.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3280.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3263.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3293.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3294.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3296.csv
+2017-03-29 13:50:54,194 create_csv_files: Creating SnowpackStatisticsByBasin_3273.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3281.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3102.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3108.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3207.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3208.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3209.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3210.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3211.csv
+2017-03-29 13:50:54,210 create_csv_files: Creating SnowpackStatisticsByBasin_3212.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3217.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3218.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3219.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3220.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3221.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3223.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3224.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3206.csv
+2017-03-29 13:50:54,226 create_csv_files: Creating SnowpackStatisticsByBasin_3277.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3229.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3230.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3231.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3233.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3234.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3236.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3239.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3243.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3244.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3270.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_402.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_3282.csv
+2017-03-29 13:50:54,242 create_csv_files: Creating SnowpackStatisticsByBasin_CLANSELO.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_CLANSEM.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_CLANSEUP.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_CLAFTCLO.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_CLAFTCM.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_CLAFTCUP.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_BAKC2LO.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_BAKC2UP.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_GRDC2.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_GBYC2LO.csv
+2017-03-29 13:50:54,256 create_csv_files: Creating SnowpackStatisticsByBasin_GBYC2UP.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_SDMCOLO.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_SDMCOUP.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_SDMCO.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_GBYC2.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_WCRC2LO.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_WCRC2UP.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_WCDC2.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_CRDC2.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_RWGC2.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_SRGC2.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_DNRC2.csv
+2017-03-29 13:50:54,273 create_csv_files: Creating SnowpackStatisticsByBasin_MVTC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_ALAC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_close.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_SCKC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_TERC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_LJCC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_RGTC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_TTRC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_SAFC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_UFGC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_TBSC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_PTOC2.csv
+2017-03-29 13:50:54,288 create_csv_files: Creating SnowpackStatisticsByBasin_MOGC2.csv
+2017-03-29 13:50:54,303 create_csv_files: Creating SnowpackStatisticsByBasin_SAOC2.csv
+2017-03-29 13:50:54,303 create_csv_files: Creating SnowpackStatisticsByBasin_ORTC2.csv
+2017-03-29 13:50:54,303 create_csv_files: Creating SnowpackStatisticsByBasin_SMSC2.csv
+2017-03-29 13:50:54,303 create_csv_files: Creating SnowpackStatisticsByBasin_LSZC2.csv
+2017-03-29 13:50:54,303 create_csv_files: Creating SnowpackStatisticsByBasin_SLUC2.csv
+2017-03-29 13:50:54,303 create_csv_files: Creating SnowpackStatisticsByBasin_LOBC2.csv
+2017-03-29 13:50:54,303 create_csv_files: Finished SNODAS_SWE_ClipAndProj20170329.tif
+2017-03-29 13:50:54,303 create_csv_files: Starting SNODAS_SWE_ClipAndProj20170329.tif.aux.xml
+2017-03-29 13:50:54,303 create_csv_files: Creating SnowpackStatisticsByDate_20170329.csv
+2017-03-29 13:50:54,617 create_csv_files: Finished SNODAS_SWE_ClipAndProj20170329.tif.aux.xml
+2017-03-29 13:50:54,617 delete_ByBasinCSV_repeated_rows: Starting SNODAS_SWE_ClipAndProj20170329.tif
+2017-03-29 13:50:54,631 delete_ByBasinCSV_repeated_rows: Finished SNODAS_SWE_ClipAndProj20170329.tif 
+
+2017-03-29 13:50:54,631 delete_ByBasinCSV_repeated_rows: Starting SNODAS_SWE_ClipAndProj20170329.tif.aux.xml
+2017-03-29 13:50:54,663 delete_ByBasinCSV_repeated_rows: Finished SNODAS_SWE_ClipAndProj20170329.tif.aux.xml 
+
+2017-03-29 13:50:54,663 zStat_and_export: Processing zonal statistics by basin of SNODAS_SWE_ClipAndProj20170329.tif ...
+2017-03-29 13:50:54,663 format_date_YYYYMMDD: Starting 2017-03-22 13:50:42.003000
+2017-03-29 13:50:54,663 format_date_YYYYMMDD: Finished 2017-03-22 13:50:42.003000 
+
+2017-03-29 13:51:17,637 zStat_and_export: Zonal statistics of SNODAS_SWE_ClipAndProj20170329.tif are exported to C:\Users\intern1\cdss-dev\CDSS-SNODAS-Tools\git-repos\cdss-app-snodas-tools\test-CDSS\processedDataUpdated/5_CalculateStatistics/SnowpackStatisticsByBasin
+2017-03-29 13:51:17,651 zStat_and_export: SNODAS_SWE_ClipAndProj20170329.tif.aux.xml is not a .tif file and the zonal statistics were not processed.
+2017-03-29 13:51:18,464 
+ SNODASDailyDownload.py: Completed.
+2017-03-29 13:51:18,464 Elapsed time: 37 seconds
