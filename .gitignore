@@ -7,3 +7,9 @@
 
 # Need to list dynamic files here
 
+*.tar
+*.tif
+*.png
+*.csv
+*.zip
+*.geojson
