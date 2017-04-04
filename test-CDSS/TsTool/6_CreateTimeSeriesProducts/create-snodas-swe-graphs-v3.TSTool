@@ -12,7 +12,9 @@ StartLog(LogFile="~$create-snodas-swe-graphs.TSTool.log")
 #
 # History:
 # 2017-03-18 Steve Malers, Open Water Foundation, Initial version.
-#===============================================================================
+# 2017-03-26 Steve Malers, Open Water Foundation, v2, add 25% melt-out line.
+# 2017-03-31 Steve Malers, Open Water Foundation, v3, add cumulative SWE volume gain graph.
+#=======================================================================================================
 # Step 1 - read the list of basins from the Excel file into a TSTool table
 # - this provides core data for later steps
 #
@@ -114,7 +116,7 @@ EndIf(Name="MaxCalculated")
 If(Name="DoAnnotation",Condition="${DoAnnotation} == true")
 Message(Message="The maximum SNODAS SWE volume for basin ${BasinID} was calculated as ${CurrentWaterYearMaxSNODASSWEVolume}")
 SetProperty(PropertyName="CurrentWaterYearMaxSNODASSWEVolume_25Percent",PropertyType=Double,PropertyValue="${CurrentWaterYearMaxSNODASSWEVolume}",Multiply=.25)
-FormatStringProperty(InputProperties="CurrentWaterYearMaxSNODASSWEVolume_25Percent,CurrentWaterYearMaxSNODASSWEVolume",Format="%.0f acft = 25%% of max (%.0f acft)",OutputProperty="AnnotationLabel25PercentVolume")
+FormatStringProperty(InputProperties="CurrentWaterYearMaxSNODASSWEVolume_25Percent,CurrentWaterYearMaxSNODASSWEVolume",Format="%.0f acft = 25%% of WY max SWE (%.0f acft)",OutputProperty="AnnotationLabel25PercentVolume")
 SetProperty(PropertyName="SNODASSWEVolume25PercentComputed",PropertyType=String,PropertyValue="true")
 EndIf(Name="DoAnnotation")
 EndIf(Name="OnOrAfterMarch1")
@@ -123,10 +125,30 @@ EndIf(Name="OnOrAfterMarch1")
 ExpandTemplateFile(InputFile="snodas-localid-swe-volume-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume.tsp",ListInResults=False)
 ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume.tsp",RunMode=GUIAndBatch,View=False,OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume.png")
 #
+#---- End SWE Volume
+#
+# Process the cumulative SNODAS volume gain, how much water actually was deposited on the basin
+# -counts only daily positive increments to SWE volume
+# -calculate from SWE volume and then free SWE volume before creating plot
+Delta(TSList=AllMatchingTSID,TSID="${BasinID}-SNODAS-SWE-Volume-Day",ExpectedTrend=Increasing,Alias="${BasinID}-SNODAS-SWE-Volume-Cumulative-Day")
+# Now free the SWE volume time series so each basin and graph type is processed independently without complex data management
+Free(TSList=AllMatchingTSID,TSID="*SNODAS-SWE-Volume-Day*",IfNotFound=Ignore)
+# Exit()
+# Replace negatives with zero since only want to count positive moisture gains
+ReplaceValue(TSList=AllMatchingTSID,TSID="${BasinID}-SNODAS-SWE-Volume-Cumulative-Day",MinValue=-9999999,MaxValue=0,NewValue=0)
+Cumulate(TSList=AllMatchingTSID,TSID="${BasinID}-SNODAS-SWE-Volume-Cumulative-Day",Reset="10-01")
+# Convert the time series to annual traces in an ensemble with Oct 1 being the start of the water year
+CreateEnsembleFromOneTimeSeries(TSID="${BasinID}-SNODAS-SWE-Volume-Cumulative-Day",TraceLength=1Year,EnsembleID="${BasinID}-SNODAS-SWE-Volume-Cumulative-Ensemble",EnsembleName="${BasinID}-SNODAS-SWE-Volume-Cumulative-Ensemble",Alias="${BasinID}-SNODAS-SWE-Volume-Cumulative-Day-%z",ReferenceDate="${CurrentWaterYearStartDate}",OutputYearType=Water,ShiftDataHow=ShiftToReference)
+NewTable(TableID="WaterYearCumulativeMaxTable",Columns="WaterYear,String;Max,double")
+CalculateTimeSeriesStatistic(TSList=EnsembleID,EnsembleID="${BasinID}-SNODAS-SWE-Volume-Cumulative-Ensemble",Statistic="Max",TableID="WaterYearCumulativeMaxTable",TableTSIDColumn="WaterYear",TableTSIDFormat="%z",TableStatisticColumn="Max",StatisticValueProperty="SNODAS_SWE_Volume_Cumulative_Max_${BasinID}")
+CopyTable(TableID="WaterYearCumulativeMaxTable",NewTableID="CumulativeMaxTable",IncludeColumns="Max")
+ExpandTemplateFile(InputFile="snodas-localid-swe-volume-gain-cumulative-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.tsp",ListInResults=False)
+ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.tsp",RunMode=GUIAndBatch,View=False,OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.png")
+FreeTable(TableID="WaterYearCumulativeMaxTable")
+FreeTable(TableID="CumulativeMaxTable")
 # Free the time series so each basin and graph type is processed independently without complex data management
 Free(IfNotFound=Ignore)
-# Exit()
-#---- End SWE Volume
+#---- End SWE volume, cumulative
 #
 # Process the 1-week (7-day) change in SNODAS volume
 TableToTimeSeries(TableID="${BasinID}_Statistics",DateTimeColumn="Date_YYYYMMDD",DateTimeFormat="%Y%m%d",LocationID="${BasinID}",ValueColumn="SNODAS_SWE_Volume_1WeekChange_acft",DataSource="SNODAS",DataType="SWE-Volume-1WeekChange",Interval=Day,Units="acft",Alias="%L-SNODAS-SWE-Volume-1WeekChange-Day")
