@@ -1,4 +1,5 @@
 # Name: SNODASDaily_Interactive.py
+# Version: 1
 # Author: Emma Giles
 # Organization: Open Water Foundation
 #
@@ -20,7 +21,7 @@ from datetime import datetime, timedelta
 # Read the configuration file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
 Config = configparser.ConfigParser()
-Configfile = "../test-CDSS/config/SNODAS-Tools-Config.ini"
+Configfile = "../SNODAS_Tools/config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
 # Helper function to obtain option values of config file sections.
@@ -92,6 +93,7 @@ output_CRS_EPSG = ConfigSectionMap("Projections")['output_proj_epsg']
 delete_shp_orig = ConfigSectionMap("OutputLayers")['shp_delete_originals']
 zip_shp = ConfigSectionMap("OutputLayers")['shp_zip']
 name_of_static_folder = ConfigSectionMap("Folders")['static_data_folder']
+UploadResultsToAmazonS3 = ConfigSectionMap("OutputLayers")['upload_results_to_amazon_s3']
 
 
 if __name__ == "__main__":
@@ -156,6 +158,9 @@ if __name__ == "__main__":
     logger = logging.getLogger('log02')
     logger.info('SNODASDailyDownload.py: Started \n')
 
+    # Print version information
+    print "Running SNODASDaily_Interactive.py Version 1"
+    logger.info('Running SNODASDaily_Interactive.py Version 1')
 
     # After the user chooses the project folder where the data will be stored, they must then choose the dates of
     # interest. If the user is interested in only one date of data.
@@ -242,6 +247,9 @@ if __name__ == "__main__":
     # the end of the log file.
     start = time.time()
 
+    # Create an empty list that will contain all dates that failed to download.
+    failed_dates_lst = []
+
     # Iterate through each day of the user-specified range. Refer to:
     # http://stackoverflow.com/questions/6901436/python-expected-an-indented-block
     total_days = (endDate - startDate).days + 1
@@ -272,6 +280,8 @@ if __name__ == "__main__":
         # Download current date SNODAS .tar file from the FTP site at
         #  ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/
         returnedList = SNODAS_utilities.download_SNODAS(download_path, current)
+
+        failed_dates_lst.append(returnedList[2])
 
         # Check to see if configuration values for optional statistics 'calculate_SWE_minimum, calculate_SWE_maximum,
         # calculate_SWE_stdDev' (defined in utility function) are valid, If valid, script continues to run. If invalid,
@@ -401,6 +411,12 @@ if __name__ == "__main__":
                 # The time series graphs will only be produced after the last date of data is processed.
                 if current == endDate.date():
                     SNODAS_utilities.create_SNODAS_SWE_graphs()
+                    # Push daily statistics to the web, if configured
+                    if UploadResultsToAmazonS3.upper == 'TRUE':
+                        SNODAS_utilities.push_to_AWS(root)
+                    else:
+                        logger.info('Output files from SNODAS_Tools are not pushed to Amazon Web Services S3 because of'
+                                    ' setting in configuration file. ')
 
             # If config file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
             # script will not run and the following error message will be printed to the console and to the logging file.
@@ -428,7 +444,39 @@ if __name__ == "__main__":
     stringStart = str(startDate)
     stringEnd = str(endDate)
     print '\nSNODASHistoricalDownload.py: Completed. Dates Processed: From %s to %s.' % (stringStart, stringEnd)
-    print 'Elapsed time (full script): approximately %d hours, %d minutes and %d seconds' % (elapsed_hours, elapsed_minutes, elapsed_seconds)
+    print 'Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n' % (elapsed_hours,
+                                                                                             elapsed_minutes,
+                                                                                             elapsed_seconds)
+
+    # If any dates were unsuccessfully downloaded, print those dates to the console and the logging file.
+    failed_dates_lst_updated = []
+    failed_dates_lst_1Week = []
+    for item in failed_dates_lst:
+        if item != 'None':
+            item_str = str(item)
+            item_plus_seven = item + timedelta(days=7)
+            item_plus_seven_str = str(item_plus_seven)
+            failed_dates_lst_updated.append(item_str)
+            failed_dates_lst_1Week.append(item_plus_seven_str)
+
+    if failed_dates_lst_updated == []:
+        print 'All dates successfully downloaded!'
+        logger.info('All dates successfully downloaded!')
+    else:
+        print '\nDates unsuccessfully downloaded: '
+        logger.info('\nDates unsuccessfully downloaded: ')
+        for item in failed_dates_lst_updated:
+            print item
+            logger.info('%s'% item)
+        print "\nDates that will be affected by assigning the 'SNODAS_SWE_Volume_1WeekChange_acft' attribute 'NULL' " \
+              "due to the unsuccessful downloads: "
+        logger.info("\nDates that will be affected by assigning the 'SNODAS_SWE_Volume_1WeekChange_acft' attribute "
+                    "'NULL' due to the unsuccessful downloads: ")
+        for item in failed_dates_lst_1Week:
+            print item
+            logger.info('%s' % item)
+
+
     logger.info('\n SNODASHistoricalDownload.py: Completed.')
     logger.info('Elapsed time (full script): %d minutes' % elapsed_minutes)
 

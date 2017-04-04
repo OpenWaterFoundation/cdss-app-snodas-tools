@@ -1,4 +1,5 @@
 # Name: SNODASDaily_Automated.py
+# Version: 1
 # Author: Emma Giles
 # Organization: Open Water Foundation
 #
@@ -23,7 +24,7 @@ start = time.time()
 # Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
 Config = configparser.ConfigParser()
-Configfile = "../test-CDSS/config/SNODAS-Tools-Config.ini"
+Configfile = "../SNODAS_Tools/config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
 # Helper function to obtain option values of config file sections.
@@ -98,8 +99,10 @@ delete_shp_orig = ConfigSectionMap("OutputLayers")['shp_delete_originals']
 zip_shp = ConfigSectionMap("OutputLayers")['shp_zip']
 name_of_timeSeries_folder = ConfigSectionMap("Folders")['timeseries_folder']
 name_of_GraphsbyBasin_folder = ConfigSectionMap("Folders")['timeseries_graph_png_folder']
+UploadResultsToAmazonS3 = ConfigSectionMap("OutputLayers")['upload_results_to_amazon_s3']
 
 if __name__ == "__main__":
+
 
     # Define static folder and extent shapefile
     static_path = os.path.join(root, name_of_static_folder)
@@ -126,6 +129,10 @@ if __name__ == "__main__":
     fileConfig(Configfile)
     logger = logging.getLogger('log02')
     logger.info('SNODASDailyDownload.py: Started \n')
+
+    # Print version information
+    print "Running SNODASDaily_Automated.py Version 1"
+    logger.info('Running SNODASDaily_Automated.py Version 1')
 
     # Initialize QGIS resources to utilize QGIS functionality.
     # More information at: http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html.
@@ -288,6 +295,13 @@ if __name__ == "__main__":
             SNODAS_utilities.create_SNODAS_SWE_graphs()
             TsTool_time_end = time.time()
             elapsed_TsTool = TsTool_time_end - TsTool_time_start
+
+            # Push daily statistics to the web, if configured
+            if UploadResultsToAmazonS3.upper == 'TRUE':
+                SNODAS_utilities.push_to_AWS(root)
+            else:
+                logger.info('Output files from SNODAS_Tools are not pushed to Amazon Web Services S3 because of'
+                            ' setting in configuration file. ')
 
         # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
         # script will not run and the following error message will be printed to the console and to the logging file.

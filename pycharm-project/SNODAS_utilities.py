@@ -1,4 +1,5 @@
 # Name: SNODAS_utilites.py
+# Version: 1
 # Author: Emma Giles
 # Organization: Open Water Foundation
 #
@@ -16,7 +17,7 @@
 
 # Import necessary modules
 import ftplib, os, tarfile, gzip, gdal, csv, logging, configparser, glob, osr, zipfile, ogr
-from subprocess import Popen
+from subprocess import Popen, call
 from logging.config import fileConfig
 from qgis.analysis import QgsRasterCalculator, QgsRasterCalculatorEntry, QgsZonalStatistics
 from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsField
@@ -28,7 +29,7 @@ from shutil import copy
 # Reads the configuration file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
 Config = configparser.ConfigParser()
-Configfile = "../test-CDSS/config/SNODAS-Tools-Config.ini"
+Configfile = "../SNODAS_Tools/config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
 # Create and configures logging file
@@ -69,6 +70,10 @@ def config_section_map(section):
 #   TsToolInstall: The full pathname to the TsTool program.
 #   TsToolBatchFile: The full pathname to the TsTool Batch file responsible for creating the time-series graphs.
 
+
+def push_to_AWS(AWS_batch_file, root):
+    Popen(AWS_batch_file, cwd=r'root')
+
 host = config_section_map("SNODAS_FTPSite")['host']
 username = config_section_map("SNODAS_FTPSite")['username']
 password = config_section_map("SNODAS_FTPSite")['password']
@@ -88,7 +93,7 @@ TsToolInstall = config_section_map("ProgramInstall")['tstool_pathname']
 TsToolCreateTimeSeries = config_section_map("ProgramInstall")['tstool_create-snodas-graphs_pathname']
 weekly_update = config_section_map("OutputLayers")['tsgraph_weekly_update']
 weekly_update_date = config_section_map("OutputLayers")['tsgraph_weekly_update_date']
-
+AWS_batch_file = config_section_map("ProgramInstall")['aws_batch_pathname']
 
 # Get today's date ----------------------------------------------------------------------------------------------------
 now = datetime.now()
@@ -147,10 +152,13 @@ def download_SNODAS(downloadDir, singleDate):
     if 1 not in no_download_available:
         logger.error('ERROR: download_SNODAS: Download unsuccessful for %s' % singleDate)
         logging.error('ERROR: download_SNODAS: Download unsuccessful for %s' % singleDate)
+        failed_date = singleDate
+
     # Report success if download marker '1' is in the list
     else:
         print 'Download complete for %s.' % singleDate
         logger.info('download_SNODAS: Download complete for %s.' % singleDate)
+        failed_date = 'None'
 
     # Retrieve a timestamp to later export to the statistical results
     timestamp = datetime.now().isoformat()
@@ -159,7 +167,7 @@ def download_SNODAS(downloadDir, singleDate):
     # SNODASDaily_Interactive.py scripts
     optStats = [calculate_SWE_maximum, calculate_SWE_minimum, calculate_SWE_stdDev]
 
-    returnedList = [timestamp, optStats]
+    returnedList = [timestamp, optStats, failed_date]
     return returnedList
 
 # Formatting function -------------------------------------------------------------------------------------------------
@@ -1364,7 +1372,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             vectorFile_GeoJson.startEditing()
 
             # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
-            fieldDict = {'SWE_mean': 'SNODAS_SWE_Mean_mm', 'SWEVolC_af': 'SNODAS_SWE_Volume_1WeekChange_acft',
+            fieldDict = {'SWEMean_mm': 'SNODAS_SWE_Mean_mm', 'SWEVolC_af': 'SNODAS_SWE_Volume_1WeekChange_acft',
                          'SWEMean_in': 'SNODAS_SWE_Mean_in', 'Area_sqmi': 'SNODAS_EffectiveArea_sqmi',
                          'SWEVol_af': 'SNODAS_SWE_Volume_acft', 'SCover_pct': 'SNODAS_SnowCover_percent'}
 
@@ -1474,3 +1482,9 @@ def create_SNODAS_SWE_graphs():
         # Run the TsTool command file, 'TsToolCreateTimeSeries', in the background. Wait for the subprocess
         # to complete before continuing.
         Popen([TsToolInstall, '-commands', TsToolCreateTimeSeries]).wait()
+
+def push_to_AWS(root):
+    logger.info('push_to_AWS: Pushing files to Amazon Web Services S3 given specifics of %s.'% AWS_batch_file)
+    # Call batch file, AWS_batch_file, to push files up to Amazon Web Service
+    Popen([AWS_batch_file, root, 'OWF-SNODAS']).wait()
+    logger.info('push_to_AWS: Files have been pushed to Amazon Web Services S3 as designed by %s.'% AWS_batch_file)
