@@ -16,7 +16,7 @@ StartLog(LogFile="~$create-snodas-swe-graphs.TSTool.log")
 # Step 1 - read the list of basins from the Excel file into a TSTool table
 # - this provides core data for later steps
 #
-ReadTableFromExcel(TableID="WaterSupplyBasins",InputFile="Watershed_Connectivity_v3.xlsx",Worksheet="Connectivity",ExcelColumnNames=FirstRowInRange,ColumnExcludeFilters="LOCAL_ID:",ExcelDoubleColumns="AREA_SQKM",ExcelTextColumns="LOCAL_ID,LOCAL_NAME,TOTAL_ID,TOTAL_NAME,POLY_SOURC,GAGE_ID,UPSTREAM BASIN 1,UPSTREAM BASIN 2,UPSTREAM BASIN 3,UPSTREAM BASIN 4,UPSTREAM BASIN 5",RowCountProperty="WaterSupplyBasinCount")
+ReadTableFromExcel(TableID="WaterSupplyBasins",InputFile="../../staticData/WatershedConnectivity/Watershed_Connectivity_v3.xlsx",Worksheet="Connectivity",ExcelColumnNames=FirstRowInRange,ColumnExcludeFilters="LOCAL_ID:",ExcelDoubleColumns="AREA_SQKM",ExcelTextColumns="LOCAL_ID,LOCAL_NAME,TOTAL_ID,TOTAL_NAME,POLY_SOURC,GAGE_ID,UPSTREAM BASIN 1,UPSTREAM BASIN 2,UPSTREAM BASIN 3,UPSTREAM BASIN 4,UPSTREAM BASIN 5",RowCountProperty="WaterSupplyBasinCount")
 #===============================================================================
 # Step 2 - general setup
 # - figure out the last year in the data, and allow override if specified as input to TSTool
@@ -32,6 +32,10 @@ Message(Message="Property CurrentDayDate is not defined, defaulting to computer 
 SetProperty(PropertyName="CurrentDayDate",PropertyType=DateTime,PropertyValue="CurrentToDay")
 EndIf(Name="If_SetCurrentDayNotSet")
 #
+# Set the property CurrentDateNum as a number to allow integer comparison of date
+# - the 25% of maximum snowpack line is only draw if March 1 or later
+FormatDateTimeProperty(PropertyName="CurrentDateNum",DateTimePropertyName="CurrentDayDate",Format="%Y%m%d",PropertyType=Integer)
+#
 # Next set the water year start, needed for resetting the annual traces.
 FormatDateTimeProperty(PropertyName="CurrentDateYearAsString",DateTimePropertyName="CurrentDayDate",Format="%Y")
 FormatDateTimeProperty(PropertyName="CurrentDateMonthAsString",DateTimePropertyName="CurrentDayDate",Format="%m")
@@ -39,13 +43,23 @@ SetProperty(PropertyName="CurrentDateMonth",PropertyType=Integer,PropertyValue="
 If(Name="If_WaterYearStartIsLastCalendarYear",Condition="${CurrentDateMonth} < 10")
 # In months January-September, so water year start needs to shift to use previous year.
 SetProperty(PropertyName="CurrentWaterYearStartDate",PropertyType=DateTime,PropertyValue="${CurrentDateYearAsString}-10-01")
-SetProperty(PropertyName="CurrentWaterYearStartDate",PropertyType=DateTime,PropertyValue="${CurrentWaterYearStartDate}",Subtract=1Year)
+SetProperty(PropertyName="CurrentWaterYearStartDate",PropertyType=DateTime,PropertyValue="${CurrentWaterYearStartDate}",Subtract="1Year")
 EndIf(Name="If_WaterYearStartIsLastCalendarYear")
 If(Name="If_WaterYearStartIsThisCalendarYear",Condition="${CurrentDateMonth} >= 10")
 # In months October-December, so water year start is OK using the current year
 SetProperty(PropertyName="CurrentWaterYearStartDate",PropertyType=DateTime,PropertyValue="${CurrentDateYearAsString}-10-01")
 EndIf(Name="If_WaterYearStartIsThisCalendarYear")
 Message(Message="CurrentDayDate=${CurrentDayDate}, CurrentWaterYearStartDate=${CurrentWaterYearStartDate} will be used to generate output products.")
+#
+# Also set the CurrentWaterYearEndDate by doing some basic math
+SetProperty(PropertyName="CurrentWaterYearEndDate",PropertyType=DateTime,PropertyValue="${CurrentWaterYearStartDate}")
+SetProperty(PropertyName="CurrentWaterYearEndDate",PropertyType=DateTime,PropertyValue="${CurrentWaterYearEndDate}",Add="1Year")
+SetProperty(PropertyName="CurrentWaterYearEndDate",PropertyType=DateTime,PropertyValue="${CurrentWaterYearEndDate}",Subtract="1Day")
+FormatDateTimeProperty(PropertyName="CurrentWaterYear",DateTimePropertyName="CurrentWaterYearEndDate",Format="%Y",PropertyType=Integer)
+#
+# Set the March 1 date of the current water year as threshold for computing the 25% of peak snowpack
+# - only do the calculation after this date assuming that the value has relevance
+FormatDateTimeProperty(PropertyName="CurrentWaterYearMarch1DateNum",DateTimePropertyName="CurrentWaterYearEndDate",Format="%Y0301",PropertyType=Integer)
 #===============================================================================
 #
 # Step 3 - loop through each LOCAL_ID in the table and create SWE plots
@@ -57,10 +71,12 @@ SetProperty(PropertyName="BasinName",PropertyType=String,PropertyValue="${LOCAL_
 Message(Message="Processing Basin_LOCAL_ID=${Basin_LOCAL_ID} BasinID=${BasinID}")
 # Use the following if to run one basin, useful during development and troubleshooting.
 # If(Name="TestInclude",Condition="${Basin_LOCAL_ID} == CDMC2",CompareAsStrings="True")
+# If(Name="TestInclude",Condition="${Basin_LOCAL_ID} == CSNC2U",CompareAsStrings="True")
+# If(Name="TestInclude",Condition="${Basin_LOCAL_ID} == 3175",CompareAsStrings="True")
 # First read the statistics table for the basin
 # - Each day in historical period is represented, through last day processed
 # - Use LOCAL_ID as the unique identifier for basins
-ReadTableFromDelimitedFile(TableID="${BasinID}_Statistics",InputFile="../5_CalculateStatistics/SnowpackStatisticsByBasin/SnowpackStatisticsByBasin_${BasinID}.csv",HeaderLines="1",DateTimeColumns="Date_YYYYMMDD,Updated_Timestamp",DoubleColumns="SNODAS_SWE_Mean_in,SNODAS_SWE_Mean_mm,SNODAS_EffectiveArea_sqmi,SNODAS_SWE_Volume_acft,SNODAS_SWE_Volume_1WeekChange_acft,SNODAS_SnowCover_percent",TextColumns="LOCAL_ID")
+ReadTableFromDelimitedFile(TableID="${BasinID}_Statistics",InputFile="../../processedData/5_CalculateStatistics/SnowpackStatisticsByBasin/SnowpackStatisticsByBasin_${BasinID}.csv",HeaderLines="1",DateTimeColumns="Date_YYYYMMDD,Updated_Timestamp",DoubleColumns="SNODAS_SWE_Mean_in,SNODAS_SWE_Mean_mm,SNODAS_EffectiveArea_sqmi,SNODAS_SWE_Volume_acft,SNODAS_SWE_Volume_1WeekChange_acft,SNODAS_SnowCover_percent",TextColumns="LOCAL_ID")
 #
 # Convert the table to time series - process the SNODAS SWE first
 TableToTimeSeries(TableID="${BasinID}_Statistics",DateTimeColumn="Date_YYYYMMDD",DateTimeFormat="%Y%m%d",LocationID="${BasinID}",ValueColumn="SNODAS_SWE_mean_in",DataSource="SNODAS",DataType="SWE",Interval=Day,Units="in",Alias="%L-SNODAS-SWE-Day")
@@ -73,7 +89,7 @@ SetProperty(PropertyName="FirstWaterYear",PropertyType=Integer,PropertyValue="${
 SetPropertyFromEnsemble(EnsembleID="${BasinID}-SNODAS-SWE-Ensemble",PropertyName="LastWaterYearString",PropertyValue="${tsensemble:LastSequenceID}")
 SetProperty(PropertyName="LastWaterYear",PropertyType=Integer,PropertyValue="${LastWaterYearString}")
 ExpandTemplateFile(InputFile="snodas-localid-swe-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE.tsp",ListInResults=False)
-ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE.tsp",RunMode=GUIAndBatch,View=False,OutputFile="SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE.png")
+ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE.tsp",RunMode=GUIAndBatch,View=False,OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE.png")
 # Free the time series so each basin and graph type is processed independently without complex data management
 Free(IfNotFound=Ignore)
 #---- End SWE
@@ -82,31 +98,55 @@ Free(IfNotFound=Ignore)
 TableToTimeSeries(TableID="${BasinID}_Statistics",DateTimeColumn="Date_YYYYMMDD",DateTimeFormat="%Y%m%d",LocationID="${BasinID}",ValueColumn="SNODAS_SWE_Volume_acft",DataSource="SNODAS",DataType="SWE-Volume",Interval=Day,Units="acft",Alias="%L-SNODAS-SWE-Volume-Day")
 # Convert the time series to annual traces in an ensemble with Oct 1 being the start of the water year
 CreateEnsembleFromOneTimeSeries(TSID="${BasinID}-SNODAS-SWE-Volume-Day",TraceLength=1Year,EnsembleID="${BasinID}-SNODAS-SWE-Volume-Ensemble",EnsembleName="${BasinID}-SNODAS-SWE-Volume-Ensemble",Alias="${BasinID}-SNODAS-SWE-Volume-Day-%z",ReferenceDate="${CurrentWaterYearStartDate}",OutputYearType=Water,ShiftDataHow=ShiftToReference)
+#
+# Check whether 25% melt-out should be computed (do after March 1 in water year)
+# - some basins have zero snowpack all season so don't do annotation
+SetProperty(PropertyName="SNODASSWEVolume25PercentComputed",PropertyType=String,PropertyValue="false")
+If(Name="OnOrAfterMarch1",Condition="${CurrentDateNum} > ${CurrentWaterYearMarch1DateNum}")
+SetProperty(PropertyName="SNODASSWEVolumeAlias",PropertyType=String,PropertyValue="${BasinID}-SNODAS-SWE-Volume-Day-${CurrentWaterYear}")
+CalculateTimeSeriesStatistic(TSList=AllMatchingTSID,TSID="${SNODASSWEVolumeAlias}",Statistic="Max",AnalysisStart="${CurrentWaterYearStartDate}",AnalysisEnd="${CurrentWaterYearEndDate}",TimeSeriesProperty="CurrentWaterYearMaxSNODASSWEVolume")
+SetPropertyFromTimeSeries(TSList=AllMatchingTSID,TSID="${SNODASSWEVolumeAlias}",PropertyName="CurrentWaterYearMaxSNODASSWEVolume",PropertyValue="${ts:CurrentWaterYearMaxSNODASSWEVolume}")
+SetProperty(PropertyName="DoAnnotation",PropertyType=Boolean,PropertyValue="true")
+If(Name="MaxCalculated",PropertyIsNotDefinedOrIsEmpty="CurrentWaterYearMaxSNODASSWEVolume")
+SetProperty(PropertyName="DoAnnotation",PropertyType=Boolean,PropertyValue="false")
+Message(Message="The maximum SNODAS SWE volume for basin ${BasinID} was not calculated.")
+EndIf(Name="MaxCalculated")
+If(Name="DoAnnotation",Condition="${DoAnnotation} == true")
+Message(Message="The maximum SNODAS SWE volume for basin ${BasinID} was calculated as ${CurrentWaterYearMaxSNODASSWEVolume}")
+SetProperty(PropertyName="CurrentWaterYearMaxSNODASSWEVolume_25Percent",PropertyType=Double,PropertyValue="${CurrentWaterYearMaxSNODASSWEVolume}",Multiply=.25)
+FormatStringProperty(InputProperties="CurrentWaterYearMaxSNODASSWEVolume_25Percent,CurrentWaterYearMaxSNODASSWEVolume",Format="%.0f acft = 25%% of max (%.0f acft)",OutputProperty="AnnotationLabel25PercentVolume")
+SetProperty(PropertyName="SNODASSWEVolume25PercentComputed",PropertyType=String,PropertyValue="true")
+EndIf(Name="DoAnnotation")
+EndIf(Name="OnOrAfterMarch1")
+#
+# Now process the graph product
 ExpandTemplateFile(InputFile="snodas-localid-swe-volume-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume.tsp",ListInResults=False)
-ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume.tsp",RunMode=GUIAndBatch,View=False,OutputFile="SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume.png")
+ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume.tsp",RunMode=GUIAndBatch,View=False,OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume.png")
+#
 # Free the time series so each basin and graph type is processed independently without complex data management
 Free(IfNotFound=Ignore)
+# Exit()
 #---- End SWE Volume
 #
-# Process the 7-day change in SNODAS volume
+# Process the 1-week (7-day) change in SNODAS volume
 TableToTimeSeries(TableID="${BasinID}_Statistics",DateTimeColumn="Date_YYYYMMDD",DateTimeFormat="%Y%m%d",LocationID="${BasinID}",ValueColumn="SNODAS_SWE_Volume_1WeekChange_acft",DataSource="SNODAS",DataType="SWE-Volume-1WeekChange",Interval=Day,Units="acft",Alias="%L-SNODAS-SWE-Volume-1WeekChange-Day")
 # Convert the time series to annual traces in an ensemble with Oct 1 being the start of the water year
 CreateEnsembleFromOneTimeSeries(TSID="${BasinID}-SNODAS-SWE-Volume-1WeekChange-Day",TraceLength=1Year,EnsembleID="${BasinID}-SNODAS-SWE-Volume-1WeekChange-Ensemble",EnsembleName="${BasinID}-SNODAS-SWE-Volume-1WeekChange-Ensemble",Alias="${BasinID}-SNODAS-SWE-Volume-1WeekChange-Day-%z",ReferenceDate="${CurrentWaterYearStartDate}",OutputYearType=Water,ShiftDataHow=ShiftToReference)
 ExpandTemplateFile(InputFile="snodas-localid-swe-volume-1weekchange-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-1WeekChange.tsp",ListInResults=False)
-ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-1WeekChange.tsp",RunMode=GUIAndBatch,View=False,OutputFile="SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume-1WeekChange.png")
+ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-1WeekChange.tsp",RunMode=GUIAndBatch,View=False,OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume-1WeekChange.png")
 # Free the time series so each basin and graph type is processed independently without complex data management
 Free(IfNotFound=Ignore)
-#---- End SWE Volume
+#---- End SWE Volume 1-week change
 #
 # Process the snow cover percentage
 TableToTimeSeries(TableID="${BasinID}_Statistics",DateTimeColumn="Date_YYYYMMDD",DateTimeFormat="%Y%m%d",LocationID="${BasinID}",ValueColumn="SNODAS_SnowCover_percent",DataSource="SNODAS",DataType="SnowCover",Interval=Day,Units="percent",Alias="%L-SNODAS-SnowCover-Day")
 # Convert the time series to annual traces in an ensemble with Oct 1 being the start of the water year
 CreateEnsembleFromOneTimeSeries(TSID="${BasinID}-SNODAS-SnowCover-Day",TraceLength=1Year,EnsembleID="${BasinID}-SNODAS-SnowCover-Ensemble",EnsembleName="${BasinID}-SNODAS-SnowCover-Ensemble",Alias="${BasinID}-SNODAS-SnowCover-Day-%z",ReferenceDate="${CurrentWaterYearStartDate}",OutputYearType=Water,ShiftDataHow=ShiftToReference)
 ExpandTemplateFile(InputFile="snodas-localid-snowcover-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SnowCover.tsp",ListInResults=False)
-ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SnowCover.tsp",RunMode=GUIAndBatch,View=False,OutputFile="SnowpackGraphsByBasin/${BasinID}-SNODAS-SnowCover.png")
+ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SnowCover.tsp",RunMode=GUIAndBatch,View=False,OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SnowCover.png")
 # Free the time series so each basin and graph type is processed independently without complex data management
 Free(IfNotFound=Ignore)
-#---- End SWE Volume
+#---- End snow cover percentage
 #
 # Also free the table, which over time can take up a lot of memory
 FreeTable(TableID="${BasinID}_Statistics")
