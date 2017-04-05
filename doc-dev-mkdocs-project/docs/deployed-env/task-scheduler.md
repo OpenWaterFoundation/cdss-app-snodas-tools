@@ -34,14 +34,15 @@ need to be granted in order for this setting to be enabled. The administrative a
 users are defaulted otherwise. An administrative account must grant the *Log on as Batch Job* rights to the user who will be running 
 the ```SNODASDaily_Automated.py``` with the task scheduler. 
 
-1. Sign in on administrative account
-2. In the Control Panel, open Administrative Tools, then Local Security Policy.
-3. Beneath Security Settings, open Local Policies and highlight User Rights Assignment.
-4. Locate Log on as a batch job. Open the properties and add users who will be running the task scheduler SNODAS task.
-5. When finished, save your changes and close the Local Security Settings window.
-
-** TODO egiles 2017-01-19 add screenshots to the above workflow, cannot do this until I get admin login info. The above tutorial has
-not been tested on a computer because I do not have admin login info. Need to test on computer. Tutorial was created by online source.**
+1. Sign in on the local computer's administrative account. 
+2. In the Control Panel, open *Administrative Tools*, then *Local Security Policy*.
+![Control Panel](task-scheduler-images/1_admin_controlPanel.png)
+![Administrative Tools](task-scheduler-images/2_admin_adminTools.png)
+3. Beneath Security Settings, open *Local Policies* and highlight *User Rights Assignment*.
+![Local Secuirty Policies](task-scheduler-images/3_admin_localSecPolicies.PNG)
+4. Locate *Log on as a batch job*. Open the properties and add users who will be running the task scheduler SNODAS task.  
+![Log on as a batch job](task-scheduler-images/4_admin_localSecurity.png)
+5. When finished, save your changes and close the *Local Security Settings* window.
 
 ## Set up Task in Task Scheduler
 
@@ -70,7 +71,11 @@ not been tested on a computer because I do not have admin login info. Need to te
 
 	![Action](task-scheduler-images/action.png)  
 
-9.	Under *Program/Script*, navigate to the ```SNODASDaily_Automated_forTaskScheduler.bat``` script. Click *Next*.  
+9.	Under *Program/Script*, navigate to the ```SNODASDaily_Automated_forTaskScheduler.bat``` script. For *Start in (optional):*, 
+	enter the folder location holding the ```SNODASDaily_Automated_forTaskScheduler.bat``` script. In this example, you would enter 
+	```D:\SNODAS\pycharm-project``` in the *Start in (optional):* text box. Click *Next*.  
+ 
+	![Program](task-scheduler-images/program.png)  
  
 10.	Review task information and correct if necessary. Click *Finish*.   
 

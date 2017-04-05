@@ -1489,10 +1489,12 @@ def create_SNODAS_SWE_graphs():
         print 'SNODAS Time Series Graphs have been created.'
 
 def push_to_AWS():
+    """Runs batch file to push the newly-updated files to Amazon Web Services. The specifics are configured within the
+    batch file, AWS_batch_file. """
     logger.info('push_to_AWS: Pushing files to Amazon Web Services S3 given specifics of %s.'% AWS_batch_file)
     print 'Pushing files to Amazon Web Services S3'
+
     # Call batch file, AWS_batch_file, to push files up to Amazon Web Service
     args = [AWS_batch_file]
-    Popen(args).wait()
-
+    Popen(args, cwd="C:\Program Files\Amazon\AWSCLI").wait()
     logger.info('push_to_AWS: Files have been pushed to Amazon Web Services S3 as designed by %s.'% AWS_batch_file)
