@@ -409,11 +409,12 @@ if __name__ == "__main__":
 
 
                 # The time series graphs will only be produced after the last date of data is processed.
-                if current == endDate.date():
+                if current == endDate or current == endDate.date():
                     SNODAS_utilities.create_SNODAS_SWE_graphs()
                     # Push daily statistics to the web, if configured
-                    if UploadResultsToAmazonS3.upper == 'TRUE':
-                        SNODAS_utilities.push_to_AWS(root)
+                    print UploadResultsToAmazonS3.upper()
+                    if UploadResultsToAmazonS3.upper() == 'TRUE':
+                        SNODAS_utilities.push_to_AWS()
                     else:
                         logger.info('Output files from SNODAS_Tools are not pushed to Amazon Web Services S3 because of'
                                     ' setting in configuration file. ')

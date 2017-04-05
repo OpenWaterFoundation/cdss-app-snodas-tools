@@ -22,6 +22,6 @@ SET PYCHARM="C:\Program Files (x86)\JetBrains\PyCharm Community Edition 2016.2.3
 
 
 REM Launch python job
-SET PYTHON_JOB=D:\SNODAS\bin\SNODASDaily_Automated.py
+SET PYTHON_JOB="D:\SNODAS\pycharm-project\SNODASDaily_Automated.py"
 python %PYTHON_JOB%
 pause

@@ -1468,23 +1468,31 @@ def create_SNODAS_SWE_graphs():
         # Check that today is the set weekday to update the time series graphs.
         if str(datetime.today().weekday()) == str(weekly_update_date):
 
-            logger.info('create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS SWE graphs. TsTool '
+            print 'Running TsTool file to create SNODAS SWE graphs. This could take a couple of minutes.'
+            logger.info('create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS Time Series graphs. TsTool '
                         'file pathname: %s' % TsToolCreateTimeSeries)
 
             # Run the TsTool command file, 'TsToolCreateTimeSeries', in the background. Wait for the subprocess
             # to complete before continuing.
             Popen([TsToolInstall, '-commands', TsToolCreateTimeSeries]).wait()
+
+            print 'SNODAS Time Series Graphs have been created.'
     else:
+        print 'Running TsTool file to create SNODAS SWE graphs. This could take up to 5 minutes.'
         logger.info(
-            'create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS SWE graphs. TsTool '
+            'create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS Time Series graphs. TsTool '
             'file pathname: %s' % TsToolCreateTimeSeries)
 
         # Run the TsTool command file, 'TsToolCreateTimeSeries', in the background. Wait for the subprocess
         # to complete before continuing.
         Popen([TsToolInstall, '-commands', TsToolCreateTimeSeries]).wait()
+        print 'SNODAS Time Series Graphs have been created.'
 
-def push_to_AWS(root):
+def push_to_AWS():
     logger.info('push_to_AWS: Pushing files to Amazon Web Services S3 given specifics of %s.'% AWS_batch_file)
+    print 'Pushing files to Amazon Web Services S3'
     # Call batch file, AWS_batch_file, to push files up to Amazon Web Service
-    Popen([AWS_batch_file, root, 'OWF-SNODAS']).wait()
+    args = [AWS_batch_file]
+    Popen(args).wait()
+
     logger.info('push_to_AWS: Files have been pushed to Amazon Web Services S3 as designed by %s.'% AWS_batch_file)

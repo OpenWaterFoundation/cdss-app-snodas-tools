@@ -297,8 +297,8 @@ if __name__ == "__main__":
             elapsed_TsTool = TsTool_time_end - TsTool_time_start
 
             # Push daily statistics to the web, if configured
-            if UploadResultsToAmazonS3.upper == 'TRUE':
-                SNODAS_utilities.push_to_AWS(root)
+            if UploadResultsToAmazonS3.upper() == 'TRUE':
+                SNODAS_utilities.push_to_AWS()
             else:
                 logger.info('Output files from SNODAS_Tools are not pushed to Amazon Web Services S3 because of'
                             ' setting in configuration file. ')
