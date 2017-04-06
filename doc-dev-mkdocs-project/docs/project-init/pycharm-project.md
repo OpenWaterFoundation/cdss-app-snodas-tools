@@ -78,18 +78,4 @@ and ensures that each developer's settings only apply to their local development
 
 Now that a PyCharm project has been created in the repository files, Python files can be added to the project.
 
-**TODO SAM 2016-12-11 need to determine the standard for files, for example "src" for source files and "test" for tests?
-For example the following indicates how to tell PyCharm where source files exist but does not recommend a folder structure.**
-
 * [Configuring Project Structure](https://www.jetbrains.com/help/pycharm/2016.1/configuring-project-structure.html)
-
-Perhaps use something like:
-
-```
-pycharm-project\
-  .idea\        (hidden files created by PyCharm)
-  src\          (use this for the SNODAS tools scripts)
-    *.py        (put Emma's scripts here)
-  test\         (use this for pytest files)
-    *.py
-```

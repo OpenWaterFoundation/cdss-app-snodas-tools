@@ -38,7 +38,6 @@ The following is a list of development environment software:
 * [Python (for MkDocs)](python) - Python for MkDocs (and other needs separate from QGIS bundled version)
 * [PyCharm IDE](pycharm) - IDE used to develop and test Python programs
 * [MkDocs](mkdocs) - used to create this documentation
-* [pytest](pytest) - automated testing framework
 
 ## Portability and Sustainability Considerations
 

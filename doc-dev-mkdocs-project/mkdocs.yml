@@ -5,6 +5,9 @@
 site_name: SNODAS Tools (Developer Manual)
 pages:
 - 'Home': index.md
+- 'Release Notes': 'release-notes/release-notes.md'
+- 'New Developer Setup':
+    - 'Overview': 'dev-new/overview.md'
 - 'Development Environment':
     - 'Overview': 'dev-env/overview.md'
     - 'Machine':  'dev-env/machine.md'
@@ -14,7 +17,6 @@ pages:
     - 'Python (for MkDocs)': 'dev-env/python.md'
     - 'pip': 'dev-env/pip.md'
     - 'MkDocs': 'dev-env/mkdocs.md'
-    - 'pytest': 'dev-env/pytest.md'
     - 'PyCharm': 'dev-env/pycharm.md'
 - 'Initial Project Setup':
     - 'Overview': project-init/overview.md
@@ -25,9 +27,6 @@ pages:
     - 'Developer Documentation (MkDocs)': 'project-init/dev-doc.md'
     - 'User Documentation (MkDocs)': 'project-init/user-doc.md'
     - 'PyCharm Project': 'project-init/pycharm-project.md'
-    - 'pytest': 'project-init/pytest.md'
-- 'New Developer Setup':
-    - 'Overview': 'dev-new/overview.md'
 - 'Deployed Environment':
     - 'Overview': 'deployed-env/overview.md'
     - 'Task Scheduler': 'deployed-env/task-scheduler.md'
@@ -40,11 +39,9 @@ pages:
     - 'Overview': 'dev-tasks/overview.md'
     - 'Previous Tool Version': 'dev-tasks/previous-tool.md'
     - 'Software Design': 'dev-tasks/software-design.md'
-    - 'PyCharm Troubleshooting': 'dev-tasks/pycharm-trouble.md'
     - 'Git Workflow': 'dev-tasks/git.md'
     - 'Documenting': 'dev-tasks/doc.md'
     - 'Building and Running': 'dev-tasks/build-run.md'
-    - 'Testing': 'dev-tasks/test.md'
     - 'Deploying': 'dev-tasks/deploy.md'
     - 'Future Enhancements': 'dev-tasks/future-enhancements.md'
 theme: readthedocs

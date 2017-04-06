@@ -84,13 +84,12 @@ Software installation steps can be skipped if they have already been completed.
 
 1. **Should have been completed above:** [determine Windows 10 64-bit computer](../dev-env/machine/) - this is the target environment
 2. **Should have been completed above:** [Install Git software](../dev-env/git/) - needed to check out repository
-2. **Should have been completed above:** [Install Python](../dev-env/python/) - needed by MkDocs
-2. **Should have been completed above:** [Install `pip`](../dev-env/pip/) - used to install MkDocs
-2. **Should have been completed above:** [Install MkDocs](../dev-env/mkdocs/) - used for documentation
-4. [Install QGIS bundled with QGIS](../dev-env/qgis/) - QGIS/pyQGIS/GDAL/OGR software tools to run SNODAS tools
-4. [Install PyCharm IDE](../dev-env/pycharm/) - IDE used to edit and run SNODAS tools during development
-3. [Install TSTool](../dev-env/tstool/) - needed to create time series products
-3. [Install pytest](../dev-env/pytest/) - needed to run automated Python tests
+3. **Should have been completed above:** [Install Python](../dev-env/python/) - needed by MkDocs
+4. **Should have been completed above:** [Install `pip`](../dev-env/pip/) - used to install MkDocs
+5. **Should have been completed above:** [Install MkDocs](../dev-env/mkdocs/) - used for documentation
+6. [Install QGIS bundled with QGIS](../dev-env/qgis/) - QGIS/pyQGIS/GDAL/OGR software tools to run SNODAS tools
+7. [Install PyCharm IDE](../dev-env/pycharm/) - IDE used to edit and run SNODAS tools during development
+8. [Install TSTool](../dev-env/tstool/) - needed to create time series products
 
 The remaining steps below refer to other documentation and provides specific direction for new developer project setup.
 

@@ -23,11 +23,6 @@ The [SNODAS Tools Git repository](https://github.com/OpenWaterFoundation/cdss-ap
 * Collaborators were added for the project team.
 consistent with [overall project organization](overview#development-folder-structure):
 
-**TODO smalers 2016-12-06 Need to confirm how the State of CO wants to manage the repository -
-is OWF repository OK or should it be moved to a State of CO organization? - see the OWF OpenCDSS project**
-
-**TODO smalers 2016-12-06 Need to confirm with the State of CO the license for the software and work products - see the OWF OpenCDSS project**
-
 ## Clone the GitHub Repository to Developer Computer
 
 It is assumed that the [project folder structure was previously defined](dev-folder/) on the development computer for the software developer's account,

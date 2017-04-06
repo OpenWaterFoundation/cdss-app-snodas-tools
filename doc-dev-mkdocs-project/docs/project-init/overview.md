@@ -33,15 +33,13 @@ C:\OSGeo4W64\                                 (QGIS sofware install location, in
 C:\Users\user\                                (software developer's home folder on Windows)
   cdss-dev\                                   (umbrella software folder for CDSS development projects)
     CDSS-SNODAS-Tool\                         (folder for SNODAS Tools development)
-      bin\                                    (folder for scripts used in development files)
       git-repos\                              (Git repositories, may be one or more repositories under here,
         cdss-app-snodas-tools\                (all the code, documentation, tests, and other files
 	                                       that are part of this development project)
           doc-dev-mkdocs-project\             (MkDocs project for developer documentation)
           doc-user-mkdocs-project\            (MkDocs project for user documentation)
           pycharm-project\                    (PyCharm project for PyThon code)
-      tools\                                  (folder under which additional project-specific software can be installed,
-                                               if necessary)
+		  test-CDSS\						  (folder for CDSS project-specific code and products)
 ```
 
 PyCharm stores some project configuration files a hidden folder

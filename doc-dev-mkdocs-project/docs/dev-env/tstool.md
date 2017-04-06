@@ -14,4 +14,3 @@ Download the TSTool installer for Windows and install into the normal location.
 TSTool will be called in batch mode to create snow products.
 TSTool installs as a different version and therefore the code that calls TSTool should be specific about which version is being used.
 
-**TODO smalers 2016-12-04 need to finalize the process using Python script to call TSTool (?) to run TSTool command files.**

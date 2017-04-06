@@ -8,14 +8,13 @@ The following topics are discussed in this section:
 	- [Calculating SNODAS SWE Statistics](#calculating-snodas-swe-statistics)
 	- [Calculating Snow Cover Statistics](#calculating-snow-cover-statistics)
 * [Handling Missing Values](#handling-missing-snodas-values)
-* [Handling Elevation Zones](#handling-elevation-zones)
 * [Handling the One Week Change in Total Snow Volume Statistic](#handling-the-one-week-change-in-total-snow-volume-statistic)
 * [Creating the basin boundary GeoJSON file for the Web Application](#creating-the-basin-boundary-geojson-file-for-the-web-application)
 
 
 # Handling Overlapping Basin Boundaries
 
-The QGIS Zonal Statistics tool produces correct statistics even if the features of the [Watershed Basin Shapefile Input](file-structure.md#snodastools92staticdata92)
+The QGIS Zonal Statistics tool produces correct statistics even if the features of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input)
 are overlapping.   
 
 Below is an example of overlapping features in a shapefile. The dark grey lines represent basin boundaries and the red circles pinpoint the areas of overlap. 
@@ -32,12 +31,8 @@ overlapping polygons.  The code for the QGIS Zonal Statistics tool can be viewed
 [here](https://github.com/qgis/QGIS/blob/a2f51260db5357917e86b78f1bb2915379d670dd/src/analysis/vector/qgszonalstatistics.cpp).
 
 The Colorado watershed basin shapefile input used for the Colorado Water Conservation Board project has many overlapping basin boundaries. 
-This is due to:    
-
- 1. The Colorado watershed basin shapefile input is a conglomeration of muliple basin boundary shapefiles. 
- 2. Sections of the Colorado watershed basin shapefile are divided into elevation zones.
- 
- ** TODO egiles 03/16/17 add to this section - may need input from Steve and Amy on proper wordiing **
+This is because it was created by merging basin from many different sources. Refer to [SNODAS Tools User Documentation](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/data/data/#colorado-basins)
+for more information on the creation of the watershed basin shapefile input for the CWCB project. 
 
 # Handling SNODAS cells Overlapped by Multiple Features
 
@@ -98,15 +93,11 @@ describes the approximate percentage of land in each basin (non-water) covered b
 
 # Handling Missing SNODAS Values
 
-The no-data value of SNDOAS products is set to -9999. This is set in the SNODAS Tools' [configuration file](file-structure.md#snodastools92snodasconfigini). 
+The no-data value of SNDOAS products is set to -9999. This is set in the SNODAS Tools' [configuration file](file-structure.md#snodas_tools92config92). 
 If the SNODAS no-data value is changed, it is pertinent that the new value is entered in the configuration file under section ```SNODAS_FTPSite``` option ```null_value```. 
 The configured null_value variable is used in the [SNODAS_raster_clip](overview.md#3-clip-and-project-snodas-national-grids-to-study-area) function and the 
 [assign_SNODAS_projection](overview.md#3-clip-and-project-snodas-national-grids-to-study-area) function of the 
 ```SNODAS_utilities.py``` script to set the no-data value of the clipped SNODAS grid to the original no-data value of the SNODAS national dataset.
-
-# Handling Elevation Zones
-
-** egiles TODO 3/16/17 add information to this section. I might need help with this section from Amy and Steve**
 
 # Handling the One Week Change in Total Snow Volume Statistic
 
@@ -128,7 +119,7 @@ The web application for the Colorado data uses Leaflet to dispaly a choropleth m
 a GeoJSON file of the basin boundary shapefile is required. This GeoJSON file provides the geometry for the basin boundaries that are displayed in 
 the web application. The snowpack statistics are imported from the daily csv files (organized by date) and are appended to the GeoJSON file by the foreign key, LOCAL_ID.
 
-If the [watershed basin shapefile input](file-structure.md#snodastools92staticdata92) is changed, the basin boundary GeoJSON file must be recreated and 
+If the [watershed basin shapefile input](file-structure.md#watershed-basin-shapefile-input) is changed, the basin boundary GeoJSON file must be recreated and 
 reloaded into the web application. Below are the step-by-step instructions on how to create a GeoJSON file from an exisiting shapefile. 
 
 1. Open QGIS Desktop. 

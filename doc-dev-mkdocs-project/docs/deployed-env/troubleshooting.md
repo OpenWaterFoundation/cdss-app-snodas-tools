@@ -1,6 +1,18 @@
 # Deployed Environment / Troubleshooting
 
-**TODO smalers 2016-12-11 Add discussion of common tasks, such as when download fails and needs to rerun script**
+## If Automated Downwload Fails
+
+There are times where the automated daily download will fail. Some scenarios that would cause
+this are:
+
+ - The task in the task scheduler does not run because the computer is turned off. 
+ - The SNODAS FTP site did not upload the current date of data at the time of set task.
+ - The SNODAS FTP site was too busy to allow download at the time of the set task. 
+ 
+If this occurs, the missed date of SNODAS data can be downloaded 
+and processed using the ```SNODAS_DailyInteractive.py``` Python script
+To run the ```SNODAS_DailyInteractive.py``` script, refer to the step-by-step instructions in the 
+[Processing Workflow](../software-design/overview#processing-workflow) section. 
 
 ## User Input Error Messages in the Console
 
@@ -70,19 +82,22 @@ Make sure to rerun the script for the days of SNODAS data that were affected by 
 
 ## Enabling Optional SWE Statistics
 
-The SNODAS Tools always calculate and export the [default SWE statistics](). The [optional SWE statisitics](), however, are defaulted to be ignored by
-the SNODAS Tools. If desired by the user, the optional statistics can be enabled to be calculated and exported to the [csv files] alongside 
-the default SWE statistics. The desired optional statistics can be configured in the [configuration file](../software-design/file-structure.md#snodastools92snodasconfigini) under section ```Desired```. 
+The SNODAS Tools always calculate and export the [default SWE statistics](../software-design/overview/#overview). The 
+[optional SWE statisitics](../software-design/overview/#overview), however, are defaulted to be ignored by
+the SNODAS Tools. If desired by the user, the optional statistics can be enabled to be calculated and exported to the csv files alongside 
+the default SWE statistics. The desired optional statistics can be configured in the [configuration file](../software-design/file-structure.md#the-sections-and-options-of-the-configuration-file) 
+under **section** ```OptionalStatistics```. 
 
 The SNODAS Tools export the satistics into two types of csv files, ```byDate``` and ```byBasin```. In both csv files, the statistic name is written 
 to the first row, or the header row, as shown below. 
 
-![csvExample](.png)
+![csvExample](troubleshooting-images/csvExample.png)
 
 When an optional statistic is enabled in the configuration file, a new column is added to each of the csv files. For this reason, it is 
 mandatory that the configuration of the optional SWE statistics is set *before* the script is first run. If the configuraion of the optional
 SWE statistics is changed *after* the first run of the SNODAS Tools (meaning that the csv files have already been created and there
-is already data within the csv files), an error will occur within the [```byBasin``` csv file](). 
+is already data within the csv files), an error will occur within the 
+[```byBasin``` csv file](../software-design/file-structure/#processeddata925_calculatestatistics92statisticsbybasin92). 
 
 For example, if the SNODAS Tools originally run with the default settings then the header row of the csv files will 
 include the following 7 columns:
@@ -98,14 +113,15 @@ include the following 7 columns:
 |7|SWE_volume_acft|the volume of water stored within the snowpack|
 |8|one_week_SWE_volume_change_acft|the week change in water volume stored within the snowpack| 
 
-It is important to understand that a *new* [```byDate``` csv file] is created everytime a *new* date of SNODAS 
-data is processed with the SNODAS Tools. However, a new [```byBasin``` csv file] *is not* created everytime a *new*
+It is important to understand that a *new* 
+[```byDate``` csv file](../software-design/file-structure/#processeddata925_calculatestatistics92statisticsbydate92) is created everytime a *new* date of SNODAS 
+data is processed with the SNODAS Tools. However, a new 
+[```byBasin``` csv file](../software-design/file-structure/#processeddata925_calculatestatistics92statisticsbybasin92) *is not* created everytime a *new*
 date of SNODAS data is processed. Instead, the statistics from the new day are *appended* to the original ```byBasin```
 csv file. This is why the error occurs within the ```byBasin``` csv file if new statistics are introduced or disabled
 after the header row of the ```byBasin``` csv file has already been previously established. 
  
- 
-
-**Todo egiles 2/9/2017 explain the optional swe statistics and how to configure them to turn on. Also 
-note the errors that occur if a user changes the optional swe statistics after already having a byBasin csv
-file. Explain how to fix this problem.**
+If the user wants to enable or disable optional statistics after the SNODAS Tools have been run, then the 
+byBasin csv files must be deleted from the 
+[```processedData\5_CalculateStatistics\StatisticsbyBasin``` folder](../software-design/file-structure/#processeddata925_calculatestatistics92statisticsbybasin92) 
+and all dates of interest must be reprocessed by the SNODAS Tools. 

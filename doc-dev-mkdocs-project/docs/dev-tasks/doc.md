@@ -55,8 +55,6 @@ Guidelines for the content are:
 The reader of developer documentation is expected to have some skill in software development and installation.
 However, content should provide background and context where appropriate and not assume that the reader is an expert in GIS or Python.
 
-**TODO smalers 2016-12-05 Need to add a few conventions here**
-
 ## User Documentation Website
 
 User documentation is created using a similar approach to the developer documentation.
