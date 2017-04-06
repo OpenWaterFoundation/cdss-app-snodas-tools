@@ -23,6 +23,8 @@ Technical approach and design are discussed in the [Development Tasks / Software
 
 This documentation is organized by major phases of software development, including:
 
+* [Release Notes](release-notes/release-notes) - release notes for SNODAS Tools software product, including changes
+to software and documentation
 * [New Developer Setup](dev-new/overview) - steps that a new developer must take to set up the project so they can contribute to development
 * [Development Environment](dev-env/overview) - configure software tools needed in the developer environment (but don't set up the project yet)
 * [Initial Project Setup](project-init/overview) - steps to set up the project the first time, using software installed in the development environment
