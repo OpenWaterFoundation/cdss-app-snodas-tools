@@ -352,7 +352,7 @@ Refer to the [File Structure](file-structure.md#processeddata926_createtimeserie
 for more information regarding the time series .png files and the 6_CreateTimeSeriesProducts folder. Refer to the 
 [Tool Utilities and Functions](#5-calculate-and-export-zonal-statistics)
 section for detailed information on the Python functions called to create the daily binary snow cover grids. Refer to the
-[create-snodas-swe-graphs.TsTool](file-structure.md#create-snodas-swe-graphs-v3tstool) section for information about the TsTool command file 
+[create-snodas-swe-graphs.TsTool](file-structure.md#create-snodas-swe-graphststool) section for information about the TsTool command file 
  used to create the time series graphs.  
 
 ![timeseries-workflow](overview-images/workflow_timeseries.png)

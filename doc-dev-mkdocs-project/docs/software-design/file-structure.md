@@ -24,7 +24,7 @@ The following topics are discussed in this section:<br>
 		 - [Design of the Configuration File](#design-of-the-configuration-file)
 		 - [The Sections and Options of the Configuration File](#the-sections-and-options-of-the-configuration-file)
 	+ [SNODAS_Tools\\TsTool\\](#snodas_tools92tstool926_createtimeseriesproducts)
-		- [create-snodas-swe-graphs-v3.TSTool](#create-snodas-swe-graphs-v3tstool)  
+		- [create-snodas-swe-graphs.TSTool](#create-snodas-swe-graphststool) 
 		- [Other .tsp and .txt Files](#other-tsp-and-txt-files)  
 		- [~$create-snodas-swe-graphs.TSTool.log](#create-snodas-swe-graphststoollog)
 	+ [SNODAS_Tools\\aws\\](#snodas_tools92aws92)		  
@@ -93,6 +93,7 @@ locations of folders and files on the operational system.
 - - - - - - - - - - - - - - - - > ```SnowpackStatisticsByDate_YYYYMMDD.csv```  
 - - - - - - - - - - - - - - - - > ```SnowpackStatisticsByDate_YYYYMMDD.geojson```  
 - - - - - - - - - - - - - - - - > ```SnowpackStatisticsByDate_YYYYMMDD.zip```  
+- - - - - - - - - - - - - - - - > ```SnowpackStatisticsByDate_LatestDate.csv```    
 - - - - - - - - - - - - - - - - > ```ListOfDates.txt```   
 - - - - - - - - - - ```6_CreateTimeSeriesProducts```  
 - - - - - - - - - - - - - ```SnowpackGraphsByBasin\```  
@@ -110,7 +111,7 @@ locations of folders and files on the operational system.
 - - - - - - - - - ```6_CreateTimeSeriesProducts\```   
 - - - - - - - - - - - - > ```~$create-snodas-swe-graphs.TSTool.log```   
 - - - - - - - - - - - - > ```create-snodas-swe-graphs-tstool-control.txt```    
-- - - - - - - - - - - - > ```create-snodas-swe-graphs-v3.TSTool```    
+- - - - - - - - - - - - > ```create-snodas-swe-graphs.TSTool```    
 - - - - - - - - - - - - > ```snodas-localid-swe-graph-template.tsp```    
 - - - - - - - - - - - - > ```snodas-localid-snowcover-graph-template.tsp```   
 - - - - - - - - - - - - > ```snodas-localid-swe-volume-graph-template.tsp```    
@@ -304,7 +305,7 @@ of the daily SNODAS data grids (defaulted to WGS84).
 #### Watershed Connectivity File
 
 The watershed connectivity file is an excel file listing all basins of the watershed basin input shapefile.
-It is read by the [create-snodas-swe-graphs TsTool command file](#create-snodas-swe-graphs-v3tstool) to create the 
+It is read by the [create-snodas-swe-graphs TsTool command file](#create-snodas-swe-graphs-tstool) to create the 
 [time series graphs](#processeddata926_createtimeseriesproducts92). 
  
 
@@ -632,7 +633,12 @@ the user can choose to keep the shapefile component files unzipped. If the defau
 will delete the unzipped shapefile component files. Under **section** ```OutputLayers``` **option** ```shp_delete_originals``` of 
 the [configuration file](#the-sections-and-options-of-the-configuration-file), the user can choose to keep both the zipped folder AND the unzipped shapefile component files. 
  
-**ListOfDates.txt**  
+**SnowpackStatisticsByDate_LatestDate.csv**
+
+The ```SnowpackStatisticsByDate_LatestDate.csv``` is a copy of the most recent date's ```SnowpackStatisticsByDate_YYYYMMDD.csv``` file. The contents of the file are overwritten 
+when a later date of SNODAS data is processed. 
+
+ **ListOfDates.txt**  
 
 The ListOfDates.txt file is a text file that contains a list of all processed dates of SNODAS data. All dates in the list correspond to 
 a SnowpackStatisticsByDate_YYYYMMDD.csv file in the StatisticsbyDate folder. The dates in the ListOfDates.txt file are in the YYYYMMDD format. 
@@ -784,7 +790,7 @@ Configuration File Section: [ProgramInstall]
 |-------------|-------|----------|
 |qgis_pathname|The full location to the QGIS installation on the local desktop.|C:/OSGeo4W/apps/qgis|
 |tstool_pathname|The full location of the TsTool program (TsTool.exe) on the local desktop.|C:/CDSS/TSTool-12.00.00beta/bin/TSTool.exe|
-|tstool_create-snodas-graphs_pathname|The full location of the create-snodas-swe-graphs-v3.TSTool command file.|D:/SNODAS/bin/create-snodas-swe-graphs-v3.TSTool|
+|tstool_create-snodas-graphs_pathname|The full location of the create-snodas-swe-graphs.TSTool command file.|D:/SNODAS/bin/create-snodas-swe-graphs.TSTool|
 
 **NSIDC FTP Site**  
 Configuration File Section: [SNODAS_FTPSite] 
@@ -898,11 +904,11 @@ All of the **sections** and **options** in the following table are in reference 
 All files inside of this folder are required inputs and outputs for the TsTool program to create the
 time series graphs. 
 
-#### create-snodas-swe-graphs-v3.TSTool
+#### create-snodas-swe-graphs.TSTool
 
-The ```create-snodas-swe-graphs-v3.TSTool``` command file is read by [TSTool](../dev-env/tstool.md) to 
+The ```create-snodas-swe-graphs.TSTool``` command file is read by [TSTool](../dev-env/tstool.md) to 
 produce the [snowpack time series graphs](#processeddata926_createtimeseriesproducts92). 
-The ```create-snodas-swe-graphs-v3.TSTool``` command file is prompted in the ```SNODASDaily_Interactive.py``` script and the ```SNODASDaily_Automated.py``` script, 
+The ```create-snodas-swe-graphs.TSTool``` command file is prompted in the ```SNODASDaily_Interactive.py``` script and the ```SNODASDaily_Automated.py``` script, 
 under function [create_SNODAS_SWE_graphs()](overview.md#5-calculate-and-export-zonal-statistics), after all dates of data have been processed. 
 
 Refer to the [Generate Time Series Products](overview.md#generate-time-series-products) section of the Software Design - Overview page for more information 

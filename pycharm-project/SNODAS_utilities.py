@@ -17,14 +17,14 @@
 
 # Import necessary modules
 import ftplib, os, tarfile, gzip, gdal, csv, logging, configparser, glob, osr, zipfile, ogr
-from subprocess import Popen, call
+from subprocess import Popen
 from logging.config import fileConfig
 from qgis.analysis import QgsRasterCalculator, QgsRasterCalculatorEntry, QgsZonalStatistics
 from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsField
 from qgis.core import QgsExpression, QgsVectorFileWriter, QgsCoordinateReferenceSystem
 from PyQt4.QtCore import QVariant
 from datetime import datetime, timedelta
-from shutil import copy
+from shutil import copy, copyfile
 
 # Reads the configuration file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
@@ -70,9 +70,6 @@ def config_section_map(section):
 #   TsToolInstall: The full pathname to the TsTool program.
 #   TsToolBatchFile: The full pathname to the TsTool Batch file responsible for creating the time-series graphs.
 
-
-def push_to_AWS(AWS_batch_file, root):
-    Popen(AWS_batch_file, cwd=r'root')
 
 host = config_section_map("SNODAS_FTPSite")['host']
 username = config_section_map("SNODAS_FTPSite")['username']
@@ -1430,12 +1427,14 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             # Update text file, ListOfDates.txt, with list of dates represented by csv files in ByDate folder
             array = glob.glob("*.csv")
             array.sort(reverse=True)
+            array_recent_date = []
 
             with open("ListOfDates.txt", 'w') as output_file:
                 for filename in array:
-                    date = filename[25:33]
-                    output_file.write(date + "\n")
-
+                    if filename.endswith("LatestDate.csv") == False:
+                        date = filename[25:33]
+                        array_recent_date.append(date)
+                        output_file.write(date + "\n")
             output_file.close()
 
             # Export the daily date array to a .csv file. Overwrite the .csv file if it already exists.
@@ -1446,7 +1445,11 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                     csvwriter.writerow(row)
             csvfile.close()
 
-
+            # Get most recent processed SNODAS date & make a copy called 'SnowpackStatisticsByDate_LatestDate.csv'
+            most_recent_date = str(max(array_recent_date))
+            src = 'SnowpackStatisticsByDate_' + most_recent_date + '.csv'
+            dst = 'SnowpackStatisticsByDate_LatestDate.csv'
+            copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
 
             # Return working directory back to its original setting before the script began.
             os.chdir(currdir)
