@@ -4,8 +4,8 @@ The following topics are discussed in this section:<br>
 
 * [Overview](#overview)
 * [CDSS\\SNODAS\\](#cdss92snodas92)
-* [SNODAS\\pycharm-project\\](#snodas92pycharm-project92)   
 * [SNODAS\\SNODAS_Tools\\](#snodas92snodas_tools92) 
+	+ [SNODAS_Tools\\scripts\\](#snodas_tools92scripts92)   
 	+ [SNODAS_Tools\\staticData\\](#snodas_tools92staticdata92)
 		- [Watershed Basin Shapefile Input](#watershed-basin-shapefile-input)
 		- [Watershed Basin Extent Shapefile](#the-watershed-basin-extent-shapefile)
@@ -65,12 +65,6 @@ locations of folders and files on the operational system.
   
 ```C:\CDSS\SNODAS\``` 
  
----  ```pycharm-project\```   
-- - >  ```SNODASDaily_Automated.py```  
-- - >  ```SNODASDaily_Interactive.py```  
-- - >  ```SNODAS_utilities.py```  
-- - >  ```SNODASDaily_Automated_forTaskScheduler.bat``` 
-
 --- ```SNODAS_Tools```  
 - - - - - ```aws\```  
 - - - - - -  - - > ```copyAllToOWFAmazons3.bat```  
@@ -102,6 +96,11 @@ locations of folders and files on the operational system.
 - - - - - - - - - - - - - - - - > ```LOCALID_SNODAS_SWE_Volume.png```  
 - - - - - - - - - - - - - - - - > ```LOCALID_SNODAS_SWE_Volume_1WeekChange.png```   
 - - - - - - - - - - - - - - - - > ```LOCALID-SNODAS-SWE-Volume-Gain-Cumulative.png```   
+- - - - - ```scripts\``` 
+- - - - - - - - > ```SNODASDaily_Automated.py``` 
+- - - - - - - - > ```SNODASDaily_Interactive.py``` 
+- - - - - - - - > ```SNODAS_utilities.py``` 
+- - - - - - - - > ```SNODASDaily_Automated_forTaskScheduler.bat``` 
 - - - - - ```staticData\```  
 - - - - - - - - > ```studyAreaExtent_prj.shp``` (created and exported by the SNODAS Tools)    
 - - - - - - - - > ```watershedBasinBoundary.shp``` (must be added before running the SNODAS Tools)   
@@ -129,15 +128,29 @@ locations of folders and files on the operational system.
 ## CDSS\\SNODAS\\
 All SNDOAS scripts, input data and output data are stored within the ```CDSS\SNODAS\``` folder. 
 
- * The SNODAS Python and batch scripts are contained within the [SNODAS\\pycharm-project\\](#snodas92pycharm-project92) folder.
+ * The SNODAS Python and batch scripts are contained within the [SNODAS\\pycharm-project\\](#snodas_tools92scripts92) folder.
 
  * The [SNODAS\\SNODAS_Tools\\](#snodas92snodas_tools92) folder contains the data (both input and output), the configuration file, and the batch files
 designed to create the time series graphs and upload the data to amazon web services.
 
- 
-## SNODAS\\pycharm-project\\
+## SNODAS\\SNODAS_Tools\\
 
-The ```C:\CDSS\SNODAS\pycharm-project\``` folder holds all SNODAS Tools' scripts. In total there are four
+ * The SNODAS scripts (Python and .bat) are contained within the [SNODAS_Tools\\scripts\\](#snodas_tools92scripts92) folder. 
+
+ * The SNODAS input data files are contained within the [SNODAS_Tools\\staticData\\](#snodas_tools92staticdata92) folder.
+
+ * The SNODAS output data files are contained within the [SNODAS_Tools\\processedData\\](#snodas_tools92processeddata92) folder.
+ 
+ * The SNODAS cofiguration file is contained within the [SNODAS_Tools\\config\\](#the-sections-and-options-of-the-configuration-file) folder.
+ 
+ * The input TsTool files associated with creating the output time series graphs  are contained withing the [SNODAS_Tools\\TsTool\\](#snodas_tools92tstool926_createtimeseriesproducts) folder. 
+ 
+ * The batch file designed to upload the SNODAS output data to Amazon Web Services is contained within the [SNODAS_Tools\\aws\\](#snodas_tools92aws92) folder. 
+
+
+### SNODAS_Tools\\scripts\\
+
+The ```C:\CDSS\SNODAS\SNODAS_Tools\scripts\``` folder holds all SNODAS Tools' scripts. In total there are four
 scripts:   
 
 	1. SNODASDaily_Automated.py 
@@ -232,19 +245,8 @@ Components of the SNODASDaily_Automated_forTaskScheduler.bat File
 |SET PYTHON_JOB=|Set the full pathname to the location of the Python script.|D:\SNODAS\bin\SNODASDaily_Automated.py|
 |python %PYTHON_JOB%|Launch the Python program.|N/A|
 
-## SNODAS\\SNODAS_Tools\\
 
- * The SNODAS input data files are contained within the [SNODAS\\SNODAS_Tools\\staticData\\](#snodas_tools92staticdata92) folder.
-
- * The SNODAS output data files are contained within the [SNODAS_Tools\\processedData\\](#snodas_tools92processeddata92) folder.
  
- * The SNODAS cofiguration file is contained within the [SNODAS_Tools\\config\\](#the-sections-and-options-of-the-configuration-file) folder.
- 
- * The input TsTool files associated with creating the output time series graphs  are contained withing the [SNODAS_Tools\\TsTool\\](#snodas_tools92tstool926_createtimeseriesproducts) folder. 
- 
- * The batch file designed to upload the SNODAS output data to Amazon Web Services is contained within the [SNODAS_Tools\\aws\\](#snodas_tools92aws92) folder. 
-
-
 ### SNODAS_Tools\\staticData\\
 
 There are three files that are contained within the ```SNODASTools\staticData\``` folder.
