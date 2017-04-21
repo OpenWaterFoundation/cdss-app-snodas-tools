@@ -1456,37 +1456,16 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
             # List of extensions referring to the output shapefile
             ext_list = ['.cpg', '.dbf', '.prj', '.qpj', '.shp', '.shx']
-            # If the shapefile files are zipped
-            if (config_section_map("OutputLayers")['shp_zip']).upper() == 'TRUE':
-                src = 'SnowpackStatisticsByDate_' + most_recent_date + '.zip'
-                dst = 'SnowpackStatisticsByDate_LatestDate.zip'
+            for item in ext_list:
+                src = 'SnowpackStatisticsByDate_' + most_recent_date + item
+                dst = 'SnowpackStatisticsByDate_LatestDate' + item
                 copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
-                # Unzip the newly created zip file
-                zip_ref = zipfile.ZipFile(os.path.join(csv_byDate, dst), 'r')
-                zip_ref.extractall(csv_byDate)
-                zip_ref.close()
-                # Change the names of the unzipped files
-                for item in ext_list:
-                    src = 'SnowpackStatisticsByDate_' + most_recent_date + item
-                    dst = 'SnowpackStatisticsByDate_LatestDate' + item
-                    copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
-                # Zip the files back up
-                delete_originals = config_section_map("OutputLayers")['shp_delete_originals']
-                zipShapefile('SnowpackStatisticsByDate_LatestDate.shp', csv_byDate, delete_originals)
-            # If the shapefile files are unzipped
-            else:
-                for item in ext_list:
-                    src = 'SnowpackStatisticsByDate_' + most_recent_date + item
-                    dst = 'SnowpackStatisticsByDate_LatestDate' + item
-                    copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
 
             # Return working directory back to its original setting before the script began.
             os.chdir(currdir)
 
             logger.info('zStat_and_export: Zonal statistics of %s are exported to %s' % (file, csv_byBasin))
             print "Zonal statistics of %s are complete. \n" % date_name
-
-
 
         else:
             logger.info('zStat_and_export: %s is not a .tif file and the zonal statistics were not processed.' % file)

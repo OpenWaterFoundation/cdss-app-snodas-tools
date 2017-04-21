@@ -282,13 +282,18 @@ if __name__ == "__main__":
             zStats_time_end = time.time()
             elapsed_zStats = zStats_time_end - zStats_time_start
 
-            # If desired, zip files of output shapefile.
+            # If desired, zip files of output shapefile (both today's data and latestDate file)
             if zip_shp.upper() == 'TRUE':
                 for file in os.listdir(results_date_path):
                     if today_date in str(file) and file.endswith('.shp'):
                         SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
-                        break
+                    if "LatestDate" in str(file) and file.endswith('.shp'):
+                        zip_full_path = os.path.join(results_date_path, "SnowpackStatisticsByDate_LatestDate.zip")
 
+                        if os.path.exists(zip_full_path):
+                            os.remove(zip_full_path)
+
+                        SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
 
             # Create SNODAS SWE time series graph with TsTool program.
             TsTool_time_start = time.time()
