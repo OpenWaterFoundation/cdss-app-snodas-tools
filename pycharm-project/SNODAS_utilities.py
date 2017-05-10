@@ -29,7 +29,7 @@ from shutil import copy, copyfile
 # Reads the configuration file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
 Config = configparser.ConfigParser()
-Configfile = "../SNODAS_Tools/config/SNODAS-Tools-Config.ini"
+Configfile = "../config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
 # Create and configures logging file
@@ -1459,13 +1459,16 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             for item in ext_list:
                 src = 'SnowpackStatisticsByDate_' + most_recent_date + item
                 dst = 'SnowpackStatisticsByDate_LatestDate' + item
-                copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
+                if os.path.exists(src):
+                    copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
 
             # Return working directory back to its original setting before the script began.
             os.chdir(currdir)
 
             logger.info('zStat_and_export: Zonal statistics of %s are exported to %s' % (file, csv_byBasin))
             print "Zonal statistics of %s are complete. \n" % date_name
+
+
 
         else:
             logger.info('zStat_and_export: %s is not a .tif file and the zonal statistics were not processed.' % file)

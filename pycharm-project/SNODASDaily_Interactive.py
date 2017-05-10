@@ -21,7 +21,7 @@ from datetime import datetime, timedelta
 # Read the configuration file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
 Config = configparser.ConfigParser()
-Configfile = "../SNODAS_Tools/config/SNODAS-Tools-Config.ini"
+Configfile = "../config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
 # Helper function to obtain option values of config file sections.
@@ -400,12 +400,6 @@ if __name__ == "__main__":
                                                                   results_date_path,
                                                                   clip_path, snowCover_path, current,
                                                                 returnedList[0], output_CRS_EPSG)
-                # If desired, zip files of output shapefile.
-                if zip_shp.upper() == 'TRUE':
-                    for file in os.listdir(results_date_path):
-                        if current_date in str(file) and file.endswith('.shp'):
-                            SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
-                            break
 
                 # If desired, zip files of output shapefile (both today's data and latestDate file)
                 if zip_shp.upper() == 'TRUE':
@@ -414,11 +408,12 @@ if __name__ == "__main__":
                             SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
                         if "LatestDate" in str(file) and file.endswith('.shp'):
                             zip_full_path = os.path.join(results_date_path,
-                                                                     "SnowpackStatisticsByDate_LatestDate.zip")
+                                                                 "SnowpackStatisticsByDate_LatestDate.zip")
                             if os.path.exists(zip_full_path):
                                 os.remove(zip_full_path)
 
                             SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
+
 
                 # The time series graphs will only be produced after the last date of data is processed.
                 if current == endDate or current == endDate.date():
