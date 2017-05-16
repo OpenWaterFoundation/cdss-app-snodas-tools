@@ -357,20 +357,3 @@ if __name__ == "__main__":
     logger.info('Elapsed time: %d seconds' % elapsed)
     logging.info('Elapsed time: %d seconds' % elapsed)
     print 'Elapsed time: %d minutes and %d seconds \n' % (elapsedMinutes, elapsedSeconds)
-
-
-    # Only print elapsed time statistics if the file for today was successfully downloaded
-    for file in os.listdir(download_path):
-        if date in str(file):
-
-            print 'Percentage of time allocated to each processing step:'
-
-            # Print elapsed times for each processing section
-            section_dict = {' 1 Download':elapsed_download, ' 2 Set Environment':elapsed_setEnvironment,
-                            ' 3 Clip and Project': elapsed_clip, ' 4 Create Snow Cover': elapsed_snowCover,
-                            ' 5 Create and manipulate CSV files': elapsed_manipulateCSV,
-                            ' 6 Calculate and export zonal statistics': elapsed_zStats,
-                            ' 7 Create Time Series Graphs': elapsed_TsTool}
-            for key2, value2 in sorted(section_dict.items()):
-                timePercent = value2 / elapsed * 100
-                print '%s: %d%% (%d seconds)' % (key2, timePercent, value)
