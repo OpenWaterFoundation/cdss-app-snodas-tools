@@ -151,44 +151,49 @@ if __name__ == "__main__":
     DateTextFile = os.path.join(results_date_path, 'ListOfDates.txt')
     with open(DateTextFile, 'r') as TextFile:
         foundYesterday = False
-        foundToday = False
         for line in TextFile:
             if yesterday_string in line:
                 logger.info('Yesterday was processed.')
                 logging.info('Yesterday was processed.')
                 foundYesterday = True
+                TextFile.close()
                 break
 
-        # Check to see if today's date was processed.
+    # Check to see if today's date was processed.
+    with open(DateTextFile, 'r') as TextFile:
+        foundToday = False
         for line in TextFile:
-            if today_date in line:
+            if str(today_date) in line:
                 logger.info('Today has already been processed.')
                 logging.info('Today has already been processed.')
                 foundToday = True
+                TextFile.close()
                 break
 
-        # If yesterday and today were not processed, procees both.
-        if not foundYesterday and not foundToday:
-            logger.info("Yesterday was not processed. Processing BOTH SNODAS date %s AND today's data" % yesterday_string)
-            logging.info("Yesterday was not processed. Processing BOTH SNODAS date %s AND today's data" % yesterday_string)
-            datesToProcess = [yesterday_string, today_date]
-        # If only yesterday was not previouslyprocessed, process yesterday
-        elif not foundYesterday:
-            logger.info("Yesterday was not processed. Processing yesterday's data")
-            logging.info("Yesterday was not processed. Processing yesterday's data")
-            datesToProcess = [yesterday_string]
-        # If only today was not previously processed, process today.
-        elif not foundToday:
-            logger.info("Today was not processed. Processing today's data")
-            logging.info("Today was not processed. Processing today's data")
-            datesToProcess = [today_date]
-        # Both dates were previously processed.
-        else:
-            logger.info("Both today and yesterday's data has already been processed.")
-            logging.info("Both today and yesterday's data has already been processed.")
-            datesToProcess = ['None']
 
-    TextFile.close()
+
+    # If yesterday and today were not processed, procees both.
+    if not foundYesterday and not foundToday:
+        logger.info("Yesterday was not processed. Processing BOTH SNODAS date %s AND today's data" % yesterday_string)
+        logging.info("Yesterday was not processed. Processing BOTH SNODAS date %s AND today's data" % yesterday_string)
+        datesToProcess = [yesterday_string, today_date]
+    # If only yesterday was not previouslyprocessed, process yesterday
+    elif not foundYesterday:
+        logger.info("Yesterday was not processed. Processing yesterday's data")
+        logging.info("Yesterday was not processed. Processing yesterday's data")
+        datesToProcess = [yesterday_string]
+    # If only today was not previously processed, process today.
+    elif not foundToday:
+        logger.info("Today was not processed. Processing today's data")
+        logging.info("Today was not processed. Processing today's data")
+        datesToProcess = [today_date]
+    # Both dates were previously processed.
+    else:
+        logger.info("Both today and yesterday's data has already been processed.")
+        logging.info("Both today and yesterday's data has already been processed.")
+        datesToProcess = ['None']
+
+
 
     # Keeps track of the dates that failed to download.
     list_of_download_fails = []
@@ -365,7 +370,6 @@ if __name__ == "__main__":
 
 
     # If a new date was successfully downloaded and proceseed, then create the times series and push to Amazon S3.
-    print list_of_download_fails
     if 'None' in list_of_download_fails:
         # Create SNODAS SWE time series graph with TsTool program.
         TsTool_time_start = time.time()
