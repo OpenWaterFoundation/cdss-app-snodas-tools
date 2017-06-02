@@ -3,7 +3,7 @@
 ProductType = "Graph"
 TotalWidth = "850"
 TotalHeight = "600"
-MainTitleString = "${BasinName} (${BasinID}) SNODAS SWE Volume 1-Week Change"
+MainTitleString = "${BasinName} (${BasinID}) Upstream Total SNODAS SWE Volume"
 MainTitleFontSize = 16
 MainTitleFontStyle = Bold
 SubTitleString = "(Each line corresponds to a Water Year starting Oct 1)"
@@ -15,7 +15,7 @@ LeftYAxisTitleFontStyle = "Bold"
 LeftYAxisTitleFontSize = "16"
 LeftYAxisTitlePosition = "LeftOfAxis"
 LeftYAxisTitleRotation = "270"
-LeftYAxisTitleString = "Snow Water Equivalent (SWE) Volume 1-Week Change (acft)"
+LeftYAxisTitleString = "Snow Water Equivalent (SWE) Volume (acft)"
 LeftYAxisLabelPrecision = "0"
 RightYAxisGraphType = "None"
 RightYAxisIgnoreUnits = "false"
@@ -30,12 +30,11 @@ LegendFormat = "SNODAS WY %z"
 <#list FirstWaterYear..LastWaterYear as waterYear>
 [Data 1.${waterYear_index + 1}]
 
-TSID = "${BasinID}.SNODAS.SWE-Volume-1WeekChange.Day[${waterYear?c}]"
-TSAlias = "${BasinID}-SNODAS-SWE-Volume-1WeekChange-Day-${waterYear?c}"
+TSID = "${BasinID}-UpstreamTotal.SNODAS.SWE-Volume.Day[${waterYear?c}]"
+TSAlias = "${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Day-${waterYear?c}"
 
 <#if waterYear == LastWaterYear>
 Color = "Blue"
 LineWidth = 3
 </#if>
-
 </#list>
