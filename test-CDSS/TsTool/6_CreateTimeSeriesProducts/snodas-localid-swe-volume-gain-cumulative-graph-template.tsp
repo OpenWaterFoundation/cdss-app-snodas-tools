@@ -21,7 +21,7 @@ RightYAxisGraphType = "None"
 RightYAxisIgnoreUnits = "false"
 LayoutYPercent = ""
 
-LeftYAxisLegendPosition = "Left"
+LeftYAxisLegendPosition = "Right"
 LegendFormat = "SNODAS WY %z"
 
 # Properties for each trace, one for each water year

@@ -4,3 +4,9 @@
 
 *.swp
 *.swo
+
+# Temporary windows files
+~$*
+
+# Log files
+*.log
