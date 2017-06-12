@@ -170,8 +170,6 @@ if __name__ == "__main__":
                 TextFile.close()
                 break
 
-
-
     # If yesterday and today were not processed, procees both.
     if not foundYesterday and not foundToday:
         logger.info("Yesterday was not processed. Processing BOTH SNODAS date %s AND today's data" % yesterday_string)
@@ -368,6 +366,9 @@ if __name__ == "__main__":
                         "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid."
                         "Please type in 'True' or 'False' and rerun the script.")
 
+    # Log list_of_download_fails for troubleshooting purposes.
+    logger.info("list_of_download_fails is: %s" % list_of_download_fails)
+    logging.info("list_of_download_fails is: %s" % list_of_download_fails)
 
     # If a new date was successfully downloaded and proceseed, then create the times series and push to Amazon S3.
     if 'None' in list_of_download_fails:

@@ -1431,7 +1431,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
 
             with open("ListOfDates.txt", 'w') as output_file:
                 for filename in array:
-                    if filename.endswith("LatestDate.csv") == False:
+                    if filename.endswith("LatestDate.csv") == False and "Upstream" not in str(filename):
                         date = filename[25:33]
                         array_recent_date.append(date)
                         output_file.write(date + "\n")
