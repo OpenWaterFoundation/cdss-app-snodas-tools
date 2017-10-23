@@ -443,12 +443,11 @@ if __name__ == "__main__":
         logger.info('Elapsed time (date: %s): %d seconds' % (current_date, elapsed_day))
 
     # Close logging including the elapsed time of the running script in seconds.
-    end = time.time()
-    elapsed = end - start
-    elapsed_hours = elapsed / 3600
-    elapsed_hours_remaining = elapsed % 3600
-    elapsed_minutes = elapsed_hours_remaining / 60
-    elapsed_seconds = elapsed_hours_remaining % 60
+    elapsed = time.time() - start
+    elapsed_hours = int(elapsed / 3600)
+    elapsed_hours_remainder = elapsed % 3600
+    elapsed_minutes = int(elapsed_hours_remainder / 60)
+    elapsed_seconds = int(elapsed_hours_remainder % 60)
     stringStart = str(startDate)
     stringEnd = str(endDate)
     print '\nSNODASHistoricalDownload.py: Completed. Dates Processed: From %s to %s.' % (stringStart, stringEnd)
@@ -485,6 +484,8 @@ if __name__ == "__main__":
             logger.info('%s' % item)
 
 
-    logger.info('\n SNODASHistoricalDownload.py: Completed.')
-    logger.info('Elapsed time (full script): %d minutes' % elapsed_minutes)
+    logger.info('\nSNODASHistoricalDownload.py: Completed. Dates Processed: From %s to %s.' % (stringStart, stringEnd))
+    logger.info('Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n' % (elapsed_hours,
+                                                                                             elapsed_minutes,
+                                                                                             elapsed_seconds))
 
