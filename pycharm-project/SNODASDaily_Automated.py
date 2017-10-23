@@ -145,19 +145,23 @@ if __name__ == "__main__":
     today = datetime.now()
     today_date = SNODAS_utilities.format_date_YYYYMMDD(today)
 
-    # Check if yesterday's date of SNODAS data was properly processed, if not process yesterday's data too.
-    yesterday = datetime.today() - timedelta(1)
-    yesterday_string = yesterday.strftime('%Y%m%d')
-    DateTextFile = os.path.join(results_date_path, 'ListOfDates.txt')
-    with open(DateTextFile, 'r') as TextFile:
-        foundYesterday = False
-        for line in TextFile:
-            if yesterday_string in line:
-                logger.info('Yesterday was processed.')
-                logging.info('Yesterday was processed.')
-                foundYesterday = True
-                TextFile.close()
-                break
+    datesToProcess = []
+
+    # Check if the past seven dates of SNODAS data was properly processed. If a date is missing, then process that date.
+    for dayAgoNum in range(1,7):
+        pastDay = datetime.today() - timedelta(dayAgoNum)
+        pastDay_string = pastDay.strftime('%Y%m%d')
+        DateTextFile = os.path.join(results_date_path, 'ListOfDates.txt')
+        with open(DateTextFile, 'r') as TextFile:
+            foundPastDay = False
+            for line in TextFile:
+                if pastDay_string in line:
+                    logger.info('{} day ago was processed.'.format(dayAgoNum))
+                    foundPastDay = True
+                    TextFile.close()
+                    break
+            if foundPastDay == False:
+                datesToProcess.append(pastDay_string)
 
     # Check to see if today's date was processed.
     with open(DateTextFile, 'r') as TextFile:
@@ -165,30 +169,23 @@ if __name__ == "__main__":
         for line in TextFile:
             if str(today_date) in line:
                 logger.info('Today has already been processed.')
-                logging.info('Today has already been processed.')
+                print 'Today has already been processed.'
                 foundToday = True
                 TextFile.close()
                 break
+        if foundToday == False:
+            datesToProcess.append(today_date)
 
-    # If yesterday and today were not processed, procees both.
-    if not foundYesterday and not foundToday:
-        logger.info("Yesterday was not processed. Processing BOTH SNODAS date %s AND today's data" % yesterday_string)
-        logging.info("Yesterday was not processed. Processing BOTH SNODAS date %s AND today's data" % yesterday_string)
-        datesToProcess = [yesterday_string, today_date]
-    # If only yesterday was not previouslyprocessed, process yesterday
-    elif not foundYesterday:
-        logger.info("Yesterday was not processed. Processing yesterday's data")
-        logging.info("Yesterday was not processed. Processing yesterday's data")
-        datesToProcess = [yesterday_string]
-    # If only today was not previously processed, process today.
-    elif not foundToday:
-        logger.info("Today was not processed. Processing today's data")
-        logging.info("Today was not processed. Processing today's data")
-        datesToProcess = [today_date]
-    # Both dates were previously processed.
+    # Log which dates will be processed with this run of the script.
+    if datesToProcess:
+        # The dates must be sorted from latest to most recent so that the change in SWE values can be correctly
+        # calculated
+        datesToProcess = sorted(datesToProcess)
+        logger.info("These dates were not previously processed and will be processed now: {}".format(datesToProcess))
+        print "These dates were not previously processed and will be processed now: {}".format(datesToProcess)
     else:
-        logger.info("Both today and yesterday's data has already been processed.")
-        logging.info("Both today and yesterday's data has already been processed.")
+        logger.info("Today's date and the past seven days have already been processed.")
+        print "Today's date and the past seven days have already been processed."
         datesToProcess = ['None']
 
 
@@ -387,12 +384,21 @@ if __name__ == "__main__":
 
 
     # Close logging including the elapsed time of the running script in seconds.
-    end = time.time()
-    elapsed = end - start
-    elapsedMinutes = elapsed/60
-    elapsedSeconds = elapsed%60
+    elapsed = time.time() - start
+    elapsed_hours = int(elapsed / 3600)
+    elapsed_hours_remainder = elapsed % 3600
+    elapsed_minutes = int(elapsed_hours_remainder / 60)
+    elapsed_seconds = int(elapsed_hours_remainder % 60)
+
+    # Remove the provider and layer registries from memory
+    qgs.exitQgis()
+
+    # Remove temp files in ByDate folder
+    for file in os.listdir(results_date_path):
+        if file.endswith('.tmp'):
+            os.remove(os.path.join(results_date_path, file))
 
     logger.info('\n SNODASDailyDownload.py: Completed.')
-    logger.info('Elapsed time: %d seconds' % elapsed)
-    logging.info('Elapsed time: %d seconds' % elapsed)
-    print 'Elapsed time: %d minutes and %d seconds \n' % (elapsedMinutes, elapsedSeconds)
+    logger.info('Elapsed time: {} hours, {} minutes and {} seconds'.format(elapsed_hours, elapsed_minutes, elapsed_seconds))
+    logging.info('Elapsed time: {} hours, {} minutes and {} seconds'.format(elapsed_hours, elapsed_minutes, elapsed_seconds))
+    print 'Elapsed time: {} hours, {} minutes and {} seconds'.format(elapsed_hours, elapsed_minutes, elapsed_seconds)
