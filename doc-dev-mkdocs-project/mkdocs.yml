@@ -44,13 +44,15 @@ pages:
     - 'Building and Running': 'dev-tasks/build-run.md'
     - 'Deploying': 'dev-tasks/deploy.md'
     - 'Future Enhancements': 'dev-tasks/future-enhancements.md'
-theme: readthedocs
-repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
+# Use Material theme
+# - installation notes:  https://github.com/squidfunk/mkdocs-material
+theme: material
+# Do not include the repo because it shows an irritating edit icon on every page
+#repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (Developer Manual) 
 site_author: Open Water Foundation
 site_favicon: snodas-tools-favicon.png
 #copyright: TBD
-#extra_css:
-#- css/extra.css
-# Defaults to all JavaScript in the docs folder
-# extra_javascript:
+# Use extra CSS to customize styles, based on theme
+extra_css:
+    - 'css/extra-material-theme.css'
