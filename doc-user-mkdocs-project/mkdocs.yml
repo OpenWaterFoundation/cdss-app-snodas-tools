@@ -16,13 +16,15 @@ pages:
   - 'Overview': products/overview.md
   - 'CDSS SNODAS Tools Web Application': products/webApp.md
   - 'Products and Downloads': products/products.md
-theme: readthedocs
-repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
+# Use Material theme
+# - installation notes:  https://github.com/squidfunk/mkdocs-material
+theme: material
+# Do not include the repo because it shows an irritating edit icon on every page
+#repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (User Manual) 
 site_author: Open Water Foundation
 site_favicon: snodas-tools-favicon.png
 #copyright: TBD
-#extra_css:
-#- css/extra.css
-# Defaults to all JavaScript in the docs folder
-# extra_javascript:
+# Use extra CSS to customize styles, based on theme
+extra_css:
+  - 'css/extra-material-theme.css'
