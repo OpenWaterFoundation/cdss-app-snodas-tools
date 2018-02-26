@@ -15,8 +15,19 @@
 #   in multiple geometries (geoJSON and shapefile) and multiple .csv files (one .csv file for the processing date and
 #   one .csv file for EACH basin in the input vector shapefile).
 
+
+# Check to see which os is running
+import sys
+platform = sys.platform
+if platform == 'linux' or platform == 'linux2' or platform == 'cygwin' or platform == 'darwin':
+    linux_os = True
+else:
+    linux_os = False
+
+
+
 # Import necessary modules
-import ftplib, os, tarfile, gzip, gdal, csv, logging, configparser, glob, osr, zipfile, ogr
+import ftplib, os, tarfile, gzip, gdal, csv, logging, glob, osr, zipfile, ogr
 from subprocess import Popen
 from logging.config import fileConfig
 from qgis.analysis import QgsRasterCalculator, QgsRasterCalculatorEntry, QgsZonalStatistics
@@ -26,9 +37,17 @@ from PyQt4.QtCore import QVariant
 from datetime import datetime, timedelta
 from shutil import copy, copyfile
 
-# Reads the configuration file to assign variables. Reference the following for code details:
+
+# Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
-Config = configparser.ConfigParser()
+if linux_os:
+    import ConfigParser
+    Config = ConfigParser.ConfigParser()
+else:
+    import configparser
+    Config = configparser.ConfigParser()
+
+
 Configfile = "../config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
@@ -69,6 +88,7 @@ def config_section_map(section):
 #   geoJSON_precision: The number of decimal places (precision) used in the output GeoJSON geometry.
 #   TsToolInstall: The full pathname to the TsTool program.
 #   TsToolBatchFile: The full pathname to the TsTool Batch file responsible for creating the time-series graphs.
+#   aea_conic_string: USA_Albers_Equal_Area projection in WKT (Proj4) - for use in Linux systems
 
 
 host = config_section_map("SNODAS_FTPSite")['host']
@@ -91,6 +111,12 @@ TsToolCreateTimeSeries = config_section_map("ProgramInstall")['tstool_create-sno
 weekly_update = config_section_map("OutputLayers")['tsgraph_weekly_update']
 weekly_update_date = config_section_map("OutputLayers")['tsgraph_weekly_update_date']
 AWS_batch_file = config_section_map("ProgramInstall")['aws_batch_pathname']
+aea_conic_string = "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+
+# Set the srs for the calculate_statistics_projection for a Linux system.
+calculate_statistics_projection_srs = osr.SpatialReference()
+calculate_statistics_projection_srs.ImportFromProj4(aea_conic_string)
+calculate_statistics_projection_wkt = calculate_statistics_projection_srs.ExportToWkt()
 
 # Get today's date ----------------------------------------------------------------------------------------------------
 now = datetime.now()
@@ -371,6 +397,14 @@ def convert_SNODAS_bil_to_tif(file, folder_output):
     file_upper = file.upper()
     if file_upper.endswith('.BIL'):
 
+        # If in a Linux system
+        if linux_os:
+
+            # Remove the original .Hdr file so that the created .hdr file will be read instead.
+            orig_hdr_file = os.path.join(folder_output, file.replace('.bil', '.Hdr'))
+            if os.path.exists(orig_hdr_file):
+                os.remove(orig_hdr_file)
+
         # Create name with replaced .tif file extension
         new_name = file.replace('.bil', '.tif')
 
@@ -460,15 +494,25 @@ def create_extent(basin_shp, folder_output):
 
     # Set projection to calculate_statistics_projection (the projection set in the configutation file to be the same
     # as the basin boundary shapefile)
-    InJustCode = int(calculate_statistics_projection.replace('EPSG:', ''))
-    OutJustCode= int(clip_projection.replace('EPSG:', ''))
-    InSpatialRef = osr.SpatialReference()
-    InSpatialRef.ImportFromEPSG(InJustCode)
+    if linux_os:
 
-    InSpatialRef.MorphToESRI()
-    file = open(outputPrj_full_name, 'w')
-    file.write(InSpatialRef.ExportToWkt())
-    file.close()
+        InSpatialRef = calculate_statistics_projection_srs
+        InSpatialRef.MorphToESRI()
+        file = open(outputPrj_full_name, 'w')
+        file.write(InSpatialRef.ExportToWkt())
+        file.close()
+
+    else:
+
+        InJustCode = int(calculate_statistics_projection.replace('EPSG:', ''))
+        OutJustCode= int(clip_projection.replace('EPSG:', ''))
+        InSpatialRef = osr.SpatialReference()
+        InSpatialRef.ImportFromEPSG(InJustCode)
+
+        InSpatialRef.MorphToESRI()
+        file = open(outputPrj_full_name, 'w')
+        file.write(InSpatialRef.ExportToWkt())
+        file.close()
 
     # Reproject to the clip_projection
     # REF: http://geoinformaticstutorial.blogspot.com/2012/10/reprojecting-shapefile-with-gdalogr-and.html
@@ -481,15 +525,28 @@ def create_extent(basin_shp, folder_output):
     # get file name without extension
     (outfileshortname, extension) = os.path.splitext(outfilename)
 
-    # Spatial Reference of the input file
-    # Access the Spatial Reference and assign the input projection
-    inSpatialRef = osr.SpatialReference()
-    inSpatialRef.ImportFromEPSG(InJustCode)
+    if linux_os:
 
-    # Spatial Reference of the output file
-    # Access the Spatial Reference and assign the output projection
-    outSpatialRef = osr.SpatialReference()
-    outSpatialRef.ImportFromEPSG(OutJustCode)
+        # Spatial Reference of the input file
+        # Access the Spatial Reference and assign the input projection
+        inSpatialRef = calculate_statistics_projection_srs
+
+        # Spatial Reference of the output file
+        # Access the Spatial Reference and assign the output projection
+        outSpatialRef = osr.SpatialReference()
+        outSpatialRef.ImportFromEPSG(int(clip_projection.replace('EPSG:', '')))
+
+    else:
+
+        # Spatial Reference of the input file
+        # Access the Spatial Reference and assign the input projection
+        inSpatialRef = osr.SpatialReference()
+        inSpatialRef.ImportFromEPSG(InJustCode)
+
+        # Spatial Reference of the output file
+        # Access the Spatial Reference and assign the output projection
+        outSpatialRef = osr.SpatialReference()
+        outSpatialRef.ImportFromEPSG(OutJustCode)
 
     # create Coordinate Transformation
     coordTransform = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
@@ -517,6 +574,7 @@ def create_extent(basin_shp, folder_output):
     # Loop through input features and write to output file
     infeature = inlayer.GetNextFeature()
     while infeature:
+
         # get the input geometry
         geometry = infeature.GetGeometryRef()
 
@@ -696,14 +754,30 @@ def assign_SNODAS_projection(file, folder):
         file_full_output = os.path.join(folder, new_name)
 
         # Reproject the clipped SNODAS .tif files from original projection to desired projection
-        gdal.Warp(file_full_output, file_full_input, format='GTiff',
+        if linux_os:
+            gdal.Warp(file_full_output,
+                      file_full_input,
+                      format='GTiff',
+                      xRes=cellsizeX,
+                      yRes=cellsizeY,
+                      srcSRS=clip_projection,
+                      dstSRS=calculate_statistics_projection_wkt,
+                      resampleAlg='bilinear',
+                      dstNodata=null_value)
+
+            logger.info('assign_SNODAS_projection: '
+                        '%s has been projected from %s to USA_Albers_Equal_Area_Conic' % (file, clip_projection))
+
+        else:
+            gdal.Warp(file_full_output, file_full_input, format='GTiff',
                   xRes=cellsizeX, yRes=cellsizeY, srcSRS = clip_projection,
                   dstSRS=calculate_statistics_projection, resampleAlg = 'bilinear', dstNodata=null_value,)
 
+            logger.info('assign_SNODAS_projection: %s has been projected from %s to %s' % (file, clip_projection,
+                                                                                       calculate_statistics_projection))
+
         # Delete originally-projected clipped file
         os.remove(file_full_input)
-        logger.info('assign_SNODAS_projection: %s has been projected from %s to %s' % (file, clip_projection,
-                                                                                    calculate_statistics_projection))
 
         # Writes the projection information to the log file.
         ds = gdal.Open(file_full_output)
@@ -1365,30 +1439,33 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
 
             vectorFile_GeoJson = QgsVectorLayer(int_geojson_name_full, 'GeoJsonStatistics', 'ogr')
 
-            # Open vectorFile for editing
-            vectorFile_GeoJson.startEditing()
+            # Rename attribute fields of GeoJSON.
+            if not linux_os:
 
-            # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
-            fieldDict = {'SWEMean_mm': 'SNODAS_SWE_Mean_mm', 'SWEVolC_af': 'SNODAS_SWE_Volume_1WeekChange_acft',
-                         'SWEMean_in': 'SNODAS_SWE_Mean_in', 'Area_sqmi': 'SNODAS_EffectiveArea_sqmi',
-                         'SWEVol_af': 'SNODAS_SWE_Volume_acft', 'SCover_pct': 'SNODAS_SnowCover_percent'}
+                # Open vectorFile for editing
+                vectorFile_GeoJson.startEditing()
 
-            if calculate_SWE_minimum.upper() == 'TRUE':
-                fieldDict.update({'SWEMin_mm': 'SNODAS_SWE_Min_mm', 'SWEMin_in': 'SNODAS_SWE_Min_in'})
+                # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
+                fieldDict = {'SWEMean_mm': 'SNODAS_SWE_Mean_mm', 'SWEVolC_af': 'SNODAS_SWE_Volume_1WeekChange_acft',
+                             'SWEMean_in': 'SNODAS_SWE_Mean_in', 'Area_sqmi': 'SNODAS_EffectiveArea_sqmi',
+                             'SWEVol_af': 'SNODAS_SWE_Volume_acft', 'SCover_pct': 'SNODAS_SnowCover_percent'}
 
-            if calculate_SWE_maximum.upper() == 'TRUE':
-                fieldDict.update({'SWEMax_mm': 'SNODAS_SWE_Max_mm', 'SWEMax_in': 'SNODAS_SWE_Max_in'})
+                if calculate_SWE_minimum.upper() == 'TRUE':
+                    fieldDict.update({'SWEMin_mm': 'SNODAS_SWE_Min_mm', 'SWEMin_in': 'SNODAS_SWE_Min_in'})
 
-            if calculate_SWE_stdDev.upper() == 'TRUE':
-                fieldDict.update({'SWESDev_mm': 'SNODAS_SWE_StdDev_mm', 'SWESDev_in': 'SNODAS_SWE_StdDev_in'})
+                if calculate_SWE_maximum.upper() == 'TRUE':
+                    fieldDict.update({'SWEMax_mm': 'SNODAS_SWE_Max_mm', 'SWEMax_in': 'SNODAS_SWE_Max_in'})
 
-            for key, value in fieldDict.items():
-                index = vectorFile_GeoJson.dataProvider().fieldNameIndex(key)
-                vectorFile_GeoJson.dataProvider().renameAttributes({index: value})
+                if calculate_SWE_stdDev.upper() == 'TRUE':
+                    fieldDict.update({'SWESDev_mm': 'SNODAS_SWE_StdDev_mm', 'SWESDev_in': 'SNODAS_SWE_StdDev_in'})
 
-            # Update the changes to the field names and remove the intermediate GeoJSON file (with shapefile fieldnames)
-            vectorFile_GeoJson.updateFields()
-            vectorFile_GeoJson.commitChanges()
+                for key, value in fieldDict.items():
+                    index = vectorFile_GeoJson.dataProvider().fieldNameIndex(key)
+                    vectorFile_GeoJson.dataProvider().renameAttributes({index: value})
+
+                # Update the changes to the field names and remove the intermediate GeoJSON file (with shapefile fieldnames)
+                vectorFile_GeoJson.updateFields()
+                vectorFile_GeoJson.commitChanges()
 
             # Export geojson. (layer, full output pathname, file encoding, destination reference system,
             # output file type, layer options (GeoJSON): number of decimal places used in GeoJSON geometry)
@@ -1396,10 +1473,13 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                                                     QgsCoordinateReferenceSystem(output_CRS), "GeoJSON",
                                                     layerOptions=['COORDINATE_PRECISION=%s' % geoJSON_precision])
 
+            # Rename attribute fields of GeoJSON.
+            if linux_os:
+                change_field_names(geojson_name_full)
+
             # Close the vectorFile_GeoJSON so that the vectorFile can open
             os.remove(int_geojson_name_full)
             vectorFile.startEditing()
-
 
             # Delete attribute fields of the shapefile related to the daily calculated zonal statistics.
             listOfFieldNames = ['SWEMean_mm', 'SCover_pct', 'SWEMean_in', 'Area_sqmi', 'SWEVolC_af', 'SWEVol_af']
@@ -1512,3 +1592,52 @@ def push_to_AWS():
     args = [AWS_batch_file]
     Popen(args, cwd="C:\Program Files\Amazon\AWSCLI").wait()
     logger.info('push_to_AWS: Files have been pushed to Amazon Web Services S3 as designed by %s.'% AWS_batch_file)
+
+def change_field_names(geojson_file):
+    """Renames the attribute field names of the output GeoJSON file for each date. This function is only to be used in
+    the Linux environment because the Windows environment already has a built in attribute field editor within the
+    QGIS software. When the built-in QGIS mechanism is run on the Linux machine the following error is printed.
+    Error 6: AlterFieldDefn() not supported by this layer.
+
+    This function will create a separate geojson file with the updated attribute fields. The original geojson will be
+    deleted and the new geojson will be renamed to the original geojson's name.
+
+    Args:
+        geojson_file: the full pathname to the GeoJSON file to be edited.
+
+    Returns: None
+    """
+
+    # Get the text content of the original GeoJSON file.
+    geojson = open(geojson_file, 'r')
+    geojson_content = geojson.read()
+    geojson.close()
+
+    # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
+    fieldDict = {'SWEMean_mm': 'SNODAS_SWE_Mean_mm', 'SWEVolC_af': 'SNODAS_SWE_Volume_1WeekChange_acft',
+                 'SWEMean_in': 'SNODAS_SWE_Mean_in', 'Area_sqmi': 'SNODAS_EffectiveArea_sqmi',
+                 'SWEVol_af': 'SNODAS_SWE_Volume_acft', 'SCover_pct': 'SNODAS_SnowCover_percent'}
+
+    if calculate_SWE_minimum.upper() == 'TRUE':
+        fieldDict.update({'SWEMin_mm': 'SNODAS_SWE_Min_mm', 'SWEMin_in': 'SNODAS_SWE_Min_in'})
+
+    if calculate_SWE_maximum.upper() == 'TRUE':
+        fieldDict.update({'SWEMax_mm': 'SNODAS_SWE_Max_mm', 'SWEMax_in': 'SNODAS_SWE_Max_in'})
+
+    if calculate_SWE_stdDev.upper() == 'TRUE':
+        fieldDict.update({'SWESDev_mm': 'SNODAS_SWE_StdDev_mm', 'SWESDev_in': 'SNODAS_SWE_StdDev_in'})
+
+    # Replace the appropriate files.
+    for key, value in fieldDict.items():
+        geojson_content = geojson_content.replace(key, value)
+
+    # Create an intermediate GeoJSON file that has the same contents of the original GeoJSON but with the new
+    # attribute names.
+    geojson_int_path = geojson_file.replace('.geojson', '_temp.geojson')
+    geojson_int = open(geojson_int_path, 'w')
+    geojson_int.write(geojson_content)
+    geojson_int.close()
+
+    # Remove the original GeoJSON file and rename the intermediate GeoJSON file to the name of the original GeoJSON.
+    os.remove(geojson_file)
+    os.rename(geojson_int_path, geojson_file)

@@ -11,16 +11,32 @@
 #   processing. The user can decide between a single date and a range of dates. This script does not allow for the user
 #   to pick a list of non-sequential dates.
 
+
+# Check to see which os is running
+import sys
+platform = sys.platform
+if platform == 'linux' or platform == 'linux2' or platform == 'cygwin' or platform == 'darwin':
+    linux_os = True
+else:
+    linux_os = False
+
+
 # Import necessary modules
-import SNODAS_utilities, os, logging, time, configparser, sys
+import SNODAS_utilities, os, logging, time, sys
 from sys import version_info
 from logging.config import fileConfig
 from qgis.core import QgsApplication
 from datetime import datetime, timedelta
 
-# Read the configuration file to assign variables. Reference the following for code details:
+# Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
-Config = configparser.ConfigParser()
+if linux_os:
+    import ConfigParser
+    Config = ConfigParser.ConfigParser()
+else:
+    import configparser
+    Config = configparser.ConfigParser()
+
 Configfile = "../config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 

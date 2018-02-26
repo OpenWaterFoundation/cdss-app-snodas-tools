@@ -11,8 +11,18 @@
 #   This script is intended to be run on a task scheduler program so that the data is automatically processed every day.
 #   It can also be processed manually if desired.
 
+
+# Check to see which os is running
+import sys
+platform = sys.platform
+if platform == 'linux' or platform == 'linux2' or platform == 'cygwin' or platform == 'darwin':
+    linux_os = True
+else:
+    linux_os = False
+
+
 # Import necessary modules.
-import SNODAS_utilities, os, logging, configparser, time, re
+import SNODAS_utilities, os, logging, time, re
 from qgis.core import QgsApplication
 from logging.config import fileConfig
 from datetime import datetime, date, timedelta
@@ -24,7 +34,13 @@ start = time.time()
 
 # Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
-Config = configparser.ConfigParser()
+if linux_os:
+    import ConfigParser
+    Config = ConfigParser.ConfigParser()
+else:
+    import configparser
+    Config = configparser.ConfigParser()
+
 Configfile = "../config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
@@ -137,9 +153,15 @@ if __name__ == "__main__":
 
     # Initialize QGIS resources to utilize QGIS functionality.
     # More information at: http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html.
-    QgsApplication.setPrefixPath(QGIS_installation, True)
-    qgs = QgsApplication([], False)
-    qgs.initQgis()
+    if linux_os:
+        qgs = QgsApplication([], False, None)
+        qgs.setPrefixPath("/usr", True)
+        qgs.initQgis()
+        sys.path.append('/usr/share/qgis/python/plugins')
+    else:
+        QgsApplication.setPrefixPath(QGIS_installation, True)
+        qgs = QgsApplication([], False)
+        qgs.initQgis()
 
     # Get today's date in string format
     today = datetime.now()
