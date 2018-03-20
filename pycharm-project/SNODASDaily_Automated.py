@@ -399,9 +399,12 @@ if __name__ == "__main__":
 
         # Push daily statistics to the web, if configured
         if UploadResultsToAmazonS3.upper() == 'TRUE':
-            SNODAS_utilities.push_to_AWS()
+            if linux_os:
+                SNODAS_utilities.push_to_GCP()
+            else:
+                SNODAS_utilities.push_to_AWS()
         else:
-            logger.info('Output files from SNODAS_Tools are not pushed to Amazon Web Services S3 because of'
+            logger.info('Output files from SNODAS_Tools are not pushed to cloud storage because of'
                                 ' setting in configuration file. ')
 
 

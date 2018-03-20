@@ -27,7 +27,7 @@ else:
 
 
 # Import necessary modules
-import ftplib, os, tarfile, gzip, gdal, csv, logging, glob, osr, zipfile, ogr
+import ftplib, os, tarfile, gzip, gdal, csv, logging, glob, osr, zipfile, ogr, subprocess
 from subprocess import Popen
 from logging.config import fileConfig
 from qgis.analysis import QgsRasterCalculator, QgsRasterCalculatorEntry, QgsZonalStatistics
@@ -1592,6 +1592,23 @@ def push_to_AWS():
     args = [AWS_batch_file]
     Popen(args, cwd="C:\Program Files\Amazon\AWSCLI").wait()
     logger.info('push_to_AWS: Files have been pushed to Amazon Web Services S3 as designed by %s.'% AWS_batch_file)
+
+def push_to_GCP():
+    """Runs shell script to push the newly-updated files to a GCP bucket. The specifics are configured within the
+    batch file, GCP_shell_script. """
+    
+    script_location = "/var/opt/snodas-tools/aws"
+    GCP_shell_script = "/var/opt/snodas-tools/aws/copyAllToGCPBucket.sh"
+
+    logger.info('push_to_GCP: Pushing files to Google Cloud Platform bucket given specifics of %s.'% GCP_shell_script)
+    print 'Pushing files to Google Cloud Platform bucket given shell script ({}) specifics'.format(GCP_shell_script)
+ 
+    # Call shell script, GCP_shell_script, to push files up to GCP.
+    os.chdir(script_location)
+    proc = Popen(['sudo', 'bash', GCP_shell_script])   
+    proc.wait()
+    logger.info('push_to_GCP: Files have been pushed toGoogle Cloud Platform bucket as designed by %s.'%
+                GCP_shell_script)
 
 def change_field_names(geojson_file):
     """Renames the attribute field names of the output GeoJSON file for each date. This function is only to be used in

@@ -435,11 +435,13 @@ if __name__ == "__main__":
                 if current == endDate or current == endDate.date():
                     SNODAS_utilities.create_SNODAS_SWE_graphs()
                     # Push daily statistics to the web, if configured
-                    print UploadResultsToAmazonS3.upper()
                     if UploadResultsToAmazonS3.upper() == 'TRUE':
-                        SNODAS_utilities.push_to_AWS()
+                        if linux_os:
+                            SNODAS_utilities.push_to_GCP()
+                        else:
+                            SNODAS_utilities.push_to_AWS()
                     else:
-                        logger.info('Output files from SNODAS_Tools are not pushed to Amazon Web Services S3 because of'
+                        logger.info('Output files from SNODAS_Tools are not pushed to cloud storage because of'
                                     ' setting in configuration file. ')
 
             # If config file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
@@ -504,4 +506,3 @@ if __name__ == "__main__":
     logger.info('Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n' % (elapsed_hours,
                                                                                              elapsed_minutes,
                                                                                              elapsed_seconds))
-
