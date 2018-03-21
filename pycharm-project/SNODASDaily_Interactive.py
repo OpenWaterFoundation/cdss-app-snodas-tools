@@ -110,6 +110,8 @@ delete_shp_orig = ConfigSectionMap("OutputLayers")['shp_delete_originals']
 zip_shp = ConfigSectionMap("OutputLayers")['shp_zip']
 name_of_static_folder = ConfigSectionMap("Folders")['static_data_folder']
 UploadResultsToAmazonS3 = ConfigSectionMap("OutputLayers")['upload_results_to_amazon_s3']
+run_daily_tstool = ConfigSectionMap("OutputLayers")['process_daily_tstool_graphs']
+run_historical_tstool = ConfigSectionMap("OutputLayers")['process_historical_tstool_graphs']
 
 
 if __name__ == "__main__":
@@ -431,9 +433,17 @@ if __name__ == "__main__":
                             SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
 
 
-                # The time series graphs will only be produced after the last date of data is processed.
-                if current == endDate or current == endDate.date():
+                # If configured, the time series will run for each processed date of data.
+                if run_daily_tstool.upper() == "TRUE":
                     SNODAS_utilities.create_SNODAS_SWE_graphs()
+
+                # If it is the last date in the range, continue.
+                if current == endDate or current == endDate.date():
+
+                    # If configured, the time series will run for the entire historical range.
+                    if run_historical_tstool.upper() == "TRUE":
+                        SNODAS_utilities.create_SNODAS_SWE_graphs()
+
                     # Push daily statistics to the web, if configured
                     if UploadResultsToAmazonS3.upper() == 'TRUE':
                         if linux_os:

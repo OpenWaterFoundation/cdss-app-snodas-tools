@@ -117,6 +117,9 @@ zip_shp = ConfigSectionMap("OutputLayers")['shp_zip']
 name_of_timeSeries_folder = ConfigSectionMap("Folders")['timeseries_folder']
 name_of_GraphsbyBasin_folder = ConfigSectionMap("Folders")['timeseries_graph_png_folder']
 UploadResultsToAmazonS3 = ConfigSectionMap("OutputLayers")['upload_results_to_amazon_s3']
+run_daily_tstool = ConfigSectionMap("OutputLayers")['process_daily_tstool_graphs']
+run_historical_tstool = ConfigSectionMap("OutputLayers")['process_historical_tstool_graphs']
+
 
 if __name__ == "__main__":
 
@@ -375,6 +378,16 @@ if __name__ == "__main__":
 
                                 SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
 
+                    # If desired, run TSTool for the day.
+                    if run_daily_tstool.upper() == "TRUE":
+
+                        # Create SNODAS SWE time series graph with TsTool program.
+                        TsTool_time_start = time.time()
+                        SNODAS_utilities.create_SNODAS_SWE_graphs()
+                        TsTool_time_end = time.time()
+                        elapsed_TsTool = TsTool_time_end - TsTool_time_start
+
+
                 # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
                 # script will not run and the following error message will be printed to the console and to the logging file.
                 else:
@@ -389,23 +402,23 @@ if __name__ == "__main__":
     logger.info("list_of_download_fails is: %s" % list_of_download_fails)
     logging.info("list_of_download_fails is: %s" % list_of_download_fails)
 
-    # If a new date was successfully downloaded and proceseed, then create the times series and push to Amazon S3.
-    if 'None' in list_of_download_fails:
+    # If the run_daily_tstool is set to False, run the historical processing of TSTool.
+    if 'None' in list_of_download_fails and run_historical_tstool.upper() == "TRUE":
         # Create SNODAS SWE time series graph with TsTool program.
         TsTool_time_start = time.time()
         SNODAS_utilities.create_SNODAS_SWE_graphs()
         TsTool_time_end = time.time()
         elapsed_TsTool = TsTool_time_end - TsTool_time_start
 
-        # Push daily statistics to the web, if configured
-        if UploadResultsToAmazonS3.upper() == 'TRUE':
-            if linux_os:
-                SNODAS_utilities.push_to_GCP()
-            else:
-                SNODAS_utilities.push_to_AWS()
+    # Push daily statistics to the web, if configured
+    if UploadResultsToAmazonS3.upper() == 'TRUE':
+        if linux_os:
+            SNODAS_utilities.push_to_GCP()
         else:
-            logger.info('Output files from SNODAS_Tools are not pushed to cloud storage because of'
-                                ' setting in configuration file. ')
+            SNODAS_utilities.push_to_AWS()
+    else:
+        logger.info('Output files from SNODAS_Tools are not pushed to cloud storage because of'
+                            ' setting in configuration file. ')
 
 
     # Close logging including the elapsed time of the running script in seconds.
