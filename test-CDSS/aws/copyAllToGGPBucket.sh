@@ -15,10 +15,10 @@ echo ""
 #
 # gsutil library command reference: https://cloud.google.com/storage/docs/gsutil/commands/rsync
 # Snowpack statistics by basin are relative small so always sync all
-sudo gsutil -m rsync -r ../processedData/5_CalculateStatistics/SnowpackStatisticsByBasin gs://snodas.cdss.state.co.us/SnowpackStatisticsByBasin/
+sudo gsutil -m rsync -r ../processedData/5_CalculateStatistics/SnowpackStatisticsByBasin gs://snodas.cdss.state.co.us/app/SnowpackStatisticsByBasin/
 # Snowpack graphs by basin are relative small so always sync all
-sudo gsutil -m rsync -r ../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin gs://snodas.cdss.state.co.us/SnowpackStatisticsByBasin/
+sudo gsutil -m rsync -r ../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin gs://snodas.cdss.state.co.us/app/SnowpackGraphsByBasin/
 # Sync static files listed as resources on the Data tab on the website
-sudo gsutil -m rsync -r ../staticData/WatershedConnectivity gs://snodas.cdss.state.co.us/StaticData/
+sudo gsutil -m rsync -r ../staticData/WatershedConnectivity gs://snodas.cdss.state.co.us/app/StaticData/
 # Sync the snowpack statistics by date
-sudo gsutil -m rsync -r ../processedData/5_CalculateStatistics/SnowpackStatisticsByDate gs://snodas.cdss.state.co.us/SnowpackStatisticsByDate/
+sudo gsutil -m rsync -r ../processedData/5_CalculateStatistics/SnowpackStatisticsByDate gs://snodas.cdss.state.co.us/app/SnowpackStatisticsByDate/
