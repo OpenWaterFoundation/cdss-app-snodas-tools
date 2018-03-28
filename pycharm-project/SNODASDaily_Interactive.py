@@ -440,6 +440,9 @@ if __name__ == "__main__":
                 # If it is the last date in the range, continue.
                 if current == endDate or current == endDate.date():
 
+                    # Remove any duplicates that occurred in the byBasin csv files (this scenario is rare but could happen.)
+                    SNODAS_utilities.clean_duplicates_from_byBasin_csv(results_basin_path)
+
                     # If configured, the time series will run for the entire historical range.
                     if run_historical_tstool.upper() == "TRUE":
                         SNODAS_utilities.create_SNODAS_SWE_graphs()

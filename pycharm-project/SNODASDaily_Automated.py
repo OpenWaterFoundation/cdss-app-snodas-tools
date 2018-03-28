@@ -402,6 +402,9 @@ if __name__ == "__main__":
     logger.info("list_of_download_fails is: %s" % list_of_download_fails)
     logging.info("list_of_download_fails is: %s" % list_of_download_fails)
 
+    # Remove any duplicates that occurred in the byBasin csv files (this scenario is rare but could happen.)
+    SNODAS_utilities.clean_duplicates_from_byBasin_csv(results_basin_path)
+
     # If the run_daily_tstool is set to False, run the historical processing of TSTool.
     if 'None' in list_of_download_fails and run_historical_tstool.upper() == "TRUE":
         # Create SNODAS SWE time series graph with TsTool program.

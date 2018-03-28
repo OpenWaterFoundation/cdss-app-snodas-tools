@@ -27,7 +27,7 @@ else:
 
 
 # Import necessary modules
-import ftplib, os, tarfile, gzip, gdal, csv, logging, glob, osr, zipfile, ogr, subprocess
+import ftplib, os, tarfile, gzip, gdal, csv, logging, glob, osr, zipfile, ogr, fileinput
 from subprocess import Popen
 from logging.config import fileConfig
 from qgis.analysis import QgsRasterCalculator, QgsRasterCalculatorEntry, QgsZonalStatistics
@@ -1658,3 +1658,55 @@ def change_field_names(geojson_file):
     # Remove the original GeoJSON file and rename the intermediate GeoJSON file to the name of the original GeoJSON.
     os.remove(geojson_file)
     os.rename(geojson_int_path, geojson_file)
+
+def clean_duplicates_from_byBasin_csv(csv_by_basin_dir):
+    """Sometimes duplicate dates end up in the byBasin csv files. This function will make sure that the duplicates
+    are removed. """
+
+    # Get a list of the csv files within the byBasin folder (full pathnames).
+    csv_files_to_check = [os.path.join(csv_by_basin_dir, f) for f in os.listdir(csv_by_basin_dir) if f.endswith(".csv")]
+
+    # Iterate over the csv files to check for duplicates.
+    for csv_full_path in csv_files_to_check:
+
+        # Boolean to determine if there is a duplicate. False until proven true.
+        duplicate_exists = False
+
+        # Date seen keeps track of all of the dates seen within the csv file.
+        date_seen = []
+
+        # Clean rows keeps track of all of the csv rows that are not duplicates.
+        clean_rows = []
+
+        # Open the csv file.
+        with open(csv_full_path, 'r') as csvfile:
+
+            # Iterate over each row in the csv file.
+            csvReader = csv.reader(csvfile)
+            for row in csvReader:
+
+                # Get the date from the row.
+                date = row[0]
+
+                # If the date has already been seen then the row is a duplicate and should not be written to the new
+                # file.
+                if date in date_seen:
+                    duplicate_exists = True
+
+                # If the date is unique, than the row is not a duplicate and should be written to the new file.
+                else:
+                    date_seen.append(date)
+                    clean_rows.append(row)
+
+        # If there is a duplicate in the csv file, then rewrite the csv file with only the unique rows.
+        if duplicate_exists:
+
+            # Remove the original csv file (with the duplicates).
+            os.remove(csv_full_path)
+
+            # Open the new csv file and write the unique rows to it.
+            with open(csv_full_path, 'wb') as csvfile:
+                csvwriter = csv.writer(csvfile, delimiter=",")
+                for row in clean_rows:
+                    csvwriter.writerow(row)
+            csvfile.close()
