@@ -929,7 +929,10 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
 
         # Create .csv file with the appropriate fieldnames as the info in the header row. - By Date
         with open(results_date, 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=",", lineterminator='\n')
+            if linux_os:
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=",")
+            else:
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=",", lineterminator='\n')
             writer.writeheader()
         csvfile.close()
 
