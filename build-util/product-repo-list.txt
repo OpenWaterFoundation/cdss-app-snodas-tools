@@ -1,0 +1,7 @@
+# Repositories that comprise the StateMod web viewer tool
+# - assumes that local folder name will match the repository name
+cdss-app-snodas-tools
+# Legacy UI - deployed to state GCP
+cdss-webapp-snodas-tools
+# New Angular UI developed with OWF resources
+owf-app-snodas-ng
