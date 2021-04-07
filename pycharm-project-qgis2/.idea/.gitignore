@@ -1,0 +1,6 @@
+# Ignore PyCharm files that will change between developers
+# See recommendation:  https://www.jetbrains.com/help/pycharm/2016.3/directory-based-versioning-model.html
+# - "All the settings files in the .idea directory should be put under version control except the workspace.xml,
+#    which stores your local preferences. The workspace.xml file should be marked as ignored by VCS."
+
+workspace.xml
