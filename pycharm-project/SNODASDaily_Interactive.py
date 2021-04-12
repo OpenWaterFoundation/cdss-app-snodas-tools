@@ -11,46 +11,49 @@
 #   processing. The user can decide between a single date and a range of dates. This script does not allow for the user
 #   to pick a list of non-sequential dates.
 
-
 # Check to see which os is running
+# Import necessary modules
+import SNODAS_utilities
+import configparser
+import logging
+import os
 import sys
+import time
+
+from datetime import datetime, timedelta
+from logging.config import fileConfig
+
+from qgis.core import QgsApplication
+
+# Read the config file to assign variables. Reference the following for code details:
+# https://wiki.python.org/moin/ConfigParserExamples
+# if linux_os:
+#     import ConfigParser
+#     Config = ConfigParser.ConfigParser()
+# else:
+
 platform = sys.platform
 if platform == 'linux' or platform == 'linux2' or platform == 'cygwin' or platform == 'darwin':
     linux_os = True
 else:
     linux_os = False
-
-
-# Import necessary modules
-import SNODAS_utilities, os, logging, time, sys
-from sys import version_info
-from logging.config import fileConfig
-from qgis.core import QgsApplication
-from datetime import datetime, timedelta
-
-# Read the config file to assign variables. Reference the following for code details:
-# https://wiki.python.org/moin/ConfigParserExamples
-if linux_os:
-    import ConfigParser
-    Config = ConfigParser.ConfigParser()
-else:
-    import configparser
-    Config = configparser.ConfigParser()
+Config = configparser.ConfigParser()
 
 Configfile = "../config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
+
 # Helper function to obtain option values of config file sections.
-def ConfigSectionMap(section):
+def config_section_map(section):
     dict1 = {}
     options = Config.options(section)
     for option in options:
         try:
             dict1[option] = Config.get(section, option)
             if dict1[option] == -1:
-                DebugPrint("skip: %s" % option)
-        except:
-            print("exception on %s!" % option)
+                print('Skip: {}'.format(option))
+        except Exception as e:
+            print('Exception on {}: {}'.format(option, e))
             dict1[option] = None
     return dict1
 
@@ -81,7 +84,7 @@ def ConfigSectionMap(section):
 #   name_of_clip_folder: The name of the clip folder. Defaulted to '3_ClipToExtnet'. All SNODAS clipped (to basin
 #   extent)and reprojected .tif files are contained here.
 #
-#   name_of_createsnowcover_folder: The name of the snow cover folder. Defaulted to '4_CreateSnowCover'. All binary
+#   create_snow_cover_name: The name of the snow cover folder. Defaulted to '4_CreateSnowCover'. All binary
 #   snow cover .tif files (clipped to basin extent) are contained here.
 #
 #   name_of_calculateStatistics_folder: The name of the results folder. All zonal statistic results in csv format are
@@ -93,31 +96,29 @@ def ConfigSectionMap(section):
 #   name_of_byBasin_folder: The name of the byBasin folder. All zonal statistic results in csv format organized by
 #   basin are contained here.
 
-root = ConfigSectionMap("Folders")['root_pathname']
-basin_shp = ConfigSectionMap("BasinBoundaryShapefile")['pathname']
-QGIS_installation = ConfigSectionMap("ProgramInstall")['qgis_pathname']
-Save_allSNODASparameters = ConfigSectionMap("SNODASparameters")['save_all_parameters']
-name_of_download_folder = ConfigSectionMap("Folders")['download_snodas_tar_folder']
-name_of_setFormat_folder = ConfigSectionMap("Folders")['untar_snodas_tif_folder']
-name_of_clip_folder = ConfigSectionMap("Folders")['clip_proj_snodas_tif_folder']
-name_of_createsnowcover_folder = ConfigSectionMap("Folders")['create_snowcover_tif_folder']
-name_of_calculateStatistics_folder = ConfigSectionMap("Folders")['calculate_stats_folder']
-name_of_byDate_folder = ConfigSectionMap("Folders")['output_stats_by_date_folder']
-name_of_byBasin_folder = ConfigSectionMap("Folders")['output_stats_by_basin_folder']
-name_of_processed_folder = ConfigSectionMap("Folders")['processed_data_folder']
-output_CRS_EPSG = ConfigSectionMap("Projections")['output_proj_epsg']
-delete_shp_orig = ConfigSectionMap("OutputLayers")['shp_delete_originals']
-zip_shp = ConfigSectionMap("OutputLayers")['shp_zip']
-name_of_static_folder = ConfigSectionMap("Folders")['static_data_folder']
-UploadResultsToAmazonS3 = ConfigSectionMap("OutputLayers")['upload_results_to_amazon_s3']
-run_daily_tstool = ConfigSectionMap("OutputLayers")['process_daily_tstool_graphs']
-run_historical_tstool = ConfigSectionMap("OutputLayers")['process_historical_tstool_graphs']
+
+root = config_section_map("Folders")['root_pathname']
+basin_shp = config_section_map("BasinBoundaryShapefile")['pathname']
+QGIS_installation = config_section_map("ProgramInstall")['qgis_pathname']
+Save_allSNODASparameters = config_section_map("SNODASparameters")['save_all_parameters']
+name_of_download_folder = config_section_map("Folders")['download_snodas_tar_folder']
+name_of_setFormat_folder = config_section_map("Folders")['untar_snodas_tif_folder']
+name_of_clip_folder = config_section_map("Folders")['clip_proj_snodas_tif_folder']
+create_snow_cover_name = config_section_map("Folders")['create_snowcover_tif_folder']
+name_of_calculateStatistics_folder = config_section_map("Folders")['calculate_stats_folder']
+name_of_byDate_folder = config_section_map("Folders")['output_stats_by_date_folder']
+name_of_byBasin_folder = config_section_map("Folders")['output_stats_by_basin_folder']
+name_of_processed_folder = config_section_map("Folders")['processed_data_folder']
+output_CRS_EPSG = config_section_map("Projections")['output_proj_epsg']
+delete_shp_orig = config_section_map("OutputLayers")['shp_delete_originals']
+zip_shp = config_section_map("OutputLayers")['shp_zip']
+name_of_static_folder = config_section_map("Folders")['static_data_folder']
+UploadResultsToAmazonS3 = config_section_map("OutputLayers")['upload_results_to_amazon_s3']
+run_daily_tstool = config_section_map("OutputLayers")['process_daily_tstool_graphs']
+run_historical_tstool = config_section_map("OutputLayers")['process_historical_tstool_graphs']
 
 
 if __name__ == "__main__":
-
-    #Boolean vairable used to test python version throughout script.
-    py3 = version_info[0] > 2
 
     # Initialize QGIS resources: more info at
     # http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html. This block of code allows for the
@@ -135,22 +136,15 @@ if __name__ == "__main__":
 
     # Get user inputs as raw data
     # Ask the user to decide between downloading only one date of data or a range of multiple dates of data.
-    if py3:
-        singleOrRange = input("Are you interested in one date or a range of dates?: Type 'One' or 'Range'. \n")
-    else:
-        singleOrRange = raw_input("Are you interested in one date or a range of dates?: Type 'One' or 'Range'. \n")
+    singleOrRange = input("Are you interested in one date or a range of dates?: Type 'One' or 'Range'. \n")
 
     # While loop that continues to prompt user for a new input if original input is invalid.
     while singleOrRange.upper() != "ONE" and singleOrRange.upper() != "RANGE":
 
         # Ask the user to re-enter downloading data type - one date or range of dates.
-        if py3:
-            singleOrRange = input(
-                "Your input is not recognized. \n Are you interested in one date or a range of dates?: "
-                "Type 'One' or 'Range'. \n")
-        else:
-            singleOrRange = raw_input("Your input is not recognized. \n Are you interested in one date or a range of "
-                                      "dates?: Type 'One' or 'Range'. \n")
+        singleOrRange = input(
+            "Your input is not recognized. \n Are you interested in one date or a range of dates?: "
+            "Type 'One' or 'Range'. \n")
 
     # Create the root folder and the 5 sub-folders (Defaulted to: 1_DownloadSNODAS, 2_SetFormat, 3_ClipToExtent,
     # 4_CreateSnowCover, 5_CalculateStatistics [2 sub-folders: StatisticsByBasin, StatisticsByDate]). Check for folder
@@ -159,16 +153,17 @@ if __name__ == "__main__":
     download_path = os.path.join(root, name_of_processed_folder, name_of_download_folder)
     setEnvironment_path = os.path.join(root, name_of_processed_folder, name_of_setFormat_folder)
     clip_path = os.path.join(root, name_of_processed_folder, name_of_clip_folder)
-    snowCover_path = os.path.join(root, name_of_processed_folder, name_of_createsnowcover_folder)
-    results_basin_path = os.path.join(root, name_of_processed_folder, name_of_calculateStatistics_folder + name_of_byBasin_folder)
-    results_date_path = os.path.join(root, name_of_processed_folder, name_of_calculateStatistics_folder + name_of_byDate_folder)
+    snowCover_path = os.path.join(root, name_of_processed_folder, create_snow_cover_name)
+    results_basin_path = os.path.join(root, name_of_processed_folder,
+                                      name_of_calculateStatistics_folder + name_of_byBasin_folder)
+    results_date_path = os.path.join(root, name_of_processed_folder,
+                                     name_of_calculateStatistics_folder + name_of_byDate_folder)
 
+    all_folders = [root, download_path, setEnvironment_path, clip_path, snowCover_path, results_basin_path,
+                   results_date_path]
 
-    listofFolders = [root, download_path, setEnvironment_path, clip_path, snowCover_path, results_basin_path,
-                     results_date_path]
-
-    for folder in listofFolders:
-        if os.path.exists(folder) == False:
+    for folder in all_folders:
+        if not os.path.exists(folder):
             os.makedirs(folder)
 
     # Create and configures logging file
@@ -177,8 +172,10 @@ if __name__ == "__main__":
     logger.info('SNODASDailyDownload.py: Started \n')
 
     # Print version information
-    print "Running SNODASDaily_Interactive.py Version 1"
+    print("Running SNODASDaily_Interactive.py Version 1")
     logger.info('Running SNODASDaily_Interactive.py Version 1')
+
+    singleDate = None
 
     # After the user chooses the project folder where the data will be stored, they must then choose the dates of
     # interest. If the user is interested in only one date of data.
@@ -187,77 +184,54 @@ if __name__ == "__main__":
         # Ask the user which date of data they would like. Must be in mm/dd/yy format and be within the specified
         # range of available dates. Continues to ask the user for a date if the entered string is not a valid date with
         # correct formatting or if the date chosen is outside the range of available data.
-        count = True
-        while count:
+        while True:
             try:
-                if py3:
-                    userIn = input(
-                        "\n Which date are you interested in? The date must be of or between 30 September 2003 and today's "
-                        "date. \n mm/dd/yy: \n")
-                else:
-                    userIn = raw_input(
+                userIn = input(
                     "\n Which date are you interested in? The date must be of or between 30 September 2003 and today's "
                     "date. \n mm/dd/yy: \n")
                 singleDate = datetime.strptime(userIn, "%m/%d/%y")
-                if (datetime(year=2003, month=9, day=29) < singleDate <= now) == False:
-                    print ('\n You have chosen an invalid date.')
-                    count = True
+                if not (datetime(year=2003, month=9, day=29) < singleDate <= now):
+                    print('\n You have chosen an invalid date.')
                 else:
                     startDate = singleDate
                     endDate = singleDate
-                    count = False
+                    break
             except ValueError:
-                print ('Invalid Format!')
+                print('Invalid Format!')
 
     # If the user is interested in a range of multiple dates.
     else:
-
         # Ask the user which START date they would like. Must be in mm/dd/yy format and be within the specified
         # range of available dates. Continue to ask the user for a date if the entered string is not a valid date with
         # correct formatting or if the date chosen is outside the range of available data.
-        count = True
-        while count:
+        while True:
             try:
-                if py3:
-                    userIn = input(
-                    "\n What is the STARTING (earliest) date of data that you are interested in? The date must be of or between "
-                    "30 September 2003 and today's date. \n mm/dd/yy: \n")
-                else:
-                    userIn = raw_input(
-                        "\n What is the STARTING (earliest) date of data that you are interested in? The date must be of or between "
-                        "30 September 2003 and today's date. \n mm/dd/yy: \n")
+                userIn = input(
+                    "\n What is the STARTING (earliest) date of data that you are interested in?"
+                    "The date must be of or between 30 September 2003 and today's date. \n mm/dd/yy: \n")
                 startDate = datetime.strptime(userIn, "%m/%d/%y")
-                if (datetime(year=2003, month=9, day=29) < startDate <= now) == False:
-                    print ('\n You have chosen an invalid date.')
-                    count = True
+                if not (datetime(year=2003, month=9, day=29) < startDate <= now):
+                    print('\n You have chosen an invalid date.')
                 else:
-                    count = False
+                    break
             except ValueError:
-                print ('Invalid Format!')
+                print('Invalid Format!')
 
         # Ask the user which END date they would like. Must be in mm/dd/yy format and be within the specified
         # range of available dates. Continue to ask the user for a date if the entered string is not a valid date with
         # correct formatting or if the date chosen is outside the range of available data.
-        count = True
-        while count:
+        while True:
             try:
-                if py3:
-                    userIn = input(
-                    "\n What is the ENDING (most recent) date of data that you are interested in? The date must be between"
-                    " %s and today's date. \n mm/dd/yy: \n" % startDate.date())
-                else:
-                    userIn = raw_input(
-                        "\n What is the ENDING (most recent) date of data that you are interested in? The date must be between "
-                        " %s and today's date. \n mm/dd/yy: \n" % startDate.date())
+                userIn = input(
+                    "\n What is the ENDING (most recent) date of data that you are interested in?"
+                    "The date must be between %s and today's date. \n mm/dd/yy: \n" % startDate.date())
                 endDate = datetime.strptime(userIn, "%m/%d/%y")
-                if (startDate < endDate <= now) == False:
-                    print ('\n You have chosen an invalid date.')
-                    count = True
+                if not (startDate < endDate <= now):
+                    print('\n You have chosen an invalid date.')
                 else:
-                    count = False
+                    break
             except ValueError:
-                print ('Invalid Format!')
-
+                print('Invalid Format!')
 
     # ----------------- End of user input. Begin automated script.------------------------------------------------------
 
@@ -275,6 +249,9 @@ if __name__ == "__main__":
     # Define the current day depending on the user's interest in one or range of dates.
     for day_number in range(total_days):
         if singleOrRange.upper() == "ONE":
+            if singleDate is None:
+                logger.warning("\n singleDate has not be defined. Using the default day 2003-09-30.")
+                singleDate = datetime(year=2003, month=9, day=30)
             current = singleDate
         else:
             current = (startDate + timedelta(days=day_number)).date()
@@ -290,10 +267,11 @@ if __name__ == "__main__":
         # Check to see if this date of data has already been processed in the folder
         possible_file = os.path.join(download_path, current_date_tar)
 
-        # If date has already been procesed within the folder, the download & zonal statistics are rerun.
+        # If date has already been processed within the folder, the download & zonal statistics are rerun.
         if os.path.exists(possible_file):
-            logger.warning ( "\n This date (%s) has already been processed. The files will be reprocessed and "
-                              "rewritten." % current_date)
+            logger.warning(
+                "\n This date (%s) has already been processed. The files will be reprocessed and "
+                "rewritten." % current_date)
 
         # Download current date SNODAS .tar file from the FTP site at
         #  ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/
@@ -303,7 +281,7 @@ if __name__ == "__main__":
 
         # Check to see if configuration values for optional statistics 'calculate_SWE_minimum, calculate_SWE_maximum,
         # calculate_SWE_stdDev' (defined in utility function) are valid, If valid, script continues to run. If invalid,
-        # error message is printed to consol and log file and script is terminated
+        # error message is printed to console and log file and script is terminated
         tempList = []
         for stat in returnedList[1]:
             if stat.upper() == 'TRUE' or stat.upper() == 'FALSE':
@@ -339,7 +317,7 @@ if __name__ == "__main__":
                 # Move irrelevant files (parameters other than SWE) to 'OtherSNODASParamaters'.
                 else:
                     parameter_path = os.path.join(setEnvironment_path, r'OtherParameters')
-                    if os.path.exists(parameter_path) == False:
+                    if not os.path.exists(parameter_path):
                         os.makedirs(parameter_path)
                     for file in os.listdir(setEnvironment_path):
                         if current_date in str(file):
@@ -399,7 +377,7 @@ if __name__ == "__main__":
                 # Create current date's snow cover binary raster
                 for file in os.listdir(clip_path):
                     if current_date in str(file):
-                        SNODAS_utilities.snowCoverage(file, clip_path, snowCover_path)
+                        SNODAS_utilities.snow_coverage(file, clip_path, snowCover_path)
 
                 # Create .csv files of byBasin and byDate outputs
                 for file in os.listdir(clip_path):
@@ -414,10 +392,9 @@ if __name__ == "__main__":
                 # Calculate zonal statistics and export results
                 for file in os.listdir(clip_path):
                     if current_date in str(file):
-                        SNODAS_utilities.zStat_and_export(file, basin_shp, results_basin_path,
-                                                                  results_date_path,
-                                                                  clip_path, snowCover_path, current,
-                                                                returnedList[0], output_CRS_EPSG)
+                        SNODAS_utilities.zStat_and_export(file, basin_shp, results_basin_path, results_date_path,
+                                                          clip_path, snowCover_path, current,
+                                                          returnedList[0], output_CRS_EPSG)
 
                 # If desired, zip files of output shapefile (both today's data and latestDate file)
                 if zip_shp.upper() == 'TRUE':
@@ -425,13 +402,11 @@ if __name__ == "__main__":
                         if current_date in str(file) and file.endswith('.shp'):
                             SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
                         if "LatestDate" in str(file) and file.endswith('.shp'):
-                            zip_full_path = os.path.join(results_date_path,
-                                                                 "SnowpackStatisticsByDate_LatestDate.zip")
+                            zip_full_path = os.path.join(results_date_path, "SnowpackStatisticsByDate_LatestDate.zip")
                             if os.path.exists(zip_full_path):
                                 os.remove(zip_full_path)
 
                             SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
-
 
                 # If configured, the time series will run for each processed date of data.
                 if run_daily_tstool.upper() == "TRUE":
@@ -440,7 +415,7 @@ if __name__ == "__main__":
                 # If it is the last date in the range, continue.
                 if current == endDate or current == endDate.date():
 
-                    # Remove any duplicates that occurred in the byBasin csv files (this scenario is rare but could happen.)
+                    # Remove any duplicates that occurred in the byBasin csv files (rare but could happen.)
                     SNODAS_utilities.clean_duplicates_from_byBasin_csv(results_basin_path)
 
                     # If configured, the time series will run for the entire historical range.
@@ -457,15 +432,15 @@ if __name__ == "__main__":
                         logger.info('Output files from SNODAS_Tools are not pushed to cloud storage because of'
                                     ' setting in configuration file. ')
 
-            # If config file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
-            # script will not run and the following error message will be printed to the console and to the logging file.
+            # If config file value SaveAllSNODASparameters is not a valid value ('True' or 'False') the remaining script
+            # will not run and the following error message will be printed to the console and to the logging file.
             else:
                 logging.error(
                             "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
                             "valid. Please type in 'True' or 'False' and rerun the script.")
                 logger.error(
-                "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
-             "valid. Please type in 'True' or 'False' and rerun the script.")
+                    "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
+                    "valid. Please type in 'True' or 'False' and rerun the script.")
 
         # Display elapsed time of current date's processing in log.
         end_day = time.time()
@@ -481,10 +456,9 @@ if __name__ == "__main__":
     elapsed_seconds = int(elapsed_hours_remainder % 60)
     stringStart = str(startDate)
     stringEnd = str(endDate)
-    print '\nSNODASHistoricalDownload.py: Completed. Dates Processed: From %s to %s.' % (stringStart, stringEnd)
-    print 'Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n' % (elapsed_hours,
-                                                                                             elapsed_minutes,
-                                                                                             elapsed_seconds)
+    print('\nSNODASHistoricalDownload.py: Completed. Dates Processed: From %s to %s.' % (stringStart, stringEnd))
+    print('Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n'
+          % (elapsed_hours, elapsed_minutes, elapsed_seconds))
 
     # If any dates were unsuccessfully downloaded, print those dates to the console and the logging file.
     failed_dates_lst_updated = []
@@ -497,25 +471,23 @@ if __name__ == "__main__":
             failed_dates_lst_updated.append(item_str)
             failed_dates_lst_1Week.append(item_plus_seven_str)
 
-    if failed_dates_lst_updated == []:
-        print 'All dates successfully downloaded!'
+    if not failed_dates_lst_updated:
+        print('All dates successfully downloaded!')
         logger.info('All dates successfully downloaded!')
     else:
-        print '\nDates unsuccessfully downloaded: '
+        print('\nDates unsuccessfully downloaded: ')
         logger.info('\nDates unsuccessfully downloaded: ')
         for item in failed_dates_lst_updated:
-            print item
-            logger.info('%s'% item)
-        print "\nDates that will be affected by assigning the 'SNODAS_SWE_Volume_1WeekChange_acft' attribute 'NULL' " \
-              "due to the unsuccessful downloads: "
+            print(item)
+            logger.info('%s' % item)
+        print("\nDates that will be affected by assigning the 'SNODAS_SWE_Volume_1WeekChange_acft' attribute 'NULL' "
+              "due to the unsuccessful downloads: ")
         logger.info("\nDates that will be affected by assigning the 'SNODAS_SWE_Volume_1WeekChange_acft' attribute "
                     "'NULL' due to the unsuccessful downloads: ")
         for item in failed_dates_lst_1Week:
-            print item
+            print(item)
             logger.info('%s' % item)
 
-
     logger.info('\nSNODASHistoricalDownload.py: Completed. Dates Processed: From %s to %s.' % (stringStart, stringEnd))
-    logger.info('Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n' % (elapsed_hours,
-                                                                                             elapsed_minutes,
-                                                                                             elapsed_seconds))
+    logger.info('Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n'
+                % (elapsed_hours, elapsed_minutes, elapsed_seconds))

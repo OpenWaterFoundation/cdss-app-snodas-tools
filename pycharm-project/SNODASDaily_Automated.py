@@ -11,22 +11,18 @@
 #   This script is intended to be run on a task scheduler program so that the data is automatically processed every day.
 #   It can also be processed manually if desired.
 
-
-# Check to see which os is running
-import sys
-platform = sys.platform
-if platform == 'linux' or platform == 'linux2' or platform == 'cygwin' or platform == 'darwin':
-    linux_os = True
-else:
-    linux_os = False
-
-
 # Import necessary modules.
-import SNODAS_utilities, os, logging, time, re
-from qgis.core import QgsApplication
-from logging.config import fileConfig
-from datetime import datetime, date, timedelta
+import SNODAS_utilities
+import configparser
+import logging
+import os
+import sys
+import time
 
+from datetime import datetime, timedelta
+from logging.config import fileConfig
+
+from qgis.core import QgsApplication
 
 # The start time is used to calculate the elapsed time of the running script. The elapsed time will be displayed at the
 # end of the log file.
@@ -34,26 +30,33 @@ start = time.time()
 
 # Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
-if linux_os:
-    import ConfigParser
-    Config = ConfigParser.ConfigParser()
+# Check to see which os is running
+platform = sys.platform
+if platform == 'linux' or platform == 'linux2' or platform == 'cygwin' or platform == 'darwin':
+    linux_os = True
 else:
-    import configparser
-    Config = configparser.ConfigParser()
+    linux_os = False
+    
+# if linux_os:
+#     import ConfigParser
+#     Config = ConfigParser.ConfigParser()
+# else:
+Config = configparser.ConfigParser()
 
 Configfile = "../config/SNODAS-Tools-Config.ini"
 Config.read(Configfile)
 
+
 # Helper function to obtain option values of config file sections.
-def ConfigSectionMap(section):
+def config_section_map(section):
     dict1 = {}
     options = Config.options(section)
     for option in options:
         try:
             dict1[option] = Config.get(section, option)
             if dict1[option] == -1:
-                DebugPrint("skip: %s" % option)
-        except:
+                print("skip: %s" % option)
+        except Exception as e:
             print("exception on %s!" % option)
             dict1[option] = None
     return dict1
@@ -98,31 +101,30 @@ def ConfigSectionMap(section):
 #   basin are contained here.
 
 
-root = ConfigSectionMap("Folders")['root_pathname']
-basin_shp = ConfigSectionMap("BasinBoundaryShapefile")['pathname']
-QGIS_installation = ConfigSectionMap("ProgramInstall")['qgis_pathname']
-Save_allSNODASparameters = ConfigSectionMap("SNODASparameters")['save_all_parameters']
-name_of_download_folder = ConfigSectionMap("Folders")['download_snodas_tar_folder']
-name_of_setFormat_folder = ConfigSectionMap("Folders")['untar_snodas_tif_folder']
-name_of_clip_folder = ConfigSectionMap("Folders")['clip_proj_snodas_tif_folder']
-name_of_createsnowcover_folder = ConfigSectionMap("Folders")['create_snowcover_tif_folder']
-name_of_calculateStatistics_folder = ConfigSectionMap("Folders")['calculate_stats_folder']
-name_of_byDate_folder = ConfigSectionMap("Folders")['output_stats_by_date_folder']
-name_of_byBasin_folder = ConfigSectionMap("Folders")['output_stats_by_basin_folder']
-name_of_processed_folder = ConfigSectionMap("Folders")['processed_data_folder']
-name_of_static_folder = ConfigSectionMap("Folders")['static_data_folder']
-output_CRS_EPSG = ConfigSectionMap("Projections")['output_proj_epsg']
-delete_shp_orig = ConfigSectionMap("OutputLayers")['shp_delete_originals']
-zip_shp = ConfigSectionMap("OutputLayers")['shp_zip']
-name_of_timeSeries_folder = ConfigSectionMap("Folders")['timeseries_folder']
-name_of_GraphsbyBasin_folder = ConfigSectionMap("Folders")['timeseries_graph_png_folder']
-UploadResultsToAmazonS3 = ConfigSectionMap("OutputLayers")['upload_results_to_amazon_s3']
-run_daily_tstool = ConfigSectionMap("OutputLayers")['process_daily_tstool_graphs']
-run_historical_tstool = ConfigSectionMap("OutputLayers")['process_historical_tstool_graphs']
+root = config_section_map("Folders")['root_pathname']
+basin_shp = config_section_map("BasinBoundaryShapefile")['pathname']
+QGIS_installation = config_section_map("ProgramInstall")['qgis_pathname']
+Save_allSNODASparameters = config_section_map("SNODASparameters")['save_all_parameters']
+name_of_download_folder = config_section_map("Folders")['download_snodas_tar_folder']
+name_of_setFormat_folder = config_section_map("Folders")['untar_snodas_tif_folder']
+name_of_clip_folder = config_section_map("Folders")['clip_proj_snodas_tif_folder']
+name_of_createsnowcover_folder = config_section_map("Folders")['create_snowcover_tif_folder']
+name_of_calculateStatistics_folder = config_section_map("Folders")['calculate_stats_folder']
+name_of_byDate_folder = config_section_map("Folders")['output_stats_by_date_folder']
+name_of_byBasin_folder = config_section_map("Folders")['output_stats_by_basin_folder']
+name_of_processed_folder = config_section_map("Folders")['processed_data_folder']
+name_of_static_folder = config_section_map("Folders")['static_data_folder']
+output_CRS_EPSG = config_section_map("Projections")['output_proj_epsg']
+delete_shp_orig = config_section_map("OutputLayers")['shp_delete_originals']
+zip_shp = config_section_map("OutputLayers")['shp_zip']
+name_of_timeSeries_folder = config_section_map("Folders")['timeseries_folder']
+name_of_GraphsbyBasin_folder = config_section_map("Folders")['timeseries_graph_png_folder']
+UploadResultsToAmazonS3 = config_section_map("OutputLayers")['upload_results_to_amazon_s3']
+run_daily_tstool = config_section_map("OutputLayers")['process_daily_tstool_graphs']
+run_historical_tstool = config_section_map("OutputLayers")['process_historical_tstool_graphs']
 
 
 if __name__ == "__main__":
-
 
     # Define static folder and extent shapefile
     static_path = os.path.join(root, name_of_static_folder)
@@ -142,7 +144,7 @@ if __name__ == "__main__":
 
     # Check for folder existence. If not exiting, the folder is created.
     for folder in listofFolders:
-        if os.path.exists(folder) == False:
+        if not os.path.exists(folder):
             os.makedirs(folder)
 
     # Create and configures logging file
@@ -151,7 +153,7 @@ if __name__ == "__main__":
     logger.info('SNODASDailyDownload.py: Started \n')
 
     # Print version information
-    print "Running SNODASDaily_Automated.py Version 1"
+    print("Running SNODASDaily_Automated.py Version 1")
     logger.info('Running SNODASDaily_Automated.py Version 1')
 
     # Initialize QGIS resources to utilize QGIS functionality.
@@ -185,7 +187,7 @@ if __name__ == "__main__":
                     foundPastDay = True
                     TextFile.close()
                     break
-            if foundPastDay == False:
+            if not foundPastDay:
                 datesToProcess.append(pastDay_string)
 
     # Check to see if today's date was processed.
@@ -194,11 +196,11 @@ if __name__ == "__main__":
         for line in TextFile:
             if str(today_date) in line:
                 logger.info('Today has already been processed.')
-                print 'Today has already been processed.'
+                print('Today has already been processed.')
                 foundToday = True
                 TextFile.close()
                 break
-        if foundToday == False:
+        if not foundToday:
             datesToProcess.append(today_date)
 
     # Log which dates will be processed with this run of the script.
@@ -207,13 +209,11 @@ if __name__ == "__main__":
         # calculated
         datesToProcess = sorted(datesToProcess)
         logger.info("These dates were not previously processed and will be processed now: {}".format(datesToProcess))
-        print "These dates were not previously processed and will be processed now: {}".format(datesToProcess)
+        print("These dates were not previously processed and will be processed now: {}".format(datesToProcess))
     else:
         logger.info("Today's date and the past seven days have already been processed.")
-        print "Today's date and the past seven days have already been processed."
+        print("Today's date and the past seven days have already been processed.")
         datesToProcess = ['None']
-
-
 
     # Keeps track of the dates that failed to download.
     list_of_download_fails = []
@@ -225,15 +225,16 @@ if __name__ == "__main__":
 
             date_dateTimeFormat = datetime.strptime(date, '%Y%m%d')
 
-            # Download today's SNODAS .tar file from SNODAS FTP site at ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/.
-            # Returned list contains a download timestamp and information on the values of the configurable optional statistics.
+            # Download today's SNODAS .tar file from SNODAS FTP site at
+            # ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/. Returned list contains a download timestamp and
+            # information on the values of the configurable optional statistics.
             returnedList = SNODAS_utilities.download_SNODAS(download_path, date_dateTimeFormat)
             # Determine if the date failed to download and store in list_of_download_fails for future use.
             list_of_download_fails.append(returnedList[2])
 
-            # Check to see if configuration values for optional statistics 'calculate_SWE_minimum, calculate_SWE_maximum,
-            # calculate_SWE_stdDev' (defined in utility function) are valid. If valid, script continues to run. If invalid,
-            # error message is printed to console and log file and script is terminated.
+            # Check to see if config values for optional statistics 'calculate_SWE_minimum, calculate_SWE_maximum,
+            # calculate_SWE_stdDev' (defined in utility function) are valid. If valid, script continues to run. If
+            # invalid, error message is printed to console and log file and script is terminated.
             tempList = []
             for stat in returnedList[1]:
                 if stat.upper() == 'TRUE' or stat.upper() == 'FALSE':
@@ -241,13 +242,11 @@ if __name__ == "__main__":
                 else:
                     tempList.append(0)
 
-
             if 0 in tempList:
-                logger.error('"ERROR: See configuration file. One or more values of the ''OptionalZonalStatistics'' section is '
-                         'not valid. Please change values to either ''True'' or ''False'' and rerun the script."')
-                logging.error('"ERROR: See configuration file. One or more values of the ''DesiredZonalStatistics'' section is '
-                         'not valid. Please change values to either ''True'' or ''False'' and rerun the script."')
-
+                logger.error('ERROR: See configuration file. One or more values of the OptionalZonalStatistics'
+                             'section is not valid. Please change values to either True or False and rerun the script.')
+                logging.error('ERROR: See configuration file. One or more values of the DesiredZonalStatistics section'
+                              'is not valid. Please change values to either True or False and rerun the script.')
 
             else:
 
@@ -259,8 +258,8 @@ if __name__ == "__main__":
                         download_time_end = time.time()
                         elapsed_download = download_time_end - download_time_start
 
-                # Check to see if configuration file 'Save_allSNODASparameters' value is valid. If valid, script continues to run.
-                # If invalid, error message is printed to console and log file and the script is terminated.
+                # Check to see if configuration file 'Save_allSNODASparameters' value is valid. If valid, script
+                # continues to run. If invalid, error message is printed and log file and the script is terminated.
                 if Save_allSNODASparameters.upper() == 'FALSE' or Save_allSNODASparameters.upper() == 'TRUE':
 
                     setEnvironment_time_start = time.time()
@@ -273,7 +272,7 @@ if __name__ == "__main__":
                     # Move irrelevant files (parameters other than SWE) to 'OtherSNODASParamaters'.
                     else:
                         parameter_path = os.path.join(setEnvironment_path, r'OtherParameters')
-                        if os.path.exists(parameter_path) == False:
+                        if not os.path.exists(parameter_path):
                             os.makedirs(parameter_path)
                         for file in os.listdir(setEnvironment_path):
                             if date in str(file):
@@ -289,9 +288,9 @@ if __name__ == "__main__":
                         if date in str(file):
                             SNODAS_utilities.convert_SNODAS_dat_to_bil(file)
 
-                    # Create today's custom .Hdr file. In order to convert today's SNODAS SWE .bil file into a usable .tif
-                    # file, a custom .Hdr must be created. Refer to the function in the SNODAS_utilities.py for more
-                    # information on the contents of the custom .HDR file.
+                    # Create today's custom .Hdr file. In order to convert today's SNODAS SWE .bil file into a usable
+                    # .tif file, a custom .Hdr must be created. Refer to the function in the SNODAS_utilities.py for
+                    # more information on the contents of the custom .HDR file.
                     for file in os.listdir(setEnvironment_path):
                         if date in str(file):
                             SNODAS_utilities.create_SNODAS_hdr_file(file)
@@ -339,7 +338,7 @@ if __name__ == "__main__":
                     # Create today's snow cover binary raster
                     for file in os.listdir(clip_path):
                         if date in str(file):
-                            SNODAS_utilities.snowCoverage(file, clip_path, snowCover_path)
+                            SNODAS_utilities.snow_coverage(file, clip_path, snowCover_path)
                     snowCover_time_end = time.time()
                     elapsed_snowCover = snowCover_time_end - snowCover_time_start
 
@@ -347,7 +346,7 @@ if __name__ == "__main__":
                     # Create .csv files of byBasin and byDate outputs
                     for file in os.listdir(clip_path):
                         if date in str(file):
-                            SNODAS_utilities.create_csv_files(file, basin_shp, results_date_path,results_basin_path)
+                            SNODAS_utilities.create_csv_files(file, basin_shp, results_date_path, results_basin_path)
 
                     # Delete rows from basin CSV files if the date is being reprocessed
                     for file in os.listdir(clip_path):
@@ -361,7 +360,8 @@ if __name__ == "__main__":
                     for file in os.listdir(clip_path):
                         if date in str(file):
                             SNODAS_utilities.zStat_and_export(file, basin_shp, results_basin_path, results_date_path,
-                                                          clip_path, snowCover_path, date_dateTimeFormat, returnedList[0], output_CRS_EPSG)
+                                                              clip_path, snowCover_path, date_dateTimeFormat,
+                                                              returnedList[0], output_CRS_EPSG)
                     zStats_time_end = time.time()
                     elapsed_zStats = zStats_time_end - zStats_time_start
 
@@ -371,7 +371,8 @@ if __name__ == "__main__":
                             if date in str(file) and file.endswith('.shp'):
                                 SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
                             if "LatestDate" in str(file) and file.endswith('.shp'):
-                                zip_full_path = os.path.join(results_date_path, "SnowpackStatisticsByDate_LatestDate.zip")
+                                zip_full_path = os.path.join(results_date_path,
+                                                             "SnowpackStatisticsByDate_LatestDate.zip")
 
                                 if os.path.exists(zip_full_path):
                                     os.remove(zip_full_path)
@@ -388,8 +389,9 @@ if __name__ == "__main__":
                         elapsed_TsTool = TsTool_time_end - TsTool_time_start
 
 
-                # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False') the remaining
-                # script will not run and the following error message will be printed to the console and to the logging file.
+                # If configuration file value SaveAllSNODASparameters is not a valid value (either 'True' or 'False')
+                # the remaining script will not run and the following error message will be printed to the console and
+                # to the logging file.
                 else:
                     logger.error(
                         "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not valid."
@@ -420,9 +422,8 @@ if __name__ == "__main__":
         else:
             SNODAS_utilities.push_to_AWS()
     else:
-        logger.info('Output files from SNODAS_Tools are not pushed to cloud storage because of'
-                            ' setting in configuration file. ')
-
+        logger.info('Output files from SNODAS_Tools are not pushed to cloud storage because of setting in configuration'
+                    'file. ')
 
     # Close logging including the elapsed time of the running script in seconds.
     elapsed = time.time() - start
@@ -440,6 +441,8 @@ if __name__ == "__main__":
             os.remove(os.path.join(results_date_path, file))
 
     logger.info('\n SNODASDailyDownload.py: Completed.')
-    logger.info('Elapsed time: {} hours, {} minutes and {} seconds'.format(elapsed_hours, elapsed_minutes, elapsed_seconds))
-    logging.info('Elapsed time: {} hours, {} minutes and {} seconds'.format(elapsed_hours, elapsed_minutes, elapsed_seconds))
-    print 'Elapsed time: {} hours, {} minutes and {} seconds'.format(elapsed_hours, elapsed_minutes, elapsed_seconds)
+    logger.info('Elapsed time: {} hours, {} minutes and {} seconds'
+                .format(elapsed_hours, elapsed_minutes, elapsed_seconds))
+    logging.info('Elapsed time: {} hours, {} minutes and {} seconds'
+                 .format(elapsed_hours, elapsed_minutes, elapsed_seconds))
+    print('Elapsed time: {} hours, {} minutes and {} seconds'.format(elapsed_hours, elapsed_minutes, elapsed_seconds))

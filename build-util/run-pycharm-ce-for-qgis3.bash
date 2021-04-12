@@ -18,18 +18,17 @@ pycharmBashVersionDate='2021-04-07'
 PYCHARM=''
 # The base path to the directory that contains installed versions of Pycharm.
 PYCHARMBASEPATH="/home/$(whoami)/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0"
+# The path to the SNODAS Pycharm project (subject to change)
+PYCHARMPROJPATH="/home/jkeahey/workspace/cdss-dev/CDSS-SNODAS-Tools/git-repos/cdss-app-snodas-tools/pycharm-project"
 QGISBASEPATH="/usr/share/qgis"
 # Holds the qgisVersion on the system. Might become an array of different versions.
 qgisVersion='3.18'
 # Get the folder where this script is located since it may have been run from any folder.
 scriptFolder=$(cd "$(dirname "${0}")" && pwd)
-echo -e "${INFO}Script folder is '${scriptFolder}'"
 # repoFolder is cdss-app-snodas-tools.
 repoFolder=$(dirname "${scriptFolder}")
-echo -e "${INFO}Repository folder is '${repoFolder}'"
 # programName is run-pycharm-ce-for-qgis3.bash.
 programName=$(basename "${0}")
-echo -e "${INFO}Script name is '${programName}'"
 # Array of supported Pycharm versions.
 supportedPycharmVersions=("211" "203")
 # Holds the newest version of Pycharm found on the system.
@@ -38,21 +37,21 @@ foundPycharmVersion=""
 
 # The expected pycharm was not found.
 noPycharmFound() {
-  echo -e "${ERROR}PyCharm was not found in expected location."
+  echo -e "${ERROR}The PyCharm version was not found."
   echo -e "${ERROR}May need to update this script for newer versions of PyCharm."
   exit 0
 }
 
-# 
+# Set the path to the run script of the found Pycharm version.
 setPycharmScript() {
   if [ "${foundPycharmVersion}" = "211" ]; then
     PYCHARM='/home/jkeahey/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0/211.6693.115/bin/pycharm.sh'
   fi
 }
 
-# 
+# Compare installed Pycharm versions found on the host running this script to the versions currently supported,
+# and set the version if found. Complain if not found.
 findPycharmVersion() {
-  # The ! signifies that ${ver} is now an index instead of the element itself.
   for ver in "${supportedPycharmVersions[@]}"
   do
     echo -e "${INFO}Checking for PyCharm version ${ver}."
@@ -83,7 +82,14 @@ Options:
   exit 0
 }
 
-# Print the script version.
+# Display basic script info so there is no ambiguity to the user.
+printScriptInfo() {
+  echo -e "${INFO}Script folder is '${scriptFolder}'"
+  echo -e "${INFO}Repository folder is '${repoFolder}'"
+  echo -e "${INFO}Script name is '${programName}'"
+}
+
+# Print the script version and exit.
 printVersion() {
   echo -e "${INFO}run-pycharm-ce-for-qgis3.bash version: ${pycharmBashVersion} ${pycharmBashVersionDate}"
   echo ""
@@ -93,21 +99,21 @@ printVersion() {
 # 
 setupStandaloneQgis() {
   
-  echo "here at setup"
-  export SA_PYCHARM_ENV_SETUP="YES"
-  echo "${SA_PYCHARM_ENV_SETUP}"
+  echo -e "${INFO}Here at setup."
 }
 
 # 
 runStandaloneQgis() {
+  printScriptInfo
   findPycharmVersion
-  echo "SA_PYCHARM_ENV_SETUP: ${SA_PYCHARM_ENV_SETUP}"
-  if [ "${SA_PYCHARM_ENV_SETUP}" = "" ]; then
-    setupStandaloneQgis
-  fi
+  echo -e "${INFO}Setting up standalone QGIS environment. (WIP)"
+  setupStandaloneQgis
   echo -e "${INFO}Using standalone version of QGIS."
-  echo "eval ${PYCHARM}"
-  # eval ${PYCHARM}
+
+  pycharmRunCommand="${PYCHARM} ${PYCHARMPROJPATH}"
+  echo -e "${INFO}Running command pycharm.sh with project path '${PYCHARMPROJPATH}'"
+  echo -e "${INFO}Starting Pycharm..."
+  eval ${pycharmRunCommand}
 }
 
 # Check command line options. The ':' at the beginning represents the silent error reporting
@@ -126,8 +132,6 @@ do
       runStandaloneQgis;;
   esac
 done
-
-
 
 echo ""
 exit 0
