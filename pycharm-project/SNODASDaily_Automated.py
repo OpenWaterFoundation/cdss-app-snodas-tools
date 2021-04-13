@@ -120,8 +120,6 @@ RUN_DAILY_TSTOOL = config_section_map("OutputLayers")['process_daily_tstool_grap
 RUN_HIST_TSTOOL = config_section_map("OutputLayers")['process_historical_tstool_graphs']
 
 SAVE_ALL_SNODAS_PARAMS = config_section_map("SNODASparameters")['save_all_parameters']
-print('Exiting early from the script here')
-exit(0)
 
 
 if __name__ == "__main__":
