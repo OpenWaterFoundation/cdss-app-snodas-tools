@@ -27,29 +27,23 @@ from qgis.core import QgsApplication
 
 # Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
-# if linux_os:
-#     import ConfigParser
-#     Config = ConfigParser.ConfigParser()
-# else:
-
-platform = sys.platform
-if platform == 'linux' or platform == 'linux2' or platform == 'cygwin' or platform == 'darwin':
-    linux_os = True
+if sys.platform == 'linux' or sys.platform == 'linux2' or sys.platform == 'cygwin' or sys.platform == 'darwin':
+    LINUX_OS = True
 else:
-    linux_os = False
-Config = configparser.ConfigParser()
+    LINUX_OS = False
+CONFIG = configparser.ConfigParser()
 
-Configfile = "../config/SNODAS-Tools-Config.ini"
-Config.read(Configfile)
+CONFIG_FILE = "../test-CDSS/config/SNODAS-Tools-Config.ini"
+CONFIG.read(CONFIG_FILE)
 
 
 # Helper function to obtain option values of config file sections.
-def config_section_map(section):
+def config_section_map(section) -> dict:
     dict1 = {}
-    options = Config.options(section)
+    options = CONFIG.options(section)
     for option in options:
         try:
-            dict1[option] = Config.get(section, option)
+            dict1[option] = CONFIG.get(section, option)
             if dict1[option] == -1:
                 print('Skip: {}'.format(option))
         except Exception as e:
@@ -60,62 +54,67 @@ def config_section_map(section):
 # Assign the values from the configuration file to the python variables. See below for description of each
 # variable obtained by the configuration file.
 #
-#   root: The root folder is the folder housing all output files from this script.
+#   SNODAS_ROOT: The SNODAS_ROOT folder is the folder housing all output files from this script.
 #
-#   basin_shp: This is the full pathname to the shapefile holding the vector input(watershed basin boundaries).
+#   BASIN_SHP_PATH: This is the full pathname to the shapefile holding the vector input(watershed basin boundaries).
 #   The zonal statistics will be calculated for each feature of this layer. The shapefile must be projected into
 #   NAD83 Zone 13N. This script was originally developed to process Colorado Watershed Basins as the input shapefile.
 #
-#   QGIS_installation: The full path to QGIS installation on the local machine. This is used to initialize QGIS
+#   QGIS_HOME: The full path to QGIS installation on the local machine. This is used to initialize QGIS
 #   resources & utilities. More info at: http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html.
 #
-#   Save_allSNODASparameters: Each daily downloaded .tar SNODAS file contains 8 parameters as follows: (1) Snow Water
+#   SAVE_ALL_SNODAS_PARAMS: Each daily downloaded .tar SNODAS file contains 8 parameters as follows: (1) Snow Water
 #   Equivalent (2) Snow Depth (3) Snow Melt Runoff at the Base of the Snow Pack (4) Sublimation from the Snow Pack
 #   (5) Sublimation of Blowing Snow (6) Solid Precipitation (7) Liquid Precipitation and (8) Snow Pack Average
 #   Temperature. The default setting, False, will delete all parameters except 'Snow Water Equivalent'. The optional
 #   setting, True, will move all other parameters to a sub-folder under 1_Download called 'OtherParameters'
 #
-#   name_of_download_folder: The name of the download folder. Defaulted to '1_DownloadSNODAS'. All downloaded SNODAS
+#   DOWNLOAD_FOLDER: The name of the download folder. Defaulted to '1_DownloadSNODAS'. All downloaded SNODAS
 #   .tar files are contained here.
 #
-#   name_of_setFormat_folder: The name of the setFormat folder. Defaulted to ' 2_SetFormat'. All SNODAS masked .tif
+#   SET_FORMAT_FOLDER: The name of the setFormat folder. Defaulted to ' 2_SetFormat'. All SNODAS masked .tif
 #   files are contained here.
 #
-#   name_of_clip_folder: The name of the clip folder. Defaulted to '3_ClipToExtnet'. All SNODAS clipped (to basin
+#   CLIP_FOLDER: The name of the clip folder. Defaulted to '3_ClipToExtnet'. All SNODAS clipped (to basin
 #   extent)and reprojected .tif files are contained here.
 #
-#   create_snow_cover_name: The name of the snow cover folder. Defaulted to '4_CreateSnowCover'. All binary
+#   CREATE_SNOW_COVER_FOLDER: The name of the snow cover folder. Defaulted to '4_CreateSnowCover'. All binary
 #   snow cover .tif files (clipped to basin extent) are contained here.
 #
-#   name_of_calculateStatistics_folder: The name of the results folder. All zonal statistic results in csv format are
+#   CALCULATE_STATS_FOLDER: The name of the results folder. All zonal statistic results in csv format are
 #   contained here.
 #
-#   name_of_byDate_folder: The name of the byDate folder. All zonal statistic results in csv format organized by date
-#   are contained here.
+#   OUTPUT_STATS_BY_DATE_FOLDER: The name of the byDate folder. All zonal statistic results in csv format organized by
+#   date are contained here.
 #
-#   name_of_byBasin_folder: The name of the byBasin folder. All zonal statistic results in csv format organized by
+#   OUTPUT_STATS_BY_BASIN_FOLDER: The name of the byBasin folder. All zonal statistic results in csv format organized by
 #   basin are contained here.
 
 
-root = config_section_map("Folders")['root_pathname']
-basin_shp = config_section_map("BasinBoundaryShapefile")['pathname']
-QGIS_installation = config_section_map("ProgramInstall")['qgis_pathname']
-Save_allSNODASparameters = config_section_map("SNODASparameters")['save_all_parameters']
-name_of_download_folder = config_section_map("Folders")['download_snodas_tar_folder']
-name_of_setFormat_folder = config_section_map("Folders")['untar_snodas_tif_folder']
-name_of_clip_folder = config_section_map("Folders")['clip_proj_snodas_tif_folder']
-create_snow_cover_name = config_section_map("Folders")['create_snowcover_tif_folder']
-name_of_calculateStatistics_folder = config_section_map("Folders")['calculate_stats_folder']
-name_of_byDate_folder = config_section_map("Folders")['output_stats_by_date_folder']
-name_of_byBasin_folder = config_section_map("Folders")['output_stats_by_basin_folder']
-name_of_processed_folder = config_section_map("Folders")['processed_data_folder']
-output_CRS_EPSG = config_section_map("Projections")['output_proj_epsg']
-delete_shp_orig = config_section_map("OutputLayers")['shp_delete_originals']
-zip_shp = config_section_map("OutputLayers")['shp_zip']
-name_of_static_folder = config_section_map("Folders")['static_data_folder']
-UploadResultsToAmazonS3 = config_section_map("OutputLayers")['upload_results_to_amazon_s3']
-run_daily_tstool = config_section_map("OutputLayers")['process_daily_tstool_graphs']
-run_historical_tstool = config_section_map("OutputLayers")['process_historical_tstool_graphs']
+# QGIS_HOME = config_section_map("ProgramInstall")['qgis_pathname']
+
+SNODAS_ROOT = config_section_map("Folders")['root_pathname']
+STATIC_FOLDER = config_section_map("Folders")['static_data_folder']
+PROCESSED_FOLDER = config_section_map("Folders")['processed_data_folder']
+DOWNLOAD_FOLDER = config_section_map("Folders")['download_snodas_tar_folder']
+SET_FORMAT_FOLDER = config_section_map("Folders")['untar_snodas_tif_folder']
+CLIP_FOLDER = config_section_map("Folders")['clip_proj_snodas_tif_folder']
+CREATE_SNOW_COVER_FOLDER = config_section_map("Folders")['create_snowcover_tif_folder']
+CALCULATE_STATS_FOLDER = config_section_map("Folders")['calculate_stats_folder']
+OUTPUT_STATS_BY_DATE_FOLDER = config_section_map("Folders")['output_stats_by_date_folder']
+OUTPUT_STATS_BY_BASIN_FOLDER = config_section_map("Folders")['output_stats_by_basin_folder']
+
+BASIN_SHP_PATH = config_section_map("BasinBoundaryShapefile")['pathname']
+
+OUTPUT_CRS_EPSG = config_section_map("Projections")['output_proj_epsg']
+
+SHP_ZIP = config_section_map("OutputLayers")['shp_zip']
+DEL_SHP_ORIG = config_section_map("OutputLayers")['shp_delete_originals']
+UPLOAD_TO_AMAZON_S3 = config_section_map("OutputLayers")['upload_results_to_amazon_s3']
+RUN_DAILY_TSTOOL = config_section_map("OutputLayers")['process_daily_tstool_graphs']
+RUN_HIST_TSTOOL = config_section_map("OutputLayers")['process_historical_tstool_graphs']
+
+SAVE_ALL_SNODAS_PARAMS = config_section_map("SNODASparameters")['save_all_parameters']
 
 
 if __name__ == "__main__":
@@ -123,12 +122,12 @@ if __name__ == "__main__":
     # Initialize QGIS resources: more info at
     # http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html. This block of code allows for the
     # script to utilize QGIS functionality.
-    QgsApplication.setPrefixPath(QGIS_installation, True)
+    QgsApplication.setPrefixPath(QGIS_HOME, True)
     qgs = QgsApplication([], False)
     qgs.initQgis()
 
     # Define static folder and extent shapefile
-    static_path = os.path.join(root, name_of_static_folder)
+    static_path = os.path.join(SNODAS_ROOT, STATIC_FOLDER)
     extent_shapefile = static_path + 'studyAreaExtent_prj.shp'
 
     # Obtain today's date
@@ -146,20 +145,20 @@ if __name__ == "__main__":
             "Your input is not recognized. \n Are you interested in one date or a range of dates?: "
             "Type 'One' or 'Range'. \n")
 
-    # Create the root folder and the 5 sub-folders (Defaulted to: 1_DownloadSNODAS, 2_SetFormat, 3_ClipToExtent,
+    # Create the SNODAS_ROOT folder and the 5 sub-folders (Defaulted to: 1_DownloadSNODAS, 2_SetFormat, 3_ClipToExtent,
     # 4_CreateSnowCover, 5_CalculateStatistics [2 sub-folders: StatisticsByBasin, StatisticsByDate]). Check for folder
     # existence. If exiting, the folder is not recreated. Refer to developer documentation for information regarding
     # the types of files contained within each folder.
-    download_path = os.path.join(root, name_of_processed_folder, name_of_download_folder)
-    setEnvironment_path = os.path.join(root, name_of_processed_folder, name_of_setFormat_folder)
-    clip_path = os.path.join(root, name_of_processed_folder, name_of_clip_folder)
-    snowCover_path = os.path.join(root, name_of_processed_folder, create_snow_cover_name)
-    results_basin_path = os.path.join(root, name_of_processed_folder,
-                                      name_of_calculateStatistics_folder + name_of_byBasin_folder)
-    results_date_path = os.path.join(root, name_of_processed_folder,
-                                     name_of_calculateStatistics_folder + name_of_byDate_folder)
+    download_path = os.path.join(SNODAS_ROOT, PROCESSED_FOLDER, DOWNLOAD_FOLDER)
+    setEnvironment_path = os.path.join(SNODAS_ROOT, PROCESSED_FOLDER, SET_FORMAT_FOLDER)
+    clip_path = os.path.join(SNODAS_ROOT, PROCESSED_FOLDER, CLIP_FOLDER)
+    snowCover_path = os.path.join(SNODAS_ROOT, PROCESSED_FOLDER, CREATE_SNOW_COVER_FOLDER)
+    results_basin_path = os.path.join(SNODAS_ROOT, PROCESSED_FOLDER,
+                                      CALCULATE_STATS_FOLDER + OUTPUT_STATS_BY_BASIN_FOLDER)
+    results_date_path = os.path.join(SNODAS_ROOT, PROCESSED_FOLDER,
+                                     CALCULATE_STATS_FOLDER + OUTPUT_STATS_BY_DATE_FOLDER)
 
-    all_folders = [root, download_path, setEnvironment_path, clip_path, snowCover_path, results_basin_path,
+    all_folders = [SNODAS_ROOT, download_path, setEnvironment_path, clip_path, snowCover_path, results_basin_path,
                    results_date_path]
 
     for folder in all_folders:
@@ -167,7 +166,7 @@ if __name__ == "__main__":
             os.makedirs(folder)
 
     # Create and configures logging file
-    fileConfig(Configfile)
+    fileConfig(CONFIG_FILE)
     logger = logging.getLogger('log02')
     logger.info('SNODASDailyDownload.py: Started \n')
 
@@ -261,7 +260,7 @@ if __name__ == "__main__":
         start_day = time.time()
 
         # Format date into string with format YYYYMMDD
-        current_date = SNODAS_utilities.format_date_YYYYMMDD(current)
+        current_date = SNODAS_utilities.format_date_yyyymmdd(current)
         current_date_tar = 'SNODAS_' + current_date + '.tar'
 
         # Check to see if this date of data has already been processed in the folder
@@ -275,7 +274,7 @@ if __name__ == "__main__":
 
         # Download current date SNODAS .tar file from the FTP site at
         #  ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/
-        returnedList = SNODAS_utilities.download_SNODAS(download_path, current)
+        returnedList = SNODAS_utilities.download_snodas(download_path, current)
 
         failed_dates_lst.append(returnedList[2])
 
@@ -302,77 +301,77 @@ if __name__ == "__main__":
             # Untar current date's data
             for file in os.listdir(download_path):
                 if current_date in str(file):
-                    SNODAS_utilities.untar_SNODAS_file(file, download_path, setEnvironment_path)
+                    SNODAS_utilities.untar_snodas_file(file, download_path, setEnvironment_path)
 
-            # Check to see if configuration file 'Save_allSNODASparameters' value is valid. If valid, script continues
+            # Check to see if configuration file 'SAVE_ALL_SNODAS_PARAMS' value is valid. If valid, script continues
             # to run. If invalid, error message is printed to console and log file and the script is terminated.
-            if Save_allSNODASparameters.upper() == 'FALSE' or Save_allSNODASparameters.upper() == 'TRUE':
+            if SAVE_ALL_SNODAS_PARAMS.upper() == 'FALSE' or SAVE_ALL_SNODAS_PARAMS.upper() == 'TRUE':
 
                 # Delete current date's irrelevant files (parameters other than SWE).
-                if Save_allSNODASparameters.upper() == 'FALSE':
+                if SAVE_ALL_SNODAS_PARAMS.upper() == 'FALSE':
                     for file in os.listdir(setEnvironment_path):
                         if current_date in str(file):
-                            SNODAS_utilities.delete_irrelevant_SNODAS_files(file)
+                            SNODAS_utilities.delete_irrelevant_snodas_files(file)
 
-                # Move irrelevant files (parameters other than SWE) to 'OtherSNODASParamaters'.
+                # Move irrelevant files (parameters other than SWE) to 'OtherSNODASParameters'.
                 else:
                     parameter_path = os.path.join(setEnvironment_path, r'OtherParameters')
                     if not os.path.exists(parameter_path):
                         os.makedirs(parameter_path)
                     for file in os.listdir(setEnvironment_path):
                         if current_date in str(file):
-                            SNODAS_utilities.move_irrelevant_SNODAS_files(file, parameter_path)
+                            SNODAS_utilities.move_irrelevant_snodas_files(file, parameter_path)
 
                 # Extract current date's .gz files. Each SNODAS parameter files are zipped within a .gz file.
                 for file in os.listdir(setEnvironment_path):
                     if current_date in str(file):
-                        SNODAS_utilities.extract_SNODAS_gz_file(file)
+                        SNODAS_utilities.extract_snodas_gz_file(file)
 
                 # Convert current date's SNODAS SWE .dat file into .bil format.
                 for file in os.listdir(setEnvironment_path):
                     if current_date in str(file):
-                        SNODAS_utilities.convert_SNODAS_dat_to_bil(file)
+                        SNODAS_utilities.convert_snodas_dat_to_bil(file)
 
                 # Create current date's custom .Hdr file. In order to convert today's SNODAS SWE .bil file into a usable
                 # .tif file, a custom .Hdr must be created. Refer to the function in the SNODAS_utilities.py for more
                 # information on the contents of the custom .HDR file.
                 for file in os.listdir(setEnvironment_path):
                     if current_date in str(file):
-                        SNODAS_utilities.create_SNODAS_hdr_file(file)
+                        SNODAS_utilities.create_snodas_hdr_file(file)
 
                 # Convert current date's .bil files to .tif files
                 for file in os.listdir(setEnvironment_path):
                     if current_date in str(file):
-                        SNODAS_utilities.convert_SNODAS_bil_to_tif(file, setEnvironment_path)
+                        SNODAS_utilities.convert_snodas_bil_to_tif(file, setEnvironment_path)
 
                 # Delete current date's .bil file
                 for file in os.listdir(setEnvironment_path):
                     if current_date in str(file):
-                        SNODAS_utilities.delete_SNODAS_bil_file(file)
+                        SNODAS_utilities.delete_snodas_bil_file(file)
 
                 # Create the extent shapefile if not already created.
                 if not os.path.exists(extent_shapefile):
-                    SNODAS_utilities.create_extent(basin_shp, static_path)
+                    SNODAS_utilities.create_extent(BASIN_SHP_PATH, static_path)
 
-                # Copy and move current date's .tif file into name_of_clip_folder
+                # Copy and move current date's .tif file into CLIP_FOLDER
                 for file in os.listdir(setEnvironment_path):
                     if current_date in str(file):
-                        SNODAS_utilities.copy_and_move_SNODAS_tif_file(file, clip_path)
+                        SNODAS_utilities.copy_and_move_snodas_tif_file(file, clip_path)
 
                 # Assign datum to current date's .tif file (defaulted to WGS84)
                 for file in os.listdir(clip_path):
                     if current_date in str(file):
-                        SNODAS_utilities.assign_SNODAS_datum(file, clip_path)
+                        SNODAS_utilities.assign_snodas_datum(file, clip_path)
 
                 # Clip current date's .tif file to the extent of the basin shapefile
                 for file in os.listdir(clip_path):
                     if current_date in str(file):
-                        SNODAS_utilities.SNODAS_raster_clip(file, clip_path, extent_shapefile)
+                        SNODAS_utilities.snodas_raster_clip(file, clip_path, extent_shapefile)
 
                 # Project current date's .tif file into desired projection (defaulted to NAD83 UTM Zone 13N)
                 for file in os.listdir(clip_path):
                     if current_date in str(file):
-                        SNODAS_utilities.assign_SNODAS_projection(file, clip_path)
+                        SNODAS_utilities.assign_snodas_projection(file, clip_path)
 
                 # Create current date's snow cover binary raster
                 for file in os.listdir(clip_path):
@@ -382,52 +381,54 @@ if __name__ == "__main__":
                 # Create .csv files of byBasin and byDate outputs
                 for file in os.listdir(clip_path):
                     if current_date in str(file):
-                        SNODAS_utilities.create_csv_files(file, basin_shp, results_date_path, results_basin_path)
+                        SNODAS_utilities.create_csv_files(file, BASIN_SHP_PATH, results_date_path, results_basin_path)
 
                 # Delete rows from basin CSV files if the date is being reprocessed
                 for file in os.listdir(clip_path):
                     if current_date in str(file):
-                        SNODAS_utilities.delete_ByBasinCSV_repeated_rows(file, basin_shp, results_basin_path)
+                        SNODAS_utilities.delete_by_basin_csv_repeated_rows(file, BASIN_SHP_PATH, results_basin_path)
 
                 # Calculate zonal statistics and export results
                 for file in os.listdir(clip_path):
                     if current_date in str(file):
-                        SNODAS_utilities.zStat_and_export(file, basin_shp, results_basin_path, results_date_path,
-                                                          clip_path, snowCover_path, current,
-                                                          returnedList[0], output_CRS_EPSG)
+                        SNODAS_utilities.z_stat_and_export(file, BASIN_SHP_PATH, results_basin_path, results_date_path,
+                                                           clip_path, snowCover_path, current,
+                                                           returnedList[0], OUTPUT_CRS_EPSG)
 
                 # If desired, zip files of output shapefile (both today's data and latestDate file)
-                if zip_shp.upper() == 'TRUE':
+                if SHP_ZIP.upper() == 'TRUE':
                     for file in os.listdir(results_date_path):
                         if current_date in str(file) and file.endswith('.shp'):
-                            SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
+                            SNODAS_utilities.zip_shapefile(file, results_date_path, DEL_SHP_ORIG)
                         if "LatestDate" in str(file) and file.endswith('.shp'):
                             zip_full_path = os.path.join(results_date_path, "SnowpackStatisticsByDate_LatestDate.zip")
                             if os.path.exists(zip_full_path):
                                 os.remove(zip_full_path)
 
-                            SNODAS_utilities.zipShapefile(file, results_date_path, delete_shp_orig)
+                            SNODAS_utilities.zip_shapefile(file, results_date_path, DEL_SHP_ORIG)
 
                 # If configured, the time series will run for each processed date of data.
-                if run_daily_tstool.upper() == "TRUE":
-                    SNODAS_utilities.create_SNODAS_SWE_graphs()
+                if RUN_DAILY_TSTOOL.upper() == "TRUE":
+                    SNODAS_utilities.create_snodas_swe_graphs()
 
                 # If it is the last date in the range, continue.
                 if current == endDate or current == endDate.date():
 
                     # Remove any duplicates that occurred in the byBasin csv files (rare but could happen.)
-                    SNODAS_utilities.clean_duplicates_from_byBasin_csv(results_basin_path)
+                    SNODAS_utilities.clean_duplicates_from_by_basin_csv(results_basin_path)
 
                     # If configured, the time series will run for the entire historical range.
-                    if run_historical_tstool.upper() == "TRUE":
-                        SNODAS_utilities.create_SNODAS_SWE_graphs()
+                    if RUN_HIST_TSTOOL.upper() == "TRUE":
+                        SNODAS_utilities.create_snodas_swe_graphs()
 
                     # Push daily statistics to the web, if configured
-                    if UploadResultsToAmazonS3.upper() == 'TRUE':
-                        if linux_os:
-                            SNODAS_utilities.push_to_GCP()
+                    if UPLOAD_TO_AMAZON_S3.upper() == 'TRUE':
+                        if LINUX_OS:
+                            print('push_to_gcp: Pushing to AWS is currently disabled for testing purposes.')
+                            logger.info('push_to_gcp: Pushing to AWS is currently disabled for testing purposes.')
+                            # SNODAS_utilities.push_to_gcp()
                         else:
-                            SNODAS_utilities.push_to_AWS()
+                            SNODAS_utilities.push_to_aws()
                     else:
                         logger.info('Output files from SNODAS_Tools are not pushed to cloud storage because of'
                                     ' setting in configuration file. ')

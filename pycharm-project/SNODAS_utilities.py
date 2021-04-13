@@ -1,9 +1,9 @@
-# Name: SNODAS_utilites.py
+# Name: SNODAS_utilities.py
 # Version: 1
 # Author: Emma Giles
 # Organization: Open Water Foundation
 #
-# Purpose: SNODAS_utilites.py contains the functions utilized within the SNODAS tools (SNODASDaily_Automated.py and
+# Purpose: SNODAS_utilities.py contains the functions utilized within the SNODAS tools (SNODASDaily_Automated.py and
 #   SNODASDaily_Interactive.py). Both scripts process zonal statistics of SNODAS raster datasets with respect to the
 #   input vector shapefile (basin boundaries). The SNODAS tools were originally developed to calculate zonal statistics
 #   of Colorado Basin boundaries.
@@ -42,35 +42,29 @@ from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsField
 
 # Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
-# Check to see which os is running
-platform = sys.platform
-if platform == 'linux' or platform == 'linux2' or platform == 'cygwin' or platform == 'darwin':
-    linux_os = True
+# Check to see which OS is running
+if sys.platform == 'linux' or sys.platform == 'linux2' or sys.platform == 'cygwin' or sys.platform == 'darwin':
+    LINUX_OS = True
 else:
-    linux_os = False
-# This used to import ConfigParser if on Linux, but it has been renamed configparser for PEP 8 compliance.
-# I have tested
-# if linux_os:
-#     import ConfigParser
-#     Config = ConfigParser.ConfigParser()
-# else:
-Config = configparser.ConfigParser()
+    LINUX_OS = False
+# This used to import ConfigParser, but it has been renamed configparser for PEP 8 compliance.
+CONFIG = configparser.ConfigParser()
 
 
-Configfile = "../config/SNODAS-Tools-Config.ini"
-Config.read(Configfile)
+CONFIG_FILE = "../test-CDSS/config/SNODAS-Tools-Config.ini"
+CONFIG.read(CONFIG_FILE)
 
 # Create and configures logging file
-fileConfig(Configfile)
+fileConfig(CONFIG_FILE)
 logger = logging.getLogger('log02')
 
 
 # Helper function to obtain option values of config file sections.
 def config_section_map(section) -> dict:
     dict1 = {}
-    options = Config.options(section)
+    options = CONFIG.options(section)
     for option in options:
-        dict1[option] = Config.get(section, option)
+        dict1[option] = CONFIG.get(section, option)
     return dict1
 
 # Assigns the values from the configuration file to the python variables. See below for description of each
@@ -82,7 +76,7 @@ def config_section_map(section) -> dict:
 #   SNODAS_FTP_folder: The folder pathname within the SNODAS FTP site that accesses the SNODAS masked datasets. The
 #   masked datasets are SNODAS grids clipped to the contiguous U.S. boundary.
 #   clip_projection: The EPSG projection code of the input basin extent shapefile. Defaulted to WGS84. The basin
-#   extent shapefile is used to clip the national SNOADS grids to the clipped extent of the basin boundaries.
+#   extent shapefile is used to clip the national SNODAS grids to the clipped extent of the basin boundaries.
 #   calculate_statistics_projection: The desired EPSG projection code of the final products (snow cover grid and 
 #   clipped SNODAS grid). Defaulted to Albers Equal Area. 
 #   ID_Field_Name: The field name of the basin boundary attribute table describing the identification of each basin.
@@ -129,17 +123,17 @@ calculate_statistics_projection_srs = osr.SpatialReference()
 calculate_statistics_projection_srs.ImportFromProj4(aea_conic_string)
 calculate_statistics_projection_wkt = calculate_statistics_projection_srs.ExportToWkt()
 
-# Get today's date ----------------------------------------------------------------------------------------------------
+# Get today's date.
 now = datetime.now()
 
 
-def download_SNODAS(downloadDir, singleDate) -> list:
-    """Access the SNODAS FTP site and download the .tar file of singleDate. The .tar file saves to the specified
-    downloadDir folder.
-    downloadDir: full path name to the location where the downloaded SNODAS rasters are stored
-    singleDate: the date of interest in datetime format"""
+def download_snodas(download_dir, single_date) -> list:
+    """Access the SNODAS FTP site and download the .tar file of single_date. The .tar file saves to the specified
+    download_dir folder.
+    download_dir: full path name to the location where the downloaded SNODAS rasters are stored
+    single_date: the date of interest in datetime format"""
 
-    logger.info('download_SNODAS: Starting %s' % singleDate)
+    logger.info('download_snodas: Starting %s' % single_date)
 
     # Code format for the following block of code in reference to:
     # http://www.informit.com/articles/article.aspx?p=686162&seqNum=7 and
@@ -147,50 +141,50 @@ def download_SNODAS(downloadDir, singleDate) -> list:
     # Connect to FTP server
     ftp = ftplib.FTP(host, username, password)
 
-    logger.info('download_SNODAS: Connected to FTP server. Routing to %s' % singleDate)
+    logger.info('download_snodas: Connected to FTP server. Routing to %s' % single_date)
 
     # Direct to folder within FTP site storing the SNODAS masked data.
     ftp.cwd(SNODAS_FTP_folder)
 
-    os.chdir(downloadDir)
+    os.chdir(download_dir)
 
-    # Move into FTP folder containing the data from singleDate's year
-    ftp.cwd(str(singleDate.year) + '/')
+    # Move into FTP folder containing the data from single_date's year
+    ftp.cwd(str(single_date.year) + '/')
 
-    # Move into FTP folder containing the data from singleDate's month
-    month_folder = singleDate.strftime('%m') + "_" + singleDate.strftime('%b') + '/'
+    # Move into FTP folder containing the data from single_date's month
+    month_folder = single_date.strftime('%m') + "_" + single_date.strftime('%b') + '/'
     ftp.cwd(month_folder)
 
     # Set day value to a padded digit. Ex: 2 would change to 02
-    day = singleDate.strftime('%d')
+    day = single_date.strftime('%d')
 
-    # Iterate through files in FTP folder and save singleDate's data as a file in download folder
+    # Iterate through files in FTP folder and save single_date's data as a file in download folder
     # Create empty list to track if a download is available
     no_download_available = []
     filenames = ftp.nlst()
     for file in filenames:
         if file.endswith('%s.tar' % day):
-            localfile = open(file, 'wb')
-            ftp.retrbinary('RETR ' + file, localfile.write, 1024)
+            local_file = open(file, 'wb')
+            ftp.retrbinary('RETR ' + file, local_file.write, 1024)
 
-            logger.info('download_SNODAS: Downloaded %s' % singleDate)
+            logger.info('download_snodas: Downloaded %s' % single_date)
             # If SNODAS data is available for download, append a '1'
             no_download_available.append(1)
         else:
             # If SNODAS data is not available for download, append a '0'
             no_download_available.append(0)
 
-    logger.info('download_SNODAS: Finished %s \n' % singleDate)
+    logger.info('download_snodas: Finished %s \n' % single_date)
     # Report error if download marker '1' is not in the list
     if 1 not in no_download_available:
-        logger.error('ERROR: download_SNODAS: Download unsuccessful for %s' % singleDate)
-        logging.error('ERROR: download_SNODAS: Download unsuccessful for %s' % singleDate)
-        failed_date = singleDate
+        logger.error('ERROR: download_snodas: Download unsuccessful for %s' % single_date)
+        logging.error('ERROR: download_snodas: Download unsuccessful for %s' % single_date)
+        failed_date = single_date
 
     # Report success if download marker '1' is in the list
     else:
-        print('Download complete for %s.' % singleDate)
-        logger.info('download_SNODAS: Download complete for %s.' % singleDate)
+        print('Download complete for %s.' % single_date)
+        logger.info('download_snodas: Download complete for %s.' % single_date)
         failed_date = 'None'
 
     # Retrieve a timestamp to later export to the statistical results
@@ -203,11 +197,11 @@ def download_SNODAS(downloadDir, singleDate) -> list:
     return [timestamp, opt_stats, failed_date]
 
 
-def format_date_YYYYMMDD(date) -> str:
+def format_date_yyyymmdd(date) -> str:
     """Convert datetime date to string date in format: YYYYMMDD.
      date: the date of interest in datetime format"""
 
-    logger.info('format_date_YYYYMMDD: Starting %s' % date)
+    logger.info('format_date_yyyymmdd: Starting %s' % date)
 
     # Parse year, month and day of input date into separate entities.
     year = date.year
@@ -217,19 +211,19 @@ def format_date_YYYYMMDD(date) -> str:
     # Concatenate strings of the year, double-digit month, and double-digit day.
     day_string = str(year) + month + day
 
-    logger.info('format_date_YYYYMMDD: Finished %s \n' % date)
+    logger.info('format_date_yyyymmdd: Finished %s \n' % date)
 
     # Return string.
     return day_string
 
 
-def untar_SNODAS_file(file, folder_input, folder_output):
+def untar_snodas_file(file, folder_input, folder_output):
     """Untar downloaded SNODAS .tar file and extract the contained files to the folder_output
     file: SNODAS .tar file to untar
     folder_input: the full pathname to the folder containing 'file'
     folder_output: the full pathname to the folder containing the extracted files"""
 
-    logger.info('untar_SNODAS_file: Starting %s' % file)
+    logger.info('untar_snodas_file: Starting %s' % file)
 
     # Check for file extension .tar
     file_upper = file.upper()
@@ -250,15 +244,15 @@ def untar_SNODAS_file(file, folder_input, folder_output):
         # Close .tar file
         tar.close()
 
-        logger.info('untar_SNODAS_file: %s has been untarred.' % file)
+        logger.info('untar_snodas_file: %s has been untarred.' % file)
 
     else:
-        logger.info('untar_SNODAS_file: %s is not a .tar file and has not been untarred.' % file)
+        logger.info('untar_snodas_file: %s is not a .tar file and has not been untarred.' % file)
 
-    logger.info('untar_SNODAS_file: Finished %s \n' % file)
+    logger.info('untar_snodas_file: Finished %s \n' % file)
 
 
-def delete_irrelevant_SNODAS_files(file):
+def delete_irrelevant_snodas_files(file):
     """Delete file if not identified by the unique SWE ID. The SNODAS .tar files contain many different SNODAS datasets.
      For this project, the parameter of interest is SWE, uniquely named with ID '1034'. If the configuration file is
      set to 'False' for the value of the 'SaveAllSNODASparameters' section, then the parameters other than SWE are
@@ -270,16 +264,16 @@ def delete_irrelevant_SNODAS_files(file):
 
         # Delete file
         os.remove(file)
-        logger.info('delete_irrelevant_SNODAS_files: %s has been deleted.' % file)
+        logger.info('delete_irrelevant_snodas_files: %s has been deleted.' % file)
 
     else:
 
-        logger.info('delete_irrelevant_SNODAS_files: %s has the unique code 1034 and has not been deleted.' % file)
+        logger.info('delete_irrelevant_snodas_files: %s has the unique code 1034 and has not been deleted.' % file)
 
-    logger.info('delete_irrelevant_SNODAS_files: Finished %s \n' % file)
+    logger.info('delete_irrelevant_snodas_files: Finished %s \n' % file)
 
 
-def move_irrelevant_SNODAS_files(file, folder_output):
+def move_irrelevant_snodas_files(file, folder_output):
     """Move file to the 'OtherParameters' folder if not identified by the unique SWE ID, '1034'. The SNODAS .tar files
     contain many different SNODAS datasets. For this project, the parameter of interest is SWE, uniquely named with ID
     '1034'. If the configuration file is set to 'True' for the value of the 'SaveAllSNODASparameters' section, then the
@@ -287,30 +281,30 @@ def move_irrelevant_SNODAS_files(file, folder_output):
     file: file extracted from the downloaded SNODAS .tar file
     folder_output: full pathname to folder where the other-than-SWE files are contained, OtherParameters"""
 
-    logger.info('move_irrelevant_SNODAS_files: Starting %s' % file)
+    logger.info('move_irrelevant_snodas_files: Starting %s' % file)
 
     # Check for unique identifier '1034'.
     if '1034' not in str(file):
 
         # Move copy of file to folder_output. Delete original file from original location.
         copy(file, folder_output)
-        logger.info('move_irrelevant_SNODAS_files: %s has been moved to %s.' %(file, folder_output))
+        logger.info('move_irrelevant_snodas_files: {} has been moved to {}.'.format(file, folder_output))
         os.remove(file)
 
     else:
 
-        logger.info('move_irrelevant_SNODAS_files: %s has the unique code 1034 and has not been moved to %s.'
-                     %(file, folder_output))
+        logger.info('move_irrelevant_snodas_files: %s has the unique code 1034 and has not been moved to {}.'
+                    .format(file, folder_output))
 
-    logger.info('move_irrelevant_SNODAS_files: Finished %s \n' % file)
+    logger.info('move_irrelevant_snodas_files: Finished %s \n' % file)
 
 
-def extract_SNODAS_gz_file(file):
+def extract_snodas_gz_file(file):
     """Extract .dat and .Hdr files from SNODAS .gz file. Each daily SNODAS raster has 2 files associated with it
     (.dat and .Hdr) Both are zipped within a .gz file.
     file: .gz file to be extracted"""
 
-    logger.info('extract_SNODAS_gz_file: Starting %s' % file)
+    logger.info('extract_snodas_gz_file: Starting %s' % file)
 
     # Check for file extension .gz
     file_upper = file.upper()
@@ -327,20 +321,20 @@ def extract_SNODAS_gz_file(file):
         # Delete .gz file
         os.remove(file)
 
-        logger.info('extract_SNODAS_gz_file: %s has been extracted' % file)
+        logger.info('extract_snodas_gz_file: %s has been extracted' % file)
 
     else:
-        logger.info('extract_SNODAS_gz_file: %s is not of .gz format and was not extracted.' % file)
+        logger.info('extract_snodas_gz_file: %s is not of .gz format and was not extracted.' % file)
 
-    logger.info('extract_SNODAS_gz_file: Finished %s \n' % file)
+    logger.info('extract_snodas_gz_file: Finished %s \n' % file)
 
 
-def convert_SNODAS_dat_to_bil(file):
+def convert_snodas_dat_to_bil(file):
     """Convert SNODAS .dat file into supported file format (.tif). The .dat and .Hdr files are not supported file
     formats to use with QGS processing tools. The QGS processing tools are used to calculate the daily zonal stats.
     file: .dat file to be converted to .bil format"""
 
-    logger.info('convert_SNODAS_dat_to_bil: Starting %s' % file)
+    logger.info('convert_snodas_dat_to_bil: Starting %s' % file)
 
     # Check for file extension .dat
     file_upper = file.upper()
@@ -350,20 +344,21 @@ def convert_SNODAS_dat_to_bil(file):
         new_name = file.replace('.dat', '.bil')
         os.rename(file, new_name)
 
-        logger.info('convert_SNODAS_dat_to_bil: %s has been converted into .bil format' % file)
+        logger.info('convert_snodas_dat_to_bil: %s has been converted into .bil format' % file)
 
     else:
-        logger.info('convert_SNODAS_dat_to_bil: %s is not a .dat file and has not been converted into .bil format' % file)
+        logger.info('convert_snodas_dat_to_bil: {} is not a .dat file and has not been converted into .bil format'
+                    .format(file))
 
-    logger.info('convert_SNODAS_dat_to_bil: Finished %s \n' % file)
+    logger.info('convert_snodas_dat_to_bil: Finished %s \n' % file)
 
 
-def create_SNODAS_hdr_file(file):
+def create_snodas_hdr_file(file):
     """Create custom .hdr file. A custom .Hdr file needs to be created to indicate the raster settings of the .bil file.
     The custom .Hdr file aids in converting the .bil file to a usable .tif file.
     file: .bil file that needs a custom .Hdr file"""
 
-    logger.info('create_SNODAS_hdr_file: Starting %s' % file)
+    logger.info('create_snodas_hdr_file: Starting %s' % file)
 
     # Check for file extension .bil
     file_upper = file.upper()
@@ -393,27 +388,28 @@ def create_SNODAS_hdr_file(file):
         file2.write('ydim 0.00833333333333333\n')
         file2.close()
 
-        logger.info('create_SNODAS_hdr_file: %s now has a created .Hdr file.' % file)
+        logger.info('create_snodas_hdr_file: %s now has a created .Hdr file.' % file)
 
     else:
-        logger.info('create_SNODAS_hdr_file: %s is not a .bil file and an .Hdr component file has not been created.' % file)
+        logger.info('create_snodas_hdr_file: {} is not a .bil file and an .Hdr component file has not been created.'
+                    .format(file))
 
-    logger.info('create_SNODAS_hdr_file: Finished %s \n' % file)
+    logger.info('create_snodas_hdr_file: Finished %s \n' % file)
 
 
-def convert_SNODAS_bil_to_tif(file, folder_output):
+def convert_snodas_bil_to_tif(file, folder_output):
     """Convert .bil file into .tif file for processing within the QGIS environment.
     file: file to be converted into a .tif file
     folder_output: full pathname to location where the created .tif files are contained"""
 
-    logger.info('convert_SNODAS_bil_to_tif: Starting %s' % file)
+    logger.info('convert_snodas_bil_to_tif: Starting %s' % file)
 
     # Check for file extension .bil
     file_upper = file.upper()
     if file_upper.endswith('.BIL'):
 
         # If in a Linux system
-        if linux_os:
+        if LINUX_OS:
 
             # Remove the original .Hdr file so that the created .hdr file will be read instead.
             orig_hdr_file = os.path.join(folder_output, file.replace('.bil', '.Hdr'))
@@ -429,20 +425,21 @@ def convert_SNODAS_bil_to_tif(file, folder_output):
         # Convert file to .tif format by modifying the original file. No new file is created.
         gdal.Translate(file_full, file, format='GTiff')
 
-        logger.info('convert_SNODAS_bil_to_tif: %s has been converted into a .tif file.' % file)
+        logger.info('convert_snodas_bil_to_tif: %s has been converted into a .tif file.' % file)
 
     else:
-        logger.info('convert_SNODAS_bil_to_tif: %s is not a .bil file and has not been converted into a .tif file.' % file)
+        logger.info('convert_snodas_bil_to_tif: %s is not a .bil file and has not been converted into a .tif file.'
+                    .format(file))
 
-    logger.info('convert_SNODAS_bil_to_tif: Finished %s \n' % file)
+    logger.info('convert_snodas_bil_to_tif: Finished %s \n' % file)
 
 
-def delete_SNODAS_bil_file(file):
+def delete_snodas_bil_file(file):
     """Delete file with .bil or .hdr extensions. The .bil and .hdr formats are no longer important to keep because the
     newly created .tif file holds the same data.
     file: file to be checked for either .hdr or .bil extension (and, ultimately deleted)"""
 
-    logger.info('delete_SNODAS_bil_file: Starting %s' % file)
+    logger.info('delete_snodas_bil_file: Starting %s' % file)
 
     # Check for extension .bil or .Hdr
     file_upper = file.upper()
@@ -451,12 +448,12 @@ def delete_SNODAS_bil_file(file):
         # Delete file
         os.remove(file)
 
-        logger.info('delete_SNODAS_bil_file: %s has been deleted.' % file)
+        logger.info('delete_snodas_bil_file: %s has been deleted.' % file)
 
     else:
-        logger.info('delete_SNODAS_bil_file: %s is not a .bil file or a .hdr file. It has not been deleted.' % file)
+        logger.info('delete_snodas_bil_file: %s is not a .bil file or a .hdr file. It has not been deleted.' % file)
 
-    logger.info('delete_SNODAS_bil_file: Finished %s \n' % file)
+    logger.info('delete_snodas_bil_file: Finished %s \n' % file)
 
 
 def create_extent(basin_shp, folder_output):
@@ -507,10 +504,12 @@ def create_extent(basin_shp, folder_output):
     # Save and close DataSource. Important - Do not remove.
     in_data_source = None
     out_data_source = None
+    in_just_code = float('NaN')
+    out_just_code = float('NaN')
 
     # Set projection to calculate_statistics_projection (the projection set in the config file to be the same
     # as the basin boundary shapefile)
-    if linux_os:
+    if LINUX_OS:
         in_spatial_ref = calculate_statistics_projection_srs
         in_spatial_ref.MorphToESRI()
         file = open(output_prj_full_name, 'w')
@@ -539,7 +538,7 @@ def create_extent(basin_shp, folder_output):
     # Get file name without extension.
     (outfile_short_name, extension) = os.path.splitext(outfile_name)
 
-    if linux_os:
+    if LINUX_OS:
         # Spatial Reference of the input file
         # Access the Spatial Reference and assign the input projection
         in_spatial_ref = calculate_statistics_projection_srs
@@ -623,13 +622,13 @@ def create_extent(basin_shp, folder_output):
         os.remove(delete_file)
 
 
-def copy_and_move_SNODAS_tif_file(file, folder_output):
+def copy_and_move_snodas_tif_file(file, folder_output):
     """Copy and move created .tif file from original location to folder_output. The copied and moved file will be
     edited. To keep the file as it is, the original is saved within the original folder.
     file: .tif file to be copied and moved to folder_output
     folder_output: full pathname to the folder holding the newly copied .tif file"""
 
-    logger.info('copy_and_move_SNODAS_tif_file: Starting %s' % file)
+    logger.info('copy_and_move_snodas_tif_file: Starting %s' % file)
 
     # Set full pathname of file
     file_full_output = os.path.join(file, folder_output)
@@ -641,23 +640,24 @@ def copy_and_move_SNODAS_tif_file(file, folder_output):
         # Copy and move file to file_full_output
         copy(file, file_full_output)
 
-        logger.info('copy_and_move_SNODAS_tif_file: %s has been copied and moved to %s' % (file, folder_output))
+        logger.info('copy_and_move_snodas_tif_file: %s has been copied and moved to %s' % (file, folder_output))
 
     else:
-        logger.info('copy_and_move_SNODAS_tif_file: %s is not a .tif file and has not been copied and moved to %s' % (file, folder_output))
+        logger.info('copy_and_move_snodas_tif_file: {} is not a .tif file and has not been copied and moved to {}'
+                    .format(file, folder_output))
 
-    logger.info('copy_and_move_SNODAS_tif_file: Finished %s \n' % file)
+    logger.info('copy_and_move_snodas_tif_file: Finished %s \n' % file)
 
 
-def assign_SNODAS_datum(file, folder):
+def assign_snodas_datum(file, folder):
     """Define WGS84 as datum. Defaulted in configuration file to assign SNODAS grid with WGS84 datum. The
-    downloaded SNODAS raster is unprojected however the "SNODAS fields are grids of point estimates of snow cover in
+    downloaded SNODAS raster is un-projected however the "SNODAS fields are grids of point estimates of snow cover in
     latitude/longitude coordinates with the horizontal datum WGS84." - SNODAS Data Products at NSIDC User Guide
     http://nsidc.org/data/docs/noaa/g02158_snodas_snow_cover_model/index.html
     file: the name of the .tif file that is to be assigned a projection
-    folder: full pathname to the folder where both the unprojected and projected raster are stored"""
+    folder: full pathname to the folder where both the un-projected and projected raster are stored"""
 
-    logger.info('assign_SNODAS_datum: Starting %s' % file)
+    logger.info('assign_snodas_datum: Starting %s' % file)
 
     # Check for un-projected .tif files
     file_upper = file.upper()
@@ -677,7 +677,7 @@ def assign_SNODAS_datum(file, folder):
         # Delete un-projected file.
         os.remove(input_raster)
 
-        logger.info('assign_SNODAS_datum: %s has been assigned projection of %s.' % (file, clip_projection))
+        logger.info('assign_snodas_datum: %s has been assigned projection of %s.' % (file, clip_projection))
 
         # Writes the projection information to the log file.
         ds = gdal.Open(output_raster)
@@ -686,22 +686,22 @@ def assign_SNODAS_datum(file, folder):
         if srs.IsProjected:
             prj = srs.GetAttrValue('projcs')
         datum = srs.GetAttrValue('geogcs')
-        logger.info("assign_SNODAS_datum: %s has projection %s and datum %s" % (output_raster, prj, datum))
+        logger.info("assign_snodas_datum: %s has projection %s and datum %s" % (output_raster, prj, datum))
     else:
-        logger.warning("assign_SNODAS_datum: %s does not end in 'HP001.tif' and has not been assigned projection "
+        logger.warning("assign_snodas_datum: %s does not end in 'HP001.tif' and has not been assigned projection "
                        "of %s." % (file, clip_projection))
 
-    logger.info('assign_SNODAS_datum: Finished %s \n' % file)
+    logger.info('assign_snodas_datum: Finished %s \n' % file)
 
 
-def SNODAS_raster_clip(file, folder, vector_extent):
+def snodas_raster_clip(file, folder, vector_extent):
     """Clip file by vector_extent shapefile. The output filename starts with 'Clip'.
     file: the projected (defaulted to WGS84) .tif file to be clipped
     folder: full pathname to folder where both the unclipped and clipped rasters are stored
     vector_extent: full pathname to shapefile holding the extent of the basin boundaries. This shapefile must be
-    projected in projection assigned in function assign_SNODAS_datum (defaulted to WGS84)."""
+    projected in projection assigned in function assign_snodas_datum (defaulted to WGS84)."""
 
-    logger.info('SNODAS_raster_clip: Starting %s' % file)
+    logger.info('snodas_raster_clip: Starting %s' % file)
 
     # Check for file extension .tif
     file_upper = file.upper()
@@ -738,24 +738,24 @@ def SNODAS_raster_clip(file, folder, vector_extent):
         if srs.IsProjected:
             prj = srs.GetAttrValue('projcs')
         datum = srs.GetAttrValue('geogcs')
-        logger.info("SNODAS_raster_clip: %s has projection %s and datum %s" % (file_full_output, prj, datum))
+        logger.info("snodas_raster_clip: %s has projection %s and datum %s" % (file_full_output, prj, datum))
 
-        logger.info('SNODAS_raster_clip: %s has been clipped.' % file)
+        logger.info('snodas_raster_clip: %s has been clipped.' % file)
 
     else:
-        logger.info('SNODAS_raster_clip: %s does not end with PRJCT.tif. The clip was not processed.' % file)
+        logger.info('snodas_raster_clip: %s does not end with PRJCT.tif. The clip was not processed.' % file)
 
-    logger.info('SNODAS_raster_clip: Finished %s \n' % file)
+    logger.info('snodas_raster_clip: Finished %s \n' % file)
 
 
-def assign_SNODAS_projection(file, folder):
+def assign_snodas_projection(file, folder):
     """Project clipped raster from it's original datum (defaulted to WGS84) to desired projection (defaulted
     to Albers Equal Area).
     file: clipped file with original projection to be projected into desired projection
     folder: full pathname of folder where both the originally clipped rasters and the projected clipped rasters are
     contained"""
 
-    logger.info('assign_SNODAS_projection: Starting %s' % file)
+    logger.info('assign_snodas_projection: Starting %s' % file)
 
     # Check for projected SNODAS rasters.
     if file.startswith('Clip'):
@@ -768,7 +768,7 @@ def assign_SNODAS_projection(file, folder):
         file_full_output = os.path.join(folder, new_name)
 
         # Re-project the clipped SNODAS .tif files from original projection to desired projection
-        if linux_os:
+        if LINUX_OS:
             gdal.Warp(file_full_output,
                       file_full_input,
                       format='GTiff',
@@ -779,15 +779,15 @@ def assign_SNODAS_projection(file, folder):
                       resampleAlg='bilinear',
                       dstNodata=null_value)
 
-            logger.info('assign_SNODAS_projection: '
+            logger.info('assign_snodas_projection: '
                         '%s has been projected from %s to USA_Albers_Equal_Area_Conic' % (file, clip_projection))
 
         else:
             gdal.Warp(file_full_output, file_full_input, format='GTiff',
-                  xRes=cellsizeX, yRes=cellsizeY, srcSRS=clip_projection,
-                  dstSRS=calculate_statistics_projection, resampleAlg='bilinear', dstNodata=null_value)
+                      xRes=cellsizeX, yRes=cellsizeY, srcSRS=clip_projection,
+                      dstSRS=calculate_statistics_projection, resampleAlg='bilinear', dstNodata=null_value)
 
-            logger.info('assign_SNODAS_projection: %s has been projected from %s to %s'
+            logger.info('assign_snodas_projection: %s has been projected from %s to %s'
                         % (file, clip_projection, calculate_statistics_projection))
 
         # Delete originally-projected clipped file
@@ -800,12 +800,12 @@ def assign_SNODAS_projection(file, folder):
         if srs.IsProjected:
             prj = srs.GetAttrValue('projcs')
         datum = srs.GetAttrValue('geogcs')
-        logger.info("assign_SNODAS_projection: %s has projection %s and datum %s" % (file_full_output, prj, datum))
+        logger.info("assign_snodas_projection: %s has projection %s and datum %s" % (file_full_output, prj, datum))
 
     else:
-        logger.info("assign_SNODAS_projection: %s does not start with 'Clip' and will not be projected." % file)
+        logger.info("assign_snodas_projection: %s does not start with 'Clip' and will not be projected." % file)
 
-    logger.info('assign_SNODAS_projection: Finished %s \n' % file)
+    logger.info('assign_snodas_projection: Finished %s \n' % file)
 
 
 def snow_coverage(file, folder_input, folder_output):
@@ -872,11 +872,13 @@ def snow_coverage(file, folder_input, folder_output):
 
         logger.info('snow_coverage: Finished %s \n' % file)
     else:
-        logger.warning("snow_coverage:WARNING: %s does not start with 'Repj'. No raster calculation took place." % file)
-        logging.warning("snow_coverage:WARNING: %s does not start with 'Repj'. No raster calculation took place." % file)
+        logger.warning("snow_coverage:WARNING: {} does not start with 'Repj'. No raster calculation took place."
+                       .format(file))
+        logging.warning("snow_coverage:WARNING: {} does not start with 'Repj'. No raster calculation took place."
+                        .format(file))
 
 
-def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
+def create_csv_files(file, v_file, csv_by_date, csv_by_basin):
     """Create empty csv files for output - both by date and by basin. The empty csv files have a header row with
      each column represented by a different field name (refer to 'fieldnames' section of the function for actual
      fieldnames). Csv files by date contain one .csv file for each date and is titled
@@ -884,19 +886,19 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
      Csv files by basin contain one .csv file for each watershed basin & is titled 'SnowpackStatisticsByBasin_BasinId'.
      Each byBasin file contains the zonal stats for that basin for each date that has been processed.
      file: daily .tif file  to be processed with zonal statistics (clipped, projected)
-     vFile: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal stats calculations)
-     csv_byDate: full pathname of folder containing the results by date (.csv file)
-     csv_byBasin: full pathname of folder containing the results by basin (.csv file)"""
+     v_file: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal stats calculations)
+     csv_by_date: full pathname of folder containing the results by date (.csv file)
+     csv_by_basin: full pathname of folder containing the results by basin (.csv file)"""
 
     logger.info('create_csv_files: Starting %s' % file)
 
     # Envelop input shapefile as QGS object vector layer
-    vectorFile = QgsVectorLayer(vFile, 'Reprojected Basins', 'ogr')
+    vector_file = QgsVectorLayer(v_file, 'Reprojected Basins', 'ogr')
 
     # Check to determine if the shapefile is valid as an object. If this test shows that the shapefile is not a valid
     # vector file, the script does not run the zonal statistic processing (located in the 'else' block of code). If the
     # user gets the following error message, it is important to address the initialization of the QGIS resources.
-    if not vectorFile.isValid():
+    if not vector_file.isValid():
         logger.warning('create_csv_files: WARNING: Vector basin boundary shapefile is not a valid QGS object layer.')
         logging.warning('create_csv_files: WARNING: Vector basin boundary shapefile is not a valid QGS object layer.')
     else:
@@ -909,9 +911,9 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
         date_name = file[22:30]
 
         # Define fieldnames for output .csv files. These MUST match the keys of the dictionaries. Fieldnames make up
-        # the header row of the outputed .csv files. The column headers of the .csv files are in
-        # sequential order as layed out in the fieldnames list.
-        fieldnames = ['Date_YYYYMMDD', ID_Field_Name, 'LOCAL_NAME', 'SNODAS_SWE_Mean_in','SNODAS_SWE_Mean_mm',
+        # the header row of the .csv output files. The column headers of the .csv files are in
+        # sequential order as laid out in the fieldnames list.
+        fieldnames = ['Date_YYYYMMDD', ID_Field_Name, 'LOCAL_NAME', 'SNODAS_SWE_Mean_in', 'SNODAS_SWE_Mean_mm',
                       'SNODAS_EffectiveArea_sqmi', 'SNODAS_SWE_Volume_acft', 'SNODAS_SWE_Volume_1WeekChange_acft',
                       'SNODAS_SnowCover_percent', 'Updated_Timestamp']
 
@@ -928,7 +930,7 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
         results_date = 'SnowpackStatisticsByDate_' + date_name + '.csv'
 
         # Check to see if the output file has already been created.
-        if os.path.exists(os.path.join(csv_byDate, results_date)):
+        if os.path.exists(os.path.join(csv_by_date, results_date)):
 
             if not file.endswith('.aux.xml'):
 
@@ -936,13 +938,13 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
                 logging.warning(('create_csv_files: WARNING: %s has been previously created. Overwriting.' % file))
 
         # Set directory where the output .csv daily files are stored. - By Date
-        os.chdir(csv_byDate)
+        os.chdir(csv_by_date)
 
         logger.info('create_csv_files: Creating %s' % results_date)
 
         # Create .csv file with the appropriate fieldnames as the info in the header row. - By Date
         with open(results_date, 'w') as csvfile:
-            if linux_os:
+            if LINUX_OS:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=",")
             else:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=",", lineterminator='\n')
@@ -950,7 +952,7 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
         csvfile.close()
 
         # Access features of the basin boundary shapefile.
-        basin_features = vectorFile.getFeatures()
+        basin_features = vector_file.getFeatures()
 
         # Iterate through each basin of the basin boundary shapefile.
         for feature in basin_features:
@@ -961,10 +963,10 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
             # Check to see if the output file has already been created. If so, the script moves onto the raster
             # processing. If not, a .csv file is created with the appropriate fieldnames as the info in the
             # header row. - By Basin
-            if not os.path.exists(os.path.join(csv_byBasin, results_basin)):
+            if not os.path.exists(os.path.join(csv_by_basin, results_basin)):
 
                 # Set directory where the output .csv daily files are stored - By Basin
-                os.chdir(csv_byBasin)
+                os.chdir(csv_by_basin)
 
                 logger.info('create_csv_files: Creating %s' % results_basin)
 
@@ -980,33 +982,34 @@ def create_csv_files(file, vFile, csv_byDate, csv_byBasin):
     logger.info('create_csv_files: Finished %s' % file)
 
 
-def delete_ByBasinCSV_repeated_rows(file, vFile, csv_byBasin):
+def delete_by_basin_csv_repeated_rows(file, v_file, csv_by_basin):
     """ Check to see if date has already been processed. If so, iterate through by basin csv file and only write rows
     to new csv file that do not start with the date. Ultimately, delete row of data for today's date so that new data
     can be overwritten without producing multiple rows of the same date.
     file: daily .tif file  to be processed with zonal statistics (clipped, projected)
-    vFile: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal stats calculations)
-    csv_byBasin: full pathname of folder containing the results by basin (.csv file) """
+    v_file: shapefile of basin boundaries (these boundaries are used as the polygons in the zonal stats calculations)
+    csv_by_basin: full pathname of folder containing the results by basin (.csv file) """
 
-    logger.info('delete_ByBasinCSV_repeated_rows: Starting %s' % file)
+    logger.info('delete_by_basin_csv_repeated_rows: Starting %s' % file)
 
     # Envelop input shapefile as QGS object vector layer
-    vectorFile = QgsVectorLayer(vFile, 'Reprojected Basins', 'ogr')
+    vector_file = QgsVectorLayer(v_file, 'Reprojected Basins', 'ogr')
 
     # Access features of the basin boundary shapefile.
-    basin_features = vectorFile.getFeatures()
+    basin_features = vector_file.getFeatures()
 
     # Check to determine if the shapefile is valid as an object. If this test shows that the shapefile is not a valid
     # vector file, the script does not run the zonal statistic processing (located in the 'else' block of code). If the
     # user gets the  following error message, it is important to address the initialization of the QGIS resources.
-    if not vectorFile.isValid():
-        logger.warning('delete_ByBasinCSV_repeated_rows: WARNING: Vector basin boundary shapefile is not a valid QGS'
+    if not vector_file.isValid():
+        logger.warning('delete_by_basin_csv_repeated_rows: WARNING: Vector basin boundary shapefile is not a valid QGS'
                        ' object layer.')
-        logging.warning(
-            'delete_ByBasinCSV_repeated_rows: WARNING:Vector basin boundary shapefile is not a valid QGS object layer.')
+        logging.warning('delete_by_basin_csv_repeated_rows: WARNING:Vector basin boundary shapefile is not a valid QGS'
+                        ' object layer.')
     else:
         # Hold current directory in a variable, curr_dir, to be used at the end of the script.
         curr_dir = os.getcwd()
+        results_basin = None
 
         # Retrieve date of current file. File name is 'SNODAS_SWE_ClipAndProjYYYYMMDD'. File[22:30] is pulling the
         # 'YYYYMMDD' section.
@@ -1015,21 +1018,21 @@ def delete_ByBasinCSV_repeated_rows(file, vFile, csv_byBasin):
         # Iterate through each basin of the basin boundary shapefile.
         for feature in basin_features:
 
-            # Create string variable to be used as the title for the outputed .csv file - By Basin
+            # Create string variable to be used as the title for the .csv output file - By Basin
             results_basin = 'SnowpackStatisticsByBasin_' + feature[ID_Field_Name] + '.csv'
 
         # Set directory where the output .csv daily files are stored. - By Basin
-        os.chdir(csv_byBasin)
+        os.chdir(csv_by_basin)
 
         # Check to see if the daily raster has already been processed.
         if date_name in open(results_basin).read() and file.endswith('.tif'):
             logger.warning(
-                'delete_ByBasinCSV_repeated_rows: WARNING: Raster %s has already been processed.' % file)
+                'delete_by_basin_csv_repeated_rows: WARNING: Raster %s has already been processed.' % file)
             logging.warning(
-                'delete_ByBasinCSV_repeated_rows: WARNING: Raster %s has already been processed.' % file)
+                'delete_by_basin_csv_repeated_rows: WARNING: Raster %s has already been processed.' % file)
 
             # Access features of the basin boundary shapefile.
-            basin_features = vectorFile.getFeatures()
+            basin_features = vector_file.getFeatures()
 
             # Iterate through each basin of the basin boundary shapefile.
             for feature in basin_features:
@@ -1039,9 +1042,9 @@ def delete_ByBasinCSV_repeated_rows(file, vFile, csv_byBasin):
                 results_basin_edit = 'SnowpackStatisticsByBasin_' + feature[ID_Field_Name] + 'edit.csv'
 
                 logger.warning(
-                    'delete_ByBasinCSV_repeated_rows: WARNING: Rewriting %s.' % results_basin)
+                    'delete_by_basin_csv_repeated_rows: WARNING: Rewriting %s.' % results_basin)
                 logging.warning(
-                    'delete_ByBasinCSV_repeated_rows: WARNING: Rewriting %s.' % results_basin)
+                    'delete_by_basin_csv_repeated_rows: WARNING: Rewriting %s.' % results_basin)
 
                 # Open input_file and output_file files. Input will be read and output_file will be written.
                 input_file = open(results_basin, 'rb')
@@ -1066,30 +1069,30 @@ def delete_ByBasinCSV_repeated_rows(file, vFile, csv_byBasin):
             # Return directory back to original
             os.chdir(curr_dir)
 
-    logger.info('delete_ByBasinCSV_repeated_rows: Finished %s \n' % file)
+    logger.info('delete_by_basin_csv_repeated_rows: Finished %s \n' % file)
 
 
-def zipShapefile (file, csv_byDate, delete_original):
+def zip_shapefile(file, csv_by_date, delete_original):
     # Code block from http://emilsarcpython.blogspot.com/2015/10/zipping-shapefiles-with-python.html
     # List of file extensions included in the shapefile
     # file: the output shapefile (any extension). All other extensions will be included by means of the function.
-    # csv_byDate: full pathname of folder containing the results by date (.csv files, GeoJSON, and shapefiles)
+    # csv_by_date: full pathname of folder containing the results by date (.csv files, GeoJSON, and shapefiles)
     # delete_original: Boolean string to determine if the original unzipped shapefile files should be deleted.
     extensions = ['.shx', '.shp', '.qpj', '.prj', '.dbf', '.cpg']
 
     # Define naming conventions
     in_name = os.path.basename(os.path.splitext(file)[0])
-    file_to_zip = os.path.join(csv_byDate, in_name + '.zip')
+    file_to_zip = os.path.join(csv_by_date, in_name + '.zip')
     zip_file = zipfile.ZipFile(file_to_zip, 'w')
 
     # Empty list to store files to delete
     files_to_delete = []
 
-    for fl in os.listdir(csv_byDate):
+    for fl in os.listdir(csv_by_date):
         for extension in extensions:
             if fl == in_name + extension:
                 # Get full pathname of file
-                in_file = os.path.join(csv_byDate, fl)
+                in_file = os.path.join(csv_by_date, fl)
                 files_to_delete += [in_file]
                 zip_file.write(in_file, fl)
                 break
@@ -1101,18 +1104,19 @@ def zipShapefile (file, csv_byDate, delete_original):
             os.remove(fl)
 
 
-def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, today_date, timestamp, output_CRS_EPSG):
+def z_stat_and_export(file, v_file, csv_by_basin, csv_by_date, dir_clip,
+                      dir_snow, today_date, timestamp, output_crs_epsg):
     """Calculate zonal statistics of basin boundary shapefile and the current SNODAS file. The zonal stats export to
     both the byDate and the byBasin csv files. A daily shapefile and geoJSON is also exported.
     file: daily raster .tif SNODAS file that is to be processed in the zonal statistics tool (clipped, projected)
     vfile: the basin boundary shapefile (used as the zone dataset for the zonal statistics calculations)
-    csv_byDate: full pathname to the folder containing results by date (.csv file). Shapefile and GeoJSON saved here.
-    csv_byBasin: full pathname to the folder containing results by basin (.csv file)
-    DirClip: full pathname to the folder containing all daily clipped, projected .tif SNODAS rasters
-    DirSnow: full pathname to the folder containing all binary snow coverage rasters
+    csv_by_date: full pathname to the folder containing results by date (.csv file). Shapefile and GeoJSON saved here.
+    csv_by_basin: full pathname to the folder containing results by basin (.csv file)
+    dir_clip: full pathname to the folder containing all daily clipped, projected .tif SNODAS rasters
+    dir_snow: full pathname to the folder containing all binary snow coverage rasters
     today_date: date of processed SNODAS data in datetime format
-    timestamp: the download timestamp in datetime format (returned in download_SNODAS function)
-    output_CRS_EPSG: the desired projection of the output shapefile and geoJSON (configured in configuration file)"""
+    timestamp: the download timestamp in datetime format (returned in download_snodas function)
+    output_crs_epsg: the desired projection of the output shapefile and geoJSON (configured in configuration file)"""
 
     # Create empty dictionary to hold the zonal statistic outputs before they are written to the .csv files.
     # Shapefiles have a limited number of fields available in the attribute table so the statistics must be calculated,
@@ -1141,43 +1145,50 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
         fieldnames.extend(['SNODAS_SWE_StdDev_in', 'SNODAS_SWE_StdDev_mm'])
 
     # Envelop input shapefile (for example, the Colorado River Basin projected shapefile) as a QGS object vector layer.
-    vectorFile = QgsVectorLayer(vFile, 'Reprojected Basins', 'ogr')
+    vector_file = QgsVectorLayer(v_file, 'Reprojected Basins', 'ogr')
 
     # Check validity of shapefile as a QGS object. If this test shows that the vector is not a valid  vector file,
     # the script does not run the zonal statistic processing (located in the 'else' block of code). Address the
     # initialization of the QGIS resources if received following error message.
-    if not vectorFile.isValid():
-        logger.warning('zStat_and_export: WARNING: Vector shapefile is not a valid QGS object layer.')
-        logging.warning('zStat_and_export: WARNING: Vector shapefile is not a valid QGS object layer.')
+    if not vector_file.isValid():
+        logger.warning('z_stat_and_export: WARNING: Vector shapefile is not a valid QGS object layer.')
+        logging.warning('z_stat_and_export: WARNING: Vector shapefile is not a valid QGS object layer.')
 
     else:
         # Check for extension .tif
         file_upper = file.upper()
         if file_upper.endswith('.TIF'):
+            # Set conditional variables so they are defined
+            e_min = None
+            e_swe_min_in = None
+            e_max = None
+            e_swe_max_in = None
+            e_std = None
+            e_swe_s_dev_in = None
 
             # Set directory to the directory where the output .csv daily files are contained - By Basin
-            os.chdir(csv_byBasin)
+            os.chdir(csv_by_basin)
 
             # Create date value of the working dictionary.
             d['Date_YYYYMMDD'] = date_name
 
-            logger.info('zStat_and_export: Processing zonal statistics by basin of %s ...' % file)
+            logger.info('z_stat_and_export: Processing zonal statistics by basin of %s ...' % file)
 
             # Retrieve the datetime date for 7 days before today and convert to string format (YYYYMMDD).
             week_ago_date = today_date - timedelta(days=7)
-            week_ago_str = format_date_YYYYMMDD(week_ago_date)
+            week_ago_str = format_date_yyyymmdd(week_ago_date)
 
-            # Create string variable with week_ago_str to be used as the title for the outputed .csv file - By Date
+            # Create string variable with week_ago_str to be used as the title for the .csv output file - By Date
             results_date_csv = 'SnowpackStatisticsByDate_' + week_ago_str + '.csv'
-            results_date_csv_fullpath = os.path.join(csv_byDate, results_date_csv)
+            results_date_csv_full_path = os.path.join(csv_by_date, results_date_csv)
 
             # Set full pathname of rasters for later input into the zonal stat tool
             snow_file = 'SNODAS_SnowCover_ClipAndProj' + date_name + '.tif'
-            raster_path_h = os.path.join(DirClip, file)
-            raster_path_s = os.path.join(DirSnow, snow_file)
+            raster_path_h = os.path.join(dir_clip, file)
+            raster_path_s = os.path.join(dir_snow, snow_file)
 
-            # Open vectorFile for editing
-            vectorFile.startEditing()
+            # Open vector_file for editing
+            vector_file.startEditing()
 
             # Set input object options for the zonal stat tool - Mean.
             # input shapefile: must be a valid QGS vector layer
@@ -1185,7 +1196,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             # field prefix (string): prefix of the attribute field header containing the zonal statistics
             # band (integer): band of raster in which the calculations are processed
             # statistics type: zonal statistic to be calculated
-            zonal_stats = QgsZonalStatistics(vectorFile, raster_path_h, "SWE_", 1, QgsZonalStatistics.Mean)
+            zonal_stats = QgsZonalStatistics(vector_file, raster_path_h, "SWE_", 1, QgsZonalStatistics.Mean)
             zonal_stats.calculateStatistics(None)
 
             # output_dict - key: csv field name value: [shapefile attribute field name, attribute field type
@@ -1217,90 +1228,90 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             for key, value in output_dict.items():
                 if value[1] != 'None':
                     new_field = QgsField(value[0], value[1])
-                    vectorFile.dataProvider().addAttributes([new_field])
+                    vector_file.dataProvider().addAttributes([new_field])
 
             # Set raster calculator expression to populate the 'Mean' field. This field calculates mm. Change the
             # QGSExpression if different units are desired.
-            eMean = QgsExpression('SWE_mean')
-            eMean.prepare(vectorFile.pendingFields())
+            e_mean = QgsExpression('SWE_mean')
+            e_mean.prepare(vector_file.pendingFields())
 
             # Set the raster calculator expression to populate the 'SWEMean_in' field.
             # 25.4 is the number of millimeters in an inch.
-            eSWEMean_in = QgsExpression('SWE_mean / 25.4')
-            eSWEMean_in.prepare(vectorFile.pendingFields())
+            e_swe_mean_in = QgsExpression('SWE_mean / 25.4')
+            e_swe_mean_in.prepare(vector_file.pendingFields())
 
             if calculate_SWE_minimum.upper() == 'TRUE':
                 # Set input object options for the zonal stat tool - Minimum
-                zonal_stats = QgsZonalStatistics(vectorFile, raster_path_h, "SWE_", 1, QgsZonalStatistics.Min)
+                zonal_stats = QgsZonalStatistics(vector_file, raster_path_h, "SWE_", 1, QgsZonalStatistics.Min)
                 # Call zonal stat tool to start processing
                 zonal_stats.calculateStatistics(None)
 
                 # Set raster calculator expression to populate the 'Min' field.
-                eMin = QgsExpression('SWE_min')
-                eMin.prepare(vectorFile.pendingFields())
+                e_min = QgsExpression('SWE_min')
+                e_min.prepare(vector_file.pendingFields())
 
                 # Set the raster calculator expression to populate the 'SWEMin_in' field.
-                eSWEMin_in = QgsExpression('SWE_min  / 25.4')
-                eSWEMin_in.prepare(vectorFile.pendingFields())
+                e_swe_min_in = QgsExpression('SWE_min  / 25.4')
+                e_swe_min_in.prepare(vector_file.pendingFields())
 
             if calculate_SWE_maximum.upper() == 'TRUE':
                 # Set input object options for zonal stat tool - Maximum
-                zonal_stats = QgsZonalStatistics(vectorFile, raster_path_h, "SWE_", 1, QgsZonalStatistics.Max)
+                zonal_stats = QgsZonalStatistics(vector_file, raster_path_h, "SWE_", 1, QgsZonalStatistics.Max)
                 # Call zonal stat tool to start processing
                 zonal_stats.calculateStatistics(None)
 
                 # Set raster calculator expression to populate the 'Max' field.
-                eMax = QgsExpression('SWE_max')
-                eMax.prepare(vectorFile.pendingFields())
+                e_max = QgsExpression('SWE_max')
+                e_max.prepare(vector_file.pendingFields())
 
                 # Set the raster calculator expression to populate the 'SWEMax_in' field.
-                eSWEMax_in = QgsExpression('SWE_max / 25.4')
-                eSWEMax_in.prepare(vectorFile.pendingFields())
+                e_swe_max_in = QgsExpression('SWE_max / 25.4')
+                e_swe_max_in.prepare(vector_file.pendingFields())
 
             if calculate_SWE_stdDev.upper() == 'TRUE':
                 # Set input object options for the zonal stat tool - Standard Deviation
-                zonal_stats = QgsZonalStatistics(vectorFile, raster_path_h, "SWE_", 1, QgsZonalStatistics.StDev)
+                zonal_stats = QgsZonalStatistics(vector_file, raster_path_h, "SWE_", 1, QgsZonalStatistics.StDev)
                 # Call zonal stat tool to start processing
                 zonal_stats.calculateStatistics(None)
 
                 # Set raster calculator expression to populate the 'Std Dev' field.
-                eStd = QgsExpression('SWE_stdev')
-                eStd.prepare(vectorFile.pendingFields())
+                e_std = QgsExpression('SWE_stdev')
+                e_std.prepare(vector_file.pendingFields())
 
                 # Set the raster calculator expression to populate the 'SWESDev_in' field.
-                eSWESDev_in = QgsExpression('SWE_stdev / 25.4')
-                eSWESDev_in.prepare(vectorFile.pendingFields())
+                e_swe_s_dev_in = QgsExpression('SWE_stdev / 25.4')
+                e_swe_s_dev_in.prepare(vector_file.pendingFields())
 
             # Set input object options for the zonal stat tool - Count of Total Basin Cells
-            zonal_stats = QgsZonalStatistics(vectorFile, raster_path_h, "Cell", 1, QgsZonalStatistics.Count)
+            zonal_stats = QgsZonalStatistics(vector_file, raster_path_h, "Cell", 1, QgsZonalStatistics.Count)
             # Call zonal stat tool to start processing
             zonal_stats.calculateStatistics(None)
 
             # Set input object options for the zonal stat tool - Sum of snow cover raster
-            zonal_stats = QgsZonalStatistics(vectorFile, raster_path_s, "SCover", 1, QgsZonalStatistics.Sum)
+            zonal_stats = QgsZonalStatistics(vector_file, raster_path_s, "SCover", 1, QgsZonalStatistics.Sum)
             # Call zonal stat tool to start processing
             zonal_stats.calculateStatistics(None)
 
             # Update changes to fields of shapefile.
-            vectorFile.updateFields()
+            vector_file.updateFields()
 
             # Set raster calculator expression to populate the 'Area_sqmi' field. The area of the cell (square meters)
             # multiplied by the count of basin cells . There are 2589988.10 sq meters in 1 sq mile.
             a = QgsExpression('(%s) * (%s) * Cellcount / 2589988.10' % (cellsizeX, cellsizeY))
-            a.prepare(vectorFile.pendingFields())
+            a.prepare(vector_file.pendingFields())
 
             # Set raster calculator expression  to populate the 'SCover_pct' field. Sum of basin cells covered by snow
             # divided by total count of basin cells.
             e = QgsExpression('SCoversum / Cellcount * 100')
-            e.prepare(vectorFile.pendingFields())
+            e.prepare(vector_file.pendingFields())
 
             # Set raster calculator expression to populate 'SWEVol_af' field. Mean SWE (mm) multiplied by effective area
             # 'Area_sqmi' divided by 304.8. There are 640 acres in 1 square mile. There are 304.8 mm in 1 foot.
             v = QgsExpression('Area_sqmi * SWE_mean * 640 / 304.8')
-            v.prepare(vectorFile.pendingFields())
+            v.prepare(vector_file.pendingFields())
 
             # Create an empty array to hold the components of the zonal stats calculations dictionary. This
-            # array is copied to the outputed .csv file and then erased only to be filled again
+            # array is copied to the .csv output file and then erased only to be filled again
             # with the next daily raster's dictionary calculations. - By Date. There are two arrays in this
             # function, array_date and array_basin. The main difference is that the array_basin only holds one
             # dictionary at a time before it writes to a .csv file (one dictionary per basin and then the
@@ -1309,23 +1320,23 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             array_date = []
 
             # Access the features of the basin boundary shapefile.
-            basin_features = vectorFile.getFeatures()
+            basin_features = vector_file.getFeatures()
 
             # Set directory to the directory where the output .csv daily files are stored - By Basin
-            os.chdir(csv_byBasin)
+            os.chdir(csv_by_basin)
 
             # Define output coordinate reference system
-            output_CRS = "EPSG:" + output_CRS_EPSG
+            output_crs = "EPSG:" + output_crs_epsg
 
             # Iterate through each basin of the basin boundary shapefile.
             for feature in basin_features:
 
                 # Check to see if the SNODAS data has already been processed for the week_ago date.
-                os.chdir(csv_byDate)
+                os.chdir(csv_by_date)
 
                 # If so, get the volume value from last week for each basin. The for loop iterates over the basins
                 # and calculates the one-week-change in volume statistic.
-                if os.path.exists(results_date_csv_fullpath):
+                if os.path.exists(results_date_csv_full_path):
 
                     with open(results_date_csv) as csvfile:
                         reader = csv.DictReader(csvfile)
@@ -1338,13 +1349,13 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                     # Set raster calculator expression to populate 'SWEVolC_af' field.
                     # 'SWEVol_af' from today - 'SWEVol_af' from 7 days ago
                     c = QgsExpression('SWEVol_af - %s' % week_ago_value)
-                    c.prepare(vectorFile.pendingFields())
+                    c.prepare(vector_file.pendingFields())
 
                 else:
                     c = QgsExpression('noData')
-                    c.prepare(vectorFile.pendingFields())
+                    c.prepare(vector_file.pendingFields())
 
-                os.chdir(csv_byBasin)
+                os.chdir(csv_by_basin)
 
                 # Create string variable to be used as the title for the output .csv file - By Basin
                 results_basin = 'SnowpackStatisticsByBasin_' + feature[ID_Field_Name] + '.csv'
@@ -1355,21 +1366,21 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                 rounding_props = {
                     'SCover_pct': [e, 2],
                     'Area_sqmi': [a, 1],
-                    'SWE_mean': [eMean, 0],
-                    'SWEMean_in': [eSWEMean_in, 1],
+                    'SWE_mean': [e_mean, 0],
+                    'SWEMean_in': [e_swe_mean_in, 1],
                     'SWEVol_af': [v, 0],
                     'SWEVolC_af': [c, 0]
                 }
 
                 if calculate_SWE_minimum.upper() == 'TRUE':
-                    rounding_props['SWE_min'] = [eMin, 0]
-                    rounding_props['SWEMin_in'] = [eSWEMin_in, 1]
+                    rounding_props['SWE_min'] = [e_min, 0]
+                    rounding_props['SWEMin_in'] = [e_swe_min_in, 1]
                 if calculate_SWE_maximum.upper() == 'TRUE':
-                    rounding_props['SWE_max'] = [eMax, 0]
-                    rounding_props['SWEMax_in'] = [eSWEMax_in, 1]
+                    rounding_props['SWE_max'] = [e_max, 0]
+                    rounding_props['SWEMax_in'] = [e_swe_max_in, 1]
                 if calculate_SWE_stdDev.upper() == 'TRUE':
-                    rounding_props['SWE_stdev'] = [eStd, 0]
-                    rounding_props['SWESDev_in'] = [eSWESDev_in, 1]
+                    rounding_props['SWE_stdev'] = [e_std, 0]
+                    rounding_props['SWESDev_in'] = [e_swe_s_dev_in, 1]
 
                 # Perform raster calculations for each field.
                 for key, value in rounding_props.items():
@@ -1384,7 +1395,7 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                     feature[key] = s.evaluate(feature)
 
                 # Update features of basin shapefile.
-                vectorFile.updateFeature(feature)
+                vector_file.updateFeature(feature)
 
                 # Create empty array (basin) to hold the components of the zonal stats calculations.
                 array_basin = []
@@ -1412,62 +1423,62 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                 csvfile.close()
 
             # Close edits and save changes to the shapefile.
-            vectorFile.commitChanges()
+            vector_file.commitChanges()
 
             # Delete attribute fields of the shapefile used in the calculations but not important for export to final
             # product shapefile.
-            cell_count_index = vectorFile.dataProvider().fieldNameIndex('CellCount')
-            s_cover_sum_index = vectorFile.dataProvider().fieldNameIndex('SCoversum')
-            vectorFile.dataProvider().deleteAttributes([cell_count_index, s_cover_sum_index])
+            cell_count_index = vector_file.dataProvider().fieldNameIndex('CellCount')
+            s_cover_sum_index = vector_file.dataProvider().fieldNameIndex('SCoversum')
+            vector_file.dataProvider().deleteAttributes([cell_count_index, s_cover_sum_index])
 
             # Update shapefile with its newly-named attribute fields.
-            vectorFile.updateFields()
+            vector_file.updateFields()
 
             # Create daily shapefile and daily geoJSON.
             shapefile_name = 'SnowpackStatisticsByDate_' + date_name + '.shp'
             geojson_name = 'SnowpackStatisticsByDate_' + date_name + '.geojson'
-            shapefile_name_full = os.path.join(csv_byDate, shapefile_name)
-            geojson_name_full = os.path.join(csv_byDate, geojson_name)
+            shapefile_name_full = os.path.join(csv_by_date, shapefile_name)
+            geojson_name_full = os.path.join(csv_by_date, geojson_name)
 
             # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
-            swe_mean_index = vectorFile.dataProvider().fieldNameIndex('SWE_mean')
-            vectorFile.dataProvider().renameAttributes({swe_mean_index: 'SWEMean_mm'})
+            swe_mean_index = vector_file.dataProvider().fieldNameIndex('SWE_mean')
+            vector_file.dataProvider().renameAttributes({swe_mean_index: 'SWEMean_mm'})
 
             if calculate_SWE_minimum.upper() == 'TRUE':
-                swe_min_index = vectorFile.dataProvider().fieldNameIndex('SWE_min')
-                vectorFile.dataProvider().renameAttributes({swe_min_index: 'SWEMin_mm'})
+                swe_min_index = vector_file.dataProvider().fieldNameIndex('SWE_min')
+                vector_file.dataProvider().renameAttributes({swe_min_index: 'SWEMin_mm'})
 
             if calculate_SWE_maximum.upper() == 'TRUE':
-                swe_max_index = vectorFile.dataProvider().fieldNameIndex('SWE_max')
-                vectorFile.dataProvider().renameAttributes({swe_max_index: 'SWEMax_mm'})
+                swe_max_index = vector_file.dataProvider().fieldNameIndex('SWE_max')
+                vector_file.dataProvider().renameAttributes({swe_max_index: 'SWEMax_mm'})
 
             if calculate_SWE_stdDev.upper() == 'TRUE':
-                s_std_dev_index = vectorFile.dataProvider().fieldNameIndex('SWE_stdev')
-                vectorFile.dataProvider().renameAttributes({s_std_dev_index: 'SWESDev_mm'})
+                s_std_dev_index = vector_file.dataProvider().fieldNameIndex('SWE_stdev')
+                vector_file.dataProvider().renameAttributes({s_std_dev_index: 'SWESDev_mm'})
 
-            vectorFile.updateFields()
-            vectorFile.commitChanges()
+            vector_file.updateFields()
+            vector_file.commitChanges()
 
             # Export geojson and shapefile. (layer, full output pathname, file encoding, destination reference system,
             # output file type, layer options (GeoJSON): number of decimal places used in GeoJSON geometry)
-            QgsVectorFileWriter.writeAsVectorFormat(vectorFile, geojson_name_full, "utf-8",
-                                                    QgsCoordinateReferenceSystem(output_CRS), "GeoJSON",
+            QgsVectorFileWriter.writeAsVectorFormat(vector_file, geojson_name_full, "utf-8",
+                                                    QgsCoordinateReferenceSystem(output_crs), "GeoJSON",
                                                     layerOptions=['COORDINATE_PRECISION=%s' % geoJSON_precision])
-            QgsVectorFileWriter.writeAsVectorFormat(vectorFile, shapefile_name_full, "utf-8",
-                                                    QgsCoordinateReferenceSystem(output_CRS), "ESRI Shapefile")
+            QgsVectorFileWriter.writeAsVectorFormat(vector_file, shapefile_name_full, "utf-8",
+                                                    QgsCoordinateReferenceSystem(output_crs), "ESRI Shapefile")
 
             # Change fieldnames of output GeoJSON file
             # Envelop GeoJSON file as a QGS object vector layer.
             new_name = geojson_name.replace(".geojson", "_intermediate.geojson")
-            int_geojson_name_full = os.path.join(csv_byDate, new_name)
+            int_geojson_name_full = os.path.join(csv_by_date, new_name)
             os.rename(geojson_name_full, int_geojson_name_full)
 
             vector_file_geojson = QgsVectorLayer(int_geojson_name_full, 'GeoJsonStatistics', 'ogr')
 
             # Rename attribute fields of GeoJSON.
-            if not linux_os:
+            if not LINUX_OS:
 
-                # Open vectorFile for editing
+                # Open vector_file for editing
                 vector_file_geojson.startEditing()
 
                 # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
@@ -1496,16 +1507,16 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             # Export geojson. (layer, full output pathname, file encoding, destination reference system,
             # output file type, layer options (GeoJSON): number of decimal places used in GeoJSON geometry)
             QgsVectorFileWriter.writeAsVectorFormat(vector_file_geojson, geojson_name_full, "utf-8",
-                                                    QgsCoordinateReferenceSystem(output_CRS), "GeoJSON",
+                                                    QgsCoordinateReferenceSystem(output_crs), "GeoJSON",
                                                     layerOptions=['COORDINATE_PRECISION=%s' % geoJSON_precision])
 
             # Rename attribute fields of GeoJSON.
-            if linux_os:
+            if LINUX_OS:
                 change_field_names(geojson_name_full)
 
-            # Close the vector_file_geojson so that the vectorFile can open
+            # Close the vector_file_geojson so that the vector_file can open
             os.remove(int_geojson_name_full)
-            vectorFile.startEditing()
+            vector_file.startEditing()
 
             # Delete attribute fields of the shapefile related to the daily calculated zonal statistics.
             field_names = ['SWEMean_mm', 'SCover_pct', 'SWEMean_in', 'Area_sqmi', 'SWEVolC_af', 'SWEVol_af']
@@ -1517,18 +1528,18 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
                 field_names.extend(['SWESDev_mm', 'SWESDev_in'])
 
             for item in field_names:
-                index = vectorFile.dataProvider().fieldNameIndex(item)
-                vectorFile.dataProvider().deleteAttributes([index])
+                index = vector_file.dataProvider().fieldNameIndex(item)
+                vector_file.dataProvider().deleteAttributes([index])
 
             # Update shapefile with its newly-deleted attribute fields.
-            vectorFile.updateFields()
-            vectorFile.commitChanges()
+            vector_file.updateFields()
+            vector_file.commitChanges()
 
             # Create a string variable to be used as the title for the .csv output file - By Date.
             results_date = 'SnowpackStatisticsByDate_' + date_name + '.csv'
 
             # Set directory to the directory where the output .csv daily files are contained. - By Date.
-            os.chdir(csv_byDate)
+            os.chdir(csv_by_date)
 
             # Update text file, ListOfDates.txt, with list of dates represented by csv files in ByDate folder.
             array = glob.glob("*.csv")
@@ -1556,29 +1567,29 @@ def zStat_and_export(file, vFile, csv_byBasin, csv_byDate, DirClip, DirSnow, tod
             most_recent_date = str(max(array_recent_date))
             src = 'SnowpackStatisticsByDate_' + most_recent_date + '.csv'
             dst = 'SnowpackStatisticsByDate_LatestDate.csv'
-            copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
+            copyfile(os.path.join(csv_by_date, src), os.path.join(csv_by_date, dst))
             src = 'SnowpackStatisticsByDate_' + most_recent_date + '.geojson'
             dst = 'SnowpackStatisticsByDate_LatestDate.geojson'
-            copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
+            copyfile(os.path.join(csv_by_date, src), os.path.join(csv_by_date, dst))
             # List of extensions referring to the output shapefile
             ext_list = ['.cpg', '.dbf', '.prj', '.qpj', '.shp', '.shx']
             for item in ext_list:
                 src = 'SnowpackStatisticsByDate_' + most_recent_date + item
                 dst = 'SnowpackStatisticsByDate_LatestDate' + item
                 if os.path.exists(src):
-                    copyfile(os.path.join(csv_byDate, src), os.path.join(csv_byDate, dst))
+                    copyfile(os.path.join(csv_by_date, src), os.path.join(csv_by_date, dst))
 
             # Return working directory back to its original setting before the script began.
             os.chdir(curr_dir)
 
-            logger.info('zStat_and_export: Zonal statistics of %s are exported to %s' % (file, csv_byBasin))
+            logger.info('z_stat_and_export: Zonal statistics of %s are exported to %s' % (file, csv_by_basin))
             print("Zonal statistics of %s are complete. \n" % date_name)
 
         else:
-            logger.info('zStat_and_export: %s is not a .tif file and the zonal statistics were not processed.' % file)
+            logger.info('z_stat_and_export: %s is not a .tif file and the zonal statistics were not processed.' % file)
 
 
-def create_SNODAS_SWE_graphs():
+def create_snodas_swe_graphs():
     """Create, or update, the snowpack time series graphs from the by basin data."""
 
     # Refer to configuration file. If true, update the time series graphs weekly. If false, update the TS graphs daily.
@@ -1588,7 +1599,7 @@ def create_SNODAS_SWE_graphs():
         if str(datetime.today().weekday()) == str(weekly_update_date):
 
             print('Running TsTool file to create SNODAS SWE graphs. This could take a couple of minutes.')
-            logger.info('create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS Time Series graphs. TsTool '
+            logger.info('create_snodas_swe_graphs: Running TsTool file to create SNODAS Time Series graphs. TsTool '
                         'file pathname: %s' % TsToolCreateTimeSeries)
 
             # Run the TsTool command file, 'TsToolCreateTimeSeries', in the background. Wait for the subprocess
@@ -1599,7 +1610,7 @@ def create_SNODAS_SWE_graphs():
     else:
         print('Running TsTool file to create SNODAS SWE graphs. This could take up to 5 minutes.')
         logger.info(
-            'create_SNODAS_SWE_graphs: Running TsTool file to create SNODAS Time Series graphs. TsTool '
+            'create_snodas_swe_graphs: Running TsTool file to create SNODAS Time Series graphs. TsTool '
             'file pathname: %s' % TsToolCreateTimeSeries)
 
         # Run the TsTool command file, 'TsToolCreateTimeSeries', in the background. Wait for the subprocess
@@ -1608,34 +1619,34 @@ def create_SNODAS_SWE_graphs():
         print('SNODAS Time Series Graphs have been created.')
 
 
-def push_to_AWS():
+def push_to_aws():
     """Runs batch file to push the newly-updated files to Amazon Web Services. The specifics are configured within the
     batch file, AWS_batch_file. """
-    logger.info('push_to_AWS: Pushing files to Amazon Web Services S3 given specifics of %s.' % AWS_batch_file)
+    logger.info('push_to_aws: Pushing files to Amazon Web Services S3 given specifics of %s.' % AWS_batch_file)
     print('Pushing files to Amazon Web Services S3')
 
     # Call batch file, AWS_batch_file, to push files up to Amazon Web Service
     args = [AWS_batch_file]
-    Popen(args, cwd="C:\Program Files\Amazon\AWSCLI").wait()
-    logger.info('push_to_AWS: Files have been pushed to Amazon Web Services S3 as designed by %s.' % AWS_batch_file)
+    Popen(args, cwd="C:\\Program Files\\Amazon\\AWSCLI").wait()
+    logger.info('push_to_aws: Files have been pushed to Amazon Web Services S3 as designed by %s.' % AWS_batch_file)
 
 
-def push_to_GCP():
+def push_to_gcp():
     """Runs shell script to push the newly-updated files to a GCP bucket. The specifics are configured within the
-    batch file, GCP_shell_script. """
+    batch file, gcp_shell_script. """
     
     script_location = "/var/opt/snodas-tools/aws"
-    GCP_shell_script = "/var/opt/snodas-tools/aws/copyAllToGCPBucket.sh"
+    gcp_shell_script = "/var/opt/snodas-tools/aws/copyAllToGCPBucket.sh"
 
-    logger.info('push_to_GCP: Pushing files to Google Cloud Platform bucket given specifics of %s.' % GCP_shell_script)
-    print('Pushing files to Google Cloud Platform bucket given shell script ({}) specifics'.format(GCP_shell_script))
+    logger.info('push_to_gcp: Pushing files to Google Cloud Platform bucket given specifics of %s.' % gcp_shell_script)
+    print('Pushing files to Google Cloud Platform bucket given shell script ({}) specifics'.format(gcp_shell_script))
  
-    # Call shell script, GCP_shell_script, to push files up to GCP.
+    # Call shell script, gcp_shell_script, to push files up to GCP.
     os.chdir(script_location)
-    proc = Popen(['sudo', 'bash', GCP_shell_script])   
+    proc = Popen(['sudo', 'bash', gcp_shell_script])   
     proc.wait()
-    logger.info('push_to_GCP: Files have been pushed toGoogle Cloud Platform bucket as designed by %s.'%
-                GCP_shell_script)
+    logger.info('push_to_gcp: Files have been pushed toGoogle Cloud Platform bucket as designed by {}.'
+                .format(gcp_shell_script))
 
 
 def change_field_names(geojson_file):
@@ -1645,7 +1656,7 @@ def change_field_names(geojson_file):
     Error 6: AlterFieldDefn() not supported by this layer.
 
     This function will create a separate geojson file with the updated attribute fields. The original geojson will be
-    deleted and the new geojson will be renamed to the original geojson's name.
+    deleted and the new geojson will be renamed to the original geojson name.
 
     Args:
         geojson_file: the full pathname to the GeoJSON file to be edited.
@@ -1660,8 +1671,8 @@ def change_field_names(geojson_file):
 
     # Rename attribute field names defaulted by QGS Zonal Stat tool to the desired field name
     fields = {'SWEMean_mm': 'SNODAS_SWE_Mean_mm', 'SWEVolC_af': 'SNODAS_SWE_Volume_1WeekChange_acft',
-                 'SWEMean_in': 'SNODAS_SWE_Mean_in', 'Area_sqmi': 'SNODAS_EffectiveArea_sqmi',
-                 'SWEVol_af': 'SNODAS_SWE_Volume_acft', 'SCover_pct': 'SNODAS_SnowCover_percent'}
+              'SWEMean_in': 'SNODAS_SWE_Mean_in', 'Area_sqmi': 'SNODAS_EffectiveArea_sqmi',
+              'SWEVol_af': 'SNODAS_SWE_Volume_acft', 'SCover_pct': 'SNODAS_SnowCover_percent'}
 
     if calculate_SWE_minimum.upper() == 'TRUE':
         fields.update({'SWEMin_mm': 'SNODAS_SWE_Min_mm', 'SWEMin_in': 'SNODAS_SWE_Min_in'})
@@ -1688,7 +1699,7 @@ def change_field_names(geojson_file):
     os.rename(geojson_int_path, geojson_file)
 
 
-def clean_duplicates_from_byBasin_csv(csv_by_basin_dir):
+def clean_duplicates_from_by_basin_csv(csv_by_basin_dir):
     """Sometimes duplicate dates end up in the byBasin csv files. This function will make sure that the duplicates
     are removed. """
 
