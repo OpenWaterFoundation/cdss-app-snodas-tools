@@ -118,11 +118,11 @@ SAVE_ALL_SNODAS_PARAMS = config_section_map("SNODASparameters")['save_all_parame
 
 
 if __name__ == "__main__":
-
     # Initialize QGIS resources: more info at
     # http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html. This block of code allows for the
     # script to utilize QGIS functionality.
-    QgsApplication.setPrefixPath(QGIS_HOME, True)
+    # QgsApplication.setPrefixPath(QGIS_HOME, True)
+    QgsApplication.setPrefixPath('/usr', True)
     qgs = QgsApplication([], False)
     qgs.initQgis()
 
@@ -135,15 +135,14 @@ if __name__ == "__main__":
 
     # Get user inputs as raw data
     # Ask the user to decide between downloading only one date of data or a range of multiple dates of data.
-    singleOrRange = input("Are you interested in one date or a range of dates?: Type 'One' or 'Range'. \n")
+    singleOrRange = input("Are you interested in one date or a range of dates? ['One' or 'Range']: ")
 
     # While loop that continues to prompt user for a new input if original input is invalid.
     while singleOrRange.upper() != "ONE" and singleOrRange.upper() != "RANGE":
 
         # Ask the user to re-enter downloading data type - one date or range of dates.
         singleOrRange = input(
-            "Your input is not recognized. \n Are you interested in one date or a range of dates?: "
-            "Type 'One' or 'Range'. \n")
+            "Your input is not recognized. \nAre you interested in one date or a range of dates? ['One' or 'Range']: ")
 
     # Create the SNODAS_ROOT folder and the 5 sub-folders (Defaulted to: 1_DownloadSNODAS, 2_SetFormat, 3_ClipToExtent,
     # 4_CreateSnowCover, 5_CalculateStatistics [2 sub-folders: StatisticsByBasin, StatisticsByDate]). Check for folder
@@ -167,7 +166,7 @@ if __name__ == "__main__":
 
     # Create and configures logging file
     fileConfig(CONFIG_FILE)
-    logger = logging.getLogger('log02')
+    logger = logging.getLogger('interactive')
     logger.info('SNODASDailyDownload.py: Started \n')
 
     # Print version information
@@ -186,11 +185,11 @@ if __name__ == "__main__":
         while True:
             try:
                 userIn = input(
-                    "\n Which date are you interested in? The date must be of or between 30 September 2003 and today's "
-                    "date. \n mm/dd/yy: \n")
+                    "\nWhich date are you interested in? Date must be on or between\n30 September 2003 and today's "
+                    "date in the form 'mm/dd/yy': ")
                 singleDate = datetime.strptime(userIn, "%m/%d/%y")
                 if not (datetime(year=2003, month=9, day=29) < singleDate <= now):
-                    print('\n You have chosen an invalid date.')
+                    print('\nYou have chosen an invalid date.')
                 else:
                     startDate = singleDate
                     endDate = singleDate
@@ -223,7 +222,7 @@ if __name__ == "__main__":
             try:
                 userIn = input(
                     "\n What is the ENDING (most recent) date of data that you are interested in?"
-                    "The date must be between %s and today's date. \n mm/dd/yy: \n" % startDate.date())
+                    "The date must be between {} and today's date. \n mm/dd/yy: \n" .format(startDate.date()))
                 endDate = datetime.strptime(userIn, "%m/%d/%y")
                 if not (startDate < endDate <= now):
                     print('\n You have chosen an invalid date.')
@@ -268,9 +267,8 @@ if __name__ == "__main__":
 
         # If date has already been processed within the folder, the download & zonal statistics are rerun.
         if os.path.exists(possible_file):
-            logger.warning(
-                "\n This date (%s) has already been processed. The files will be reprocessed and "
-                "rewritten." % current_date)
+            logger.warning("\n This date ({}) has already been processed. The files will be reprocessed and "
+                           "rewritten.".format(current_date))
 
         # Download current date SNODAS .tar file from the FTP site at
         #  ftp://sidads.colorado.edu/DATASETS/NOAA/G02158/masked/
@@ -291,10 +289,7 @@ if __name__ == "__main__":
         if 0 in tempList:
             logger.error(
                 '"ERROR: See configuration file. One or more values of the ''OptionalZonalStatistics'' section is '
-                'not valid. Please change values to either ''True'' or ''False'' and rerun the script."')
-            logging.error(
-                '"ERROR: See configuration file. One or more values of the ''OptionalZonalStatistics'' section is '
-                'not valid. Please change values to either ''True'' or ''False'' and rerun the script."')
+                'not valid. Please change values to either ''True'' or ''False'' and rerun the script."', exc_info=True)
             break
 
         else:
@@ -436,18 +431,15 @@ if __name__ == "__main__":
             # If config file value SaveAllSNODASparameters is not a valid value ('True' or 'False') the remaining script
             # will not run and the following error message will be printed to the console and to the logging file.
             else:
-                logging.error(
-                            "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
-                            "valid. Please type in 'True' or 'False' and rerun the script.")
                 logger.error(
                     "ERROR: See configuration file. The value of the SaveAllSNODASparameters section is not "
-                    "valid. Please type in 'True' or 'False' and rerun the script.")
+                    "valid. Please type in 'True' or 'False' and rerun the script.", exc_info=True)
 
         # Display elapsed time of current date's processing in log.
         end_day = time.time()
         elapsed_day = end_day - start_day
-        logger.info('\n %s: Completed.' % current_date)
-        logger.info('Elapsed time (date: %s): %d seconds' % (current_date, elapsed_day))
+        logger.info('\n {}: Completed.'.format(current_date))
+        logger.info('Elapsed time (date: {}): {} seconds'.format(current_date, elapsed_day))
 
     # Close logging including the elapsed time of the running script in seconds.
     elapsed = time.time() - start
@@ -457,9 +449,9 @@ if __name__ == "__main__":
     elapsed_seconds = int(elapsed_hours_remainder % 60)
     stringStart = str(startDate)
     stringEnd = str(endDate)
-    print('\nSNODASHistoricalDownload.py: Completed. Dates Processed: From %s to %s.' % (stringStart, stringEnd))
-    print('Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n'
-          % (elapsed_hours, elapsed_minutes, elapsed_seconds))
+    print('\nSNODASHistoricalDownload.py: Completed. Dates Processed: From {} to {}.'.format(stringStart, stringEnd))
+    print('Elapsed time (full script): approximately {} hours, {} minutes and {} seconds\n'
+          .format(elapsed_hours, elapsed_minutes, elapsed_seconds))
 
     # If any dates were unsuccessfully downloaded, print those dates to the console and the logging file.
     failed_dates_lst_updated = []
@@ -480,15 +472,16 @@ if __name__ == "__main__":
         logger.info('\nDates unsuccessfully downloaded: ')
         for item in failed_dates_lst_updated:
             print(item)
-            logger.info('%s' % item)
+            logger.info('{}'.format(item))
         print("\nDates that will be affected by assigning the 'SNODAS_SWE_Volume_1WeekChange_acft' attribute 'NULL' "
               "due to the unsuccessful downloads: ")
         logger.info("\nDates that will be affected by assigning the 'SNODAS_SWE_Volume_1WeekChange_acft' attribute "
                     "'NULL' due to the unsuccessful downloads: ")
         for item in failed_dates_lst_1Week:
             print(item)
-            logger.info('%s' % item)
+            logger.info('{}'.format(item))
 
-    logger.info('\nSNODASHistoricalDownload.py: Completed. Dates Processed: From %s to %s.' % (stringStart, stringEnd))
-    logger.info('Elapsed time (full script): approximately %d hours, %d minutes and %d seconds\n'
-                % (elapsed_hours, elapsed_minutes, elapsed_seconds))
+    logger.info('\nSNODASHistoricalDownload.py: Completed. Dates Processed: From {} to {}.'
+                .format(stringStart, stringEnd))
+    logger.info('Elapsed time (full script): approximately {} hours, {} minutes and {} seconds\n'
+                .format(elapsed_hours, elapsed_minutes, elapsed_seconds))

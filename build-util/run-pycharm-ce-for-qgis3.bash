@@ -20,6 +20,7 @@ PYCHARM=''
 PYCHARMBASEPATH="/home/$(whoami)/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0"
 # The path to the SNODAS Pycharm project (subject to change)
 PYCHARMPROJPATH="/home/jkeahey/workspace/cdss-dev/CDSS-SNODAS-Tools/git-repos/cdss-app-snodas-tools/pycharm-project"
+export PYTHONPATH=/usr/share/qgis/python/plugins
 QGISBASEPATH="/usr/share/qgis"
 # Holds the qgisVersion on the system. Might become an array of different versions.
 qgisVersion='3.18'
@@ -132,6 +133,11 @@ do
       runStandaloneQgis;;
   esac
 done
+
+# If no options were given, print the help message.
+if [ "${OPTIND}" -eq 1 ]; then
+  printUsage
+fi
 
 echo ""
 exit 0
