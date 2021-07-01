@@ -46,7 +46,9 @@ noPycharmFound() {
 # Set the path to the run script of the found Pycharm version.
 setPycharmScript() {
   if [ "${foundPycharmVersion}" = "211" ]; then
-    PYCHARM='/home/jkeahey/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0/211.6693.115/bin/pycharm.sh'
+    # The string representing the current long string version of Pycharm
+    versionString='211.7442.45'
+    PYCHARM="/home/jkeahey/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0/${versionString}/bin/pycharm.sh"
   fi
 }
 

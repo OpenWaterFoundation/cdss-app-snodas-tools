@@ -1,8 +1,9 @@
 # List of files to ignore locally in the repository
 
 # Need to list dynamic files here
-
-*.zip
-*.geojson
-*.csv
-*.txt
+*
+!.gitignore
+#*.zip
+#*.geojson
+#*.csv
+#*.txt

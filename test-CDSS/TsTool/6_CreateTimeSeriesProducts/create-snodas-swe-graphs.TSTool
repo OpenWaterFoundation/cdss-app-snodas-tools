@@ -1,4 +1,4 @@
-StartLog(LogFile="~$create-snodas-swe-graphs.TSTool.log")
+StartLog(LogFile="create-snodas-swe-graphs.TSTool.log")
 # This command file processes each basin's full historical record using (for example):
 # ProcessedData/5_CalculateStatistics/SnowpackStatisticsByBasin/SnowpackStatisticsByBasin_LOCAL_ID.csv
 # Each of the "ByBasin" files contains the full period of daily statistics for the basin,
