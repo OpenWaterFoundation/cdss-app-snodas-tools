@@ -1,32 +1,32 @@
 # Comparing old and new QGIS values #
 
-This file describes the steps taken 
+This file describes the steps taken for determining differences between the older
+and updated SNODAS Tools computed data. Python and QGIS were updated from version
+2 to 3 for each. Syntax on both needed to be changed, and some functions,
+constructors, etc. became deprecated and had to be updated to work with the new
+version. There was a slight to moderate difference in the computed numbers (inches,
+acre feet, snow cover percentage) after the update, even though algorithms and
+functions used to get said numbers stayed the same. 
+
 
 ## Algorithm Used ##
 
-1. A for loop going through two elements in a list: 'old' and 'new'.
-2. A for loop going through all basins in Colorado.
+The following describes the algorithm used in the `compare-snodas-csv-files.TSTool`
+file to compare the old and new time series.
+
+1. A 'for loop' going through two elements in a list: 'old' and 'new'.
+2. A 'for loop' going through all basins in Colorado.
 3. Read in the CSV file into a table from either the 'old' GCP VM, or 'new' Ubuntu VM.
 4. Create the time series for SWE, Volume, and Snow cover.
 5. After both loops have finished, compare using the many time series command by
 location and data type, and write the difference to a table.
 
-## Testing ##
-
-Using the dates between 9-30-03 and 04-17-05, there should be about 191,000 entries
-for each day for all 332 basins. Different testing properties are as follows (All
-start and end times are between the above dates as well):
-
-| Analysis Properties | Differences |
-| ---- | ---- |
-| Tolerance: .1 | 172,180 |
-| Tolerance: 1 | 108,567 |
-
 ## Useful Information ##
 
 * In the main tstool script located in `/opt/tstool-13.04.00.dev/bin/`, the line
 setting the `javaCommand` variable was changed from `-Xmx1024m` to `-Xmx2048m`,
-pushing memory from 1GB to 2GB.
+pushing memory from 1GB to 2GB. A heap error was occuring otherwise, and there
+was no memory to work with.
 
 * The local and GCP national tif files seem similar enough when compared, but the
 local clipped Colorado tif file contained noticable differences from the VM. The
