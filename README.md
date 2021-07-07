@@ -67,7 +67,7 @@ described below.  Refer to the full documentation once MkDocs has been enabled i
 
 ## Configure Machine for Development
 
-**Need to update this for latest Ubuntu 20.4 environment.**
+**Need to update this for latest Ubuntu 20.04 environment.**
 
 This documentation has been written assuming that development will occur on a Windows 7/10 64-bit computer,
 with deployment to similar environment.
