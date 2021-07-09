@@ -3,7 +3,7 @@
 # Reference: http://www.mkdocs.org/user-guide/configuration/
 #
 site_name: SNODAS Tools (User Manual)
-pages:
+nav:
 - 'Home': index.md
 - 'SNODAS Tools Data ':
   - 'Overview': data/overview.md
@@ -18,12 +18,15 @@ pages:
   - 'Products and Downloads': products/products.md
 # Use Material theme
 # - installation notes:  https://github.com/squidfunk/mkdocs-material
-theme: material
+theme:
+ name: material
+ favicon: snodas-tools-favicon.png
 # Do not include the repo because it shows an irritating edit icon on every page
 #repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (User Manual) 
 site_author: Open Water Foundation
-site_favicon: snodas-tools-favicon.png
+site_url: ''
+use_directory_urls: false
 #copyright: TBD
 # Use extra CSS to customize styles, based on theme
 extra_css:

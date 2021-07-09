@@ -16,7 +16,7 @@ Ideally, the products will be generated and hosted by the State.  OWF is working
 The SNODAS Tools software is being developed by the [Open Water Foundation](http://openwaterfoundation.org)
 for the [Colorado Water Conservation Board](http://cdss.state.co.us).
 
-Background for this project is included in the [SNODAS Tools User Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/).
+Background for this project is included in the `SNODAS Tools User Manual`.
 Technical approach and design are discussed in the [Development Tasks / Software Design](dev-tasks/software-design/) section of this documentation.
 
 ## How to Use this Documentation

@@ -106,8 +106,8 @@ Both the .GeoJSON and shapefile have the same fields (but different fieldnames).
 
 ## Statistics as Time Series Graphs
 
-As explained in the [Processing Steps](../process/processing-steps/#4-generate-time-series-snowpack-products) section, four time series graphs are created for each basin of the
-[watershed basin input shapefile](../data/data/#input-zone-dataset-watershed-basins) (one time series graph for each snowpack statistic). These graphs can be viewed in the 
+As explained in the [Processing Steps](../process/processing-steps.md#4-generate-time-series-snowpack-products) section, four time series graphs are created for each basin of the
+[watershed basin input shapefile](../data/data.md#input-zone-dataset-watershed-basins) (one time series graph for each snowpack statistic). These graphs can be viewed in the 
 [CDSS SNODAS Tools Web Application](http://projects.openwaterfoundation.org/owf-proj-co-cwcb-2016-snodas/prototype/index.html) by first clicking a basin of interest in the map display 
 and then clicking the time series graph of interest in the left side panel. 
 

@@ -48,7 +48,7 @@ basin snowpack zonal statistics. The default and optional snowpack statistics ar
 * Create time series visualizations for each basin to display change of snowpack statistics over time. 
 * Publish the results to State of Colorado platforms to allow web access for water managers.
 
-The above process is described in greater depth for SNODAS Tools users in the [SNODAS Tools User Manual](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user).
+The above process is described in greater depth for SNODAS Tools users in the `SNODAS Tools User Manual`.
 The following diagram illustrates the overall data flow and technologies that are used
 (to view the image full size, use the web browser feature to open the image in a new tab - for example, in Chrome right click and ***Open image in new tab***):
 
@@ -149,7 +149,7 @@ The user inputs ```One``` if only one historical date is to be processed. The us
 	- The user inputs the last date of a range of historical dates in the correct format. All SNODAS data from the dates within the range will be 
 	downloaded (in sequential order).
 	
- If errors are occurring after input, reference the [Troubleshooting](..\deployed-env\troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
+ If errors are occurring after input, reference the [Troubleshooting](../deployed-env/troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
 	
 ----------------------------------------------------------------------------------------------------------------------
 The SNODAS Tools are set by default to access the masked SNODAS data rather than the unmasked SNODAS data. The SNODAS tools were originally designed to analyze 
@@ -322,7 +322,7 @@ statistic over time.
 
 **Percent of Snow Cover**  
 
-The time series graph representing a basin's change in percent of snow cover is the only graph solely containg data from the current year. 
+The time series graph representing a basin's change in percent of snow cover is the only graph solely containing data from the current year. 
 
 ![timeseries-snowcover](overview-images/TSGraph_snowcover.png)
 
@@ -336,15 +336,15 @@ The time series graph representing a basin's change in percent of snow cover is 
 
 **Cumulative SWE Volume**
 
-![TsGraph-cumulative](overview-images/TSGraph_cummulative.png)
+![TsGraph-cumulative](overview-images/TSGraph_cumulative.png)
 
 
 The time series graphs take approximately 3 minutes to create/update, given the 332 basins of the Colorado [watershed basin input shapefile](file-structure.md#watershed-basin-shapefile-input).  
 
- - *Note:* A watershed basin input shapefile with *less* features will processes quicker. Similarily so, a watershed basin input shapefile with 
+ - *Note:* A watershed basin input shapefile with *less* features will processes quicker. Similarly so, a watershed basin input shapefile with 
 *more* features will have process slower.     
 
-The SNODAS Tools, therefore, have a configuration setting to allow flexibilty on when the time series graphs are updated. By default,
+The SNODAS Tools, therefore, have a configuration setting to allow flexibility on when the time series graphs are updated. By default,
 the time series graphs are updated every Monday. The user can choose to update the time series daily or weekly (with a different update day of the week.) Refer to the 
 [configuration file](file-structure.md#snodas_tools92config92) for more specifics on these settings. 
 
@@ -359,7 +359,7 @@ section for detailed information on the Python functions called to create the da
 
 ### Publish Results
 
-The resutls are published daily to [Open Water Foundation's](http://openwaterfoundation.org/)
+The results are published daily to [Open Water Foundation's](http://openwaterfoundation.org/)
 [Amazon Web Services](https://aws.amazon.com/) to update the 
 [CDSS SNODAS Tools Map Viewer](http://projects.openwaterfoundation.org/owf-proj-co-cwcb-2016-snodas/prototype/index.html).  
 

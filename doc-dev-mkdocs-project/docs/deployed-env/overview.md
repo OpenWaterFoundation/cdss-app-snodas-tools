@@ -40,61 +40,6 @@ Consequently, the deployed environment must include software necessary to run th
 However, the deployed environment does not need to have development environment software installed.
 In some cases the software is used in both the deployed and development environment.
 
-## Computer System to Run SNODAS Tools
-
-The following sections describe how to install necessary software on a computer that will run the SNODAS tools.
-
-### Linux Virtual Machine Computer
-
-The target computer environment is as follows, in order to provide suitable processing capabilities, minimize ongoing cost,
-and allow for system support:
-
-* As discussed with OIT, a Linux Ubuntu 14.04 LTS VM will be used - this will be stable and provide several years of support:
-	+ Windowing environment for administration/support - Gnome? Mate? XFCE?
-* Open Water Foundation needs access to install the software and provide support - sudo privileges would be good.
-* Decent processor speed to run daily scheduled task - this machine will not initially be responding to real-time requests
-(could expand to this in the future depending on success of the project)
-* Local disk space for historical SNODAS grids and daily output snow products, to allow software to process - estimate is
-~37 GB/year for years 2003+ and into the future, which through 2025 would be ~820 GB - start with 1 or 2 TB capacity?
-Note that a nearly equivalent amount of space would be required in the Google Site to archive products for public access.
-The local files are needed to process and static archive is used to provide public access.
-* Network configuration needs to support pushing data to [Google Site](#google-site-for-static-website-data-product-archive),
-[CDSS Map Viewer](#cdss-map-viewer),
-and [Colorado Information Marketplace](#colorado-information-marketplace),
-as discussed in sections below.
-
-### QGIS Software
-
-The QGIS software should be installed in the standard location using the [same instructions as for the development environment](../dev-env/qgis).
-Open Water Foundation can install this once the VM is available.
-
-### SNODAS Tools Software
-
-**TODO smalers 2016-12-04 need to describe how to install the SNODAS tools.
-For example, might install in `/home/snodastools/CDSS/SNODAS-Tools` or in `/opt` on the Linux VM.
-Need to finalize script names, configuration files, location of data, etc. as per the [Software Design](../software-design/overview).**
-OWF will install this software once the VM is available.
-
-### TSTool Software
-
-The TSTool software should be installed in the standard location using the [same instructions as for the development environment](../dev-env/tstool).
-
-**TODO smalers 2016-12-04 need to finalize which version and provide basic installation instructions -
-will probably install in `/opt` since a Linux VM is going to be used.**
-
-### SNODAS Tools Configuration
-
-**TODO smalers 2016-12-04 need to describe final configuration of the SNODAS tools once all software components are installed.
-This will be similar to the development environment for file structure.**
-
-### Test SNODAS Tools
-
-**TODO smalers 2016-12-04 need to describe how to do basic testing to make sure things are working**
-
-### Run Operationally
-
-**TODO smalers need to describe how to run operationally, scheduled process and also manual re-run.  Refer to other documentation if appropriate.**
-
 ## Computer Systems to Publish Results
 
 The following sections describe how to configure other system components to receive the SNODAS tools output products.

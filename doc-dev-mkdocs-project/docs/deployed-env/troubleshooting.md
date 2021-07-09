@@ -1,6 +1,6 @@
 # Deployed Environment / Troubleshooting
 
-## If Automated Downwload Fails
+## If Automated Download Fails
 
 There are times where the automated daily download will fail. Some scenarios that would cause
 this are:
@@ -45,7 +45,7 @@ of a process, it is possible that the structure of the basin’s attribute table
 of interrupting the script mid-process would be permanent deletion of basin polygon/features within the basin shapefile.  <br>
 
 If the script is interrupted mid-process, there is a fix. This is a semi-complicated process so it is best to avoid this troubleshooting issue altogether by never running both scripts at the same time.  The corrupted 
-basin shapefile (not the basin extent shapefile) must be overwritten with an original copy becuse new fields have been created in the shapefile (that should have been deleted at the end of the script if 
+basin shapefile (not the basin extent shapefile) must be overwritten with an original copy because new fields have been created in the shapefile (that should have been deleted at the end of the script if 
 the script ran to completion.)Most likely, the fields of the attribute table are not correct (either too many fields or not enough fields). If one does not have an original copy of the shapefile, follow the instructions below.
 
 1. Open QGIS Desktop. 
@@ -78,26 +78,26 @@ window with a list of all available attribute fields.
 This will manually delete the selected fields. 
 8. Once again, click the ```Toggle Editing Mode``` button (![ToggleEditing](troubleshooting-images/toggle.png)) in the top left of the attribute table menu bar. This will save the attribute field deletion edits you made.
 
-Make sure to rerun the script for the days of SNODAS data that were affected by the script interuption to ensure statistical results are correct. 
+Make sure to rerun the script for the days of SNODAS data that were affected by the script interruption to ensure statistical results are correct. 
 
 ## Enabling Optional SWE Statistics
 
-The SNODAS Tools always calculate and export the [default SWE statistics](../software-design/overview/#overview). The 
-[optional SWE statisitics](../software-design/overview/#overview), however, are defaulted to be ignored by
+The SNODAS Tools always calculate and export the [default SWE statistics](../software-design/overview.md#overview). The 
+[optional SWE statistics](../software-design/overview.md#overview), however, are defaulted to be ignored by
 the SNODAS Tools. If desired by the user, the optional statistics can be enabled to be calculated and exported to the csv files alongside 
-the default SWE statistics. The desired optional statistics can be configured in the [configuration file](../software-design/file-structure.md#the-sections-and-options-of-the-configuration-file) 
+the default SWE statistics. The desired optional statistics can be configured in the [configuration file](../software-design/file-structure.md#the-sections-and-options-of-the-configuration-file)
 under **section** ```OptionalStatistics```. 
 
-The SNODAS Tools export the satistics into two types of csv files, ```byDate``` and ```byBasin```. In both csv files, the statistic name is written 
+The SNODAS Tools export the statistics into two types of csv files, ```byDate``` and ```byBasin```. In both csv files, the statistic name is written 
 to the first row, or the header row, as shown below. 
 
 ![csvExample](troubleshooting-images/csvExample.png)
 
 When an optional statistic is enabled in the configuration file, a new column is added to each of the csv files. For this reason, it is 
-mandatory that the configuration of the optional SWE statistics is set *before* the script is first run. If the configuraion of the optional
+mandatory that the configuration of the optional SWE statistics is set *before* the script is first run. If the configuration of the optional
 SWE statistics is changed *after* the first run of the SNODAS Tools (meaning that the csv files have already been created and there
 is already data within the csv files), an error will occur within the 
-[```byBasin``` csv file](../software-design/file-structure/#processeddata925_calculatestatistics92statisticsbybasin92). 
+[```byBasin``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin). 
 
 For example, if the SNODAS Tools originally run with the default settings then the header row of the csv files will 
 include the following 7 columns:
@@ -114,14 +114,14 @@ include the following 7 columns:
 |8|one_week_SWE_volume_change_acft|the week change in water volume stored within the snowpack| 
 
 It is important to understand that a *new* 
-[```byDate``` csv file](../software-design/file-structure/#processeddata925_calculatestatistics92statisticsbydate92) is created everytime a *new* date of SNODAS 
+[```byDate``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbydate) is created every time a *new* date of SNODAS 
 data is processed with the SNODAS Tools. However, a new 
-[```byBasin``` csv file](../software-design/file-structure/#processeddata925_calculatestatistics92statisticsbybasin92) *is not* created everytime a *new*
+[```byBasin``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin) *is not* created every time a *new*
 date of SNODAS data is processed. Instead, the statistics from the new day are *appended* to the original ```byBasin```
 csv file. This is why the error occurs within the ```byBasin``` csv file if new statistics are introduced or disabled
 after the header row of the ```byBasin``` csv file has already been previously established. 
  
 If the user wants to enable or disable optional statistics after the SNODAS Tools have been run, then the 
 byBasin csv files must be deleted from the 
-[```processedData\5_CalculateStatistics\StatisticsbyBasin``` folder](../software-design/file-structure/#processeddata925_calculatestatistics92statisticsbybasin92) 
+[```processedData\5_CalculateStatistics\StatisticsbyBasin``` folder](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin) 
 and all dates of interest must be reprocessed by the SNODAS Tools. 

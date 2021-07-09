@@ -14,7 +14,7 @@ In most cases the calculations involve standard GIS features.  However, the foll
 
 ## Alignment of Basin Boundaries
 
-As mentioned in the [Input Data](../data/data/#additional-details-about-the-colorado-basins) section, the Colorado watershed 
+As mentioned in the [Input Data](../data/data.md#additional-details-about-the-colorado-basins) section, the Colorado watershed 
 basin input shapefile was developed by combining multiple basin boundary shapefiles. Therefore, there are overlaps and gaps
 between features of the shapefile. 
 
