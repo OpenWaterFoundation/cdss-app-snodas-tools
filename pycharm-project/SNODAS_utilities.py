@@ -1576,50 +1576,50 @@ def z_stat_and_export(file: str, v_file: str, csv_by_basin: Path, csv_by_date: P
 
 def create_snodas_swe_graphs() -> None:
     """Create, or update, the snowpack time series graphs from the by basin data."""
-    return
+
     # Refer to configuration file. If true, update the time series graphs weekly. If false, update the TS graphs daily.
-    # if TSGRAPH_WEEKLY_UPDATE.upper() == 'TRUE':
-    #
-    #     # Check that today is the set weekday to update the time series graphs.
-    #     if str(datetime.today().weekday()) == str(TSGRAPH_WEEKLY_UPDATE_DATE):
-    #
-    #         print('Running TsTool file to create the weekly SNODAS SWE graphs. This could take a couple of minutes.')
-    #         logger.info('create_snodas_swe_graphs: Running TsTool file to create the weekly SNODAS Time Series graphs. '
-    #                     'TsTool file pathname: {}'.format(TSTOOL_SNODAS_GRAPHS_PATH))
-    #
-    #         # Run the TsTool command file, 'TSTOOL_SNODAS_GRAPHS_PATH', in the background. Wait for the subprocess
-    #         # to complete before continuing.
-    #         try:
-    #             with subprocess.Popen([TSTOOL_INSTALL_PATH, '-commands', TSTOOL_SNODAS_GRAPHS_PATH]) as _:
-    #                 pass
-    #         except OSError:
-    #             print('Currently skipping TSTool Graph creation')
-    #             return
-    #             # error_message = 'Error reading the TSTool executable file: {}'.format(bad_file)
-    #             # print(error_message)
-    #             # logger.error(error_message)
-    #             # exit(1)
-    #
-    #         print('Weekly SNODAS Time Series Graphs have been created.')
-    # else:
-    #     print('Running TsTool file to create the daily SNODAS SWE graphs. This could take up to 5 minutes.')
-    #     logger.info(
-    #         'create_snodas_swe_graphs: Running TsTool file to create the daily SNODAS Time Series graphs. TsTool '
-    #         'file pathname: {}'.format(TSTOOL_SNODAS_GRAPHS_PATH))
-    #
-    #     # Run the TsTool command file, 'TSTOOL_SNODAS_GRAPHS_PATH', in the background. Wait for the subprocess
-    #     # to complete before continuing.
-    #     try:
-    #         with subprocess.Popen([TSTOOL_INSTALL_PATH, '-commands', TSTOOL_SNODAS_GRAPHS_PATH]) as _:
-    #             pass
-    #     except OSError:
-    #         print('Currently skipping TSTool Graph creation')
-    #         return
-    #         # error_message = 'Error reading the TSTool executable file: {}'.format(bad_file)
-    #         # print(error_message)
-    #         # logger.error(error_message)
-    #         # exit(1)
-    #     print('Daily SNODAS Time Series Graphs have been created.')
+    if TSGRAPH_WEEKLY_UPDATE.upper() == 'TRUE':
+    
+        # Check that today is the set weekday to update the time series graphs.
+        if str(datetime.today().weekday()) == str(TSGRAPH_WEEKLY_UPDATE_DATE):
+    
+            print('Running TsTool file to create the weekly SNODAS SWE graphs. This could take a couple of minutes.')
+            logger.info('create_snodas_swe_graphs: Running TsTool file to create the weekly SNODAS Time Series graphs. '
+                        'TsTool file pathname: {}'.format(TSTOOL_SNODAS_GRAPHS_PATH))
+    
+            # Run the TsTool command file, 'TSTOOL_SNODAS_GRAPHS_PATH', in the background. Wait for the subprocess
+            # to complete before continuing.
+            try:
+                with subprocess.Popen([TSTOOL_INSTALL_PATH, '-commands', TSTOOL_SNODAS_GRAPHS_PATH]) as _:
+                    pass
+            except OSError:
+                print('Currently skipping TSTool Graph creation')
+                return
+                # error_message = 'Error reading the TSTool executable file: {}'.format(bad_file)
+                # print(error_message)
+                # logger.error(error_message)
+                # exit(1)
+    
+            print('Weekly SNODAS Time Series Graphs have been created.')
+    else:
+        print('Running TsTool file to create the daily SNODAS SWE graphs. This could take up to 5 minutes.')
+        logger.info(
+            'create_snodas_swe_graphs: Running TsTool file to create the daily SNODAS Time Series graphs. TsTool '
+            'file pathname: {}'.format(TSTOOL_SNODAS_GRAPHS_PATH))
+    
+        # Run the TsTool command file, 'TSTOOL_SNODAS_GRAPHS_PATH', in the background. Wait for the subprocess
+        # to complete before continuing.
+        try:
+            with subprocess.Popen([TSTOOL_INSTALL_PATH, '-commands', TSTOOL_SNODAS_GRAPHS_PATH]) as _:
+                pass
+        except OSError:
+            print('Currently skipping TSTool Graph creation')
+            return
+            # error_message = 'Error reading the TSTool executable file: {}'.format(bad_file)
+            # print(error_message)
+            # logger.error(error_message)
+            # exit(1)
+        print('Daily SNODAS Time Series Graphs have been created.')
 
 
 def push_to_aws() -> None:
