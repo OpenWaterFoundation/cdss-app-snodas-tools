@@ -31,7 +31,7 @@ overlapping polygons.  The code for the QGIS Zonal Statistics tool can be viewed
 [here](https://github.com/qgis/QGIS/blob/a2f51260db5357917e86b78f1bb2915379d670dd/src/analysis/vector/qgszonalstatistics.cpp).
 
 The Colorado watershed basin shapefile input used for the Colorado Water Conservation Board project has many overlapping basin boundaries. 
-This is because it was created by merging basin from many different sources. Refer to [SNODAS Tools User Documentation](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/data/data/#colorado-basins)
+This is because it was created by merging basin from many different sources. Refer to the `SNODAS Tools User Documentation`
 for more information on the creation of the watershed basin shapefile input for the CWCB project. 
 
 # Handling SNODAS cells Overlapped by Multiple Features

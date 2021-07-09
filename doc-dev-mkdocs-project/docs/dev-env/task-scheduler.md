@@ -8,10 +8,7 @@ script is designed to be programmed on a timed schedule. It will download the cu
 and export the daily zonal snowpack statistics in the [processedData](../software-design/file-structure.md#snodas_tools92processeddata92) folder on the local computer. 
 
 For information on the data processing steps of ```SNODASDaily_Automated.py```, refer to the 
-[Processing Workflow](../software-design/overview.md#processing-workflow) section. For information on the SNODAS FTP site, refer to the
-[SNODAS Tools Data](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/data/overview/) of the user guide. For information on
-the output snowpack products, refer to the [SNODAS Tools Products](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-user/products/overview/)
-section of the user guide.
+[Processing Workflow](../software-design/overview.md#processing-workflow) section.
 
 #  SNODASDaily_Automated_forTaskScheduler.bat
 
@@ -39,7 +36,7 @@ the ```SNODASDaily_Automated.py``` with the task scheduler.
 ![Control Panel](task-scheduler-images/1_admin_controlPanel.png)
 ![Administrative Tools](task-scheduler-images/2_admin_adminTools.png)
 3. Beneath Security Settings, open *Local Policies* and highlight *User Rights Assignment*.
-![Local Secuirty Policies](task-scheduler-images/3_admin_localSecPolicies.PNG)
+![Local Secuirty Policies](task-scheduler-images/3_admin_localSecPolicies.png)
 4. Locate *Log on as a batch job*. Open the properties and add users who will be running the task scheduler SNODAS task.  
 ![Log on as a batch job](task-scheduler-images/4_admin_localSecurity.png)
 5. When finished, save your changes and close the *Local Security Settings* window.

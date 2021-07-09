@@ -1,5 +1,5 @@
 # Name: SNODAS_utilities.py
-# Version: 1
+# Version: 2.0.0
 # Author: Emma Giles
 # Organization: Open Water Foundation
 #

@@ -27,8 +27,9 @@ input basin boundary shapefile, the SNODAS Tools estimate the following statisti
 |Maximum SWE|Optional|The daily maximum SWE value.|Inches and Millimeters|
 |Standard Deviation of SWE|Optional|A measurement of variation in the basin's daily SWE values.|Inches and Millimeters|
 
-*Note* - *The optional statistics will not be calculated unless they are configured in the [configuration file](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/file-structure/#snodastools92snodasconfigini)
-prior to utilizing the SNODAS Tools.*
+**Note** - The optional statistics will not be calculated unless they are configured
+in the configuration file prior to utilizing the SNODAS Tools. This file can be found
+in the SNODAS Tools developer's manual under **Sofware Design / File Structure**.
 
 The results of the SNODAS Tools can be manipulated to produce 
 visually-enticing choropleth maps displaying the various snowpack statistics. The SNODAS tools also create time-series graphs
@@ -36,7 +37,7 @@ displaying changes in the snowpack statistics over time.
 
 Although specifically designed for Colorado watersheds, the SNODAS Tools can be utilized to estimate snowpack statistics for any area in the 
 contiguous United States (the bounds of the masked SNODAS data limit the extent of statistical processing – see 
-the [Input Data](../data/data#snodas-data-grids) section for further details).
+the [Input Data](data/data.md#snodas-data-grids) section for further details).
 
 ## About the Colorado Water Conservation Board
 
@@ -58,9 +59,9 @@ For more information about OWF, visit the [OWF website](http://openwaterfoundati
 
 This documentation is organized to explain the SNODAS tools process and data products, including the following main sections:
 
-* [SNODAS Data](data/overview) - background on SNODAS data and comparison to SNOTEL
-* [SNODAS Tools Process](process/overview) - explain how raw SNODAS data are processed to create water supply data products that can be used to make decisions
-* [SNODAS Tools Products](products/overview) - explanation of each data product, how to access and use
+* [SNODAS Data](data/overview.md) - background on SNODAS data and comparison to SNOTEL
+* [SNODAS Tools Process](process/overview.md) - explain how raw SNODAS data are processed to create water supply data products that can be used to make decisions
+* [SNODAS Tools Products](products/overview.md) - explanation of each data product, how to access and use
 
 ## Contact
 

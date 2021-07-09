@@ -38,17 +38,16 @@ and [present dates](#download-snodas-data-each-new-day) of SNODAS daily data.
 ## Download SNODAS Data (Historical)
 
 The SNODAS Tools contain a script to download and process all available **historical** dates of SNODAS data. Refer to the
-[SNODAS Tools' Scripts](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/overview/#snodas-tools-scripts) 
-section of the Developer Manual for further details on the historical processing script. 
+`SNODAS Tools' Scripts` section of the Developer Manual for further details on the historical processing script.
+This is located under **Software Design > Overview**.
 
 
 ## Download SNODAS Data (Each New Day)
 
 Similar to historical data download, the **current daily** SNODAS grid is downloaded each day to update the snowpack products. 
 The SNODAS Tool script responsible for the daily download is designed to be processed automatically on a task scheduler 
-program. Refer to the
-[SNODAS Tools' Scripts](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/overview/#snodas-tools-scripts) 
-section of the Developer Manual for further details on the automatic daily processing script. The current date's grid, 
+program. Refer to the `SNODAS Tools' Scripts` section of the Developer Manual for further details on the
+automatic daily processing script. The current date's grid, 
 along with the historical grids, is made available in the following locations:
 
 * [CDSS Map Viewer](http://cdss.state.co.us/onlineTools/Pages/MapViewer.aspx) - **TODO smalers 2016-12-11 need to confirm that State is loading it and give directions for how to find**
@@ -69,7 +68,7 @@ the Colorado basin extent extends partially into other states.
 ![COBasins](processing-steps-images/CO_basin_boundaries.png)
 *Above: The Colorado basins displayed in green. The outline of the Colorado state boundary is overlaid in balck.*
 
-![COExtent](processing-steps-images/CO_basin_extent.png)
+![COExtent](processing-steps-images/Co_basin_extent.png)
 *Above: The Colorado basin extent displayed in green. The outline of the Colorado basins are overlaid in black.*
 
 ![NationalGridWithExtentOverlay](processing-steps-images/nationalWExtent.png)
@@ -79,9 +78,7 @@ the Colorado basin extent extends partially into other states.
 *Above: The SNODAS Snow Water Equivalent Grid for January 16th, 2017 clipped to the Colorado basin extent. 
 
 For a more detailed description on the clipping of the SNODAS daily grids 
-to the extent of the study area, refer to the 
-[Processing Workflow](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/overview/#clip-and-project-snodas-national-grids-to-study-area) 
-section of the SNODAS Tools Developer Manual.
+to the extent of the study area, refer to the `Processing Workflow` section of the SNODAS Tools Developer Manual.
 
 Both the Colorado basins layer ([the watershed basin input shapefile](../data/data.md#input-zone-dataset-watershed-basins)) and the daily clipped SNODAS grids are used in later steps to produce basin-specific snow statistics such as mean snow water equivalent (SWE) 
 and percent snow coverage.
@@ -103,7 +100,7 @@ the clipped SNODAS daily grid is intersected with the Colorado basin layer and t
 |Maximum SWE|Optional|The daily maximum SWE value.|Inches and Millimeters|
 |Standard Deviation of SWE|Optional|A measurement of variation in the basin's daily SWE values.|Inches and Millimeters|
 
-*Note* - *The optional statistics will not be calculated unless they are configured in the [configuration file](http://software.openwaterfoundation.org/cdss-app-snodas-tools-doc-dev/software-design/file-structure/#snodastools92snodasconfigini)
+**Note** - *The optional statistics will not be calculated unless they are configured in the configuration file
 prior to utilizing the SNODAS Tools.*
 
 The daily statistics are exported in both tabular and spatial formats. 

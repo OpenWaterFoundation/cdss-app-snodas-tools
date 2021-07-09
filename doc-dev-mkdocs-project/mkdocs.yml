@@ -3,7 +3,7 @@
 # Reference: http://www.mkdocs.org/user-guide/configuration/
 #
 site_name: SNODAS Tools (Developer Manual)
-pages:
+nav:
 - 'Home': index.md
 - 'Release Notes': 'release-notes/release-notes.md'
 - 'New Developer Setup':
@@ -18,6 +18,7 @@ pages:
     - 'pip': 'dev-env/pip.md'
     - 'MkDocs': 'dev-env/mkdocs.md'
     - 'PyCharm': 'dev-env/pycharm.md'
+    - 'Task Scheduler': 'dev-env/task-scheduler.md'
 - 'Initial Project Setup':
     - 'Overview': project-init/overview.md
     - 'Create Development Folder': 'project-init/dev-folder.md'
@@ -29,7 +30,11 @@ pages:
     - 'PyCharm Project': 'project-init/pycharm-project.md'
 - 'Deployed Environment':
     - 'Overview': 'deployed-env/overview.md'
-    - 'Task Scheduler': 'deployed-env/task-scheduler.md'
+    - 'Machine': 'deployed-env/machine.md'
+    - 'QGIS': 'deployed-env/qgis.md'
+    - 'Python': 'deployed-env/python.md'
+    - 'TSTool': 'deployed-env/tstool.md'
+    - 'Running SNODAS Tools': 'deployed-env/running-snodas-tools.md'
     - 'Troubleshooting': 'deployed-env/troubleshooting.md'
 - 'Software Design':
     - 'Overview': 'software-design/overview.md'
@@ -44,14 +49,18 @@ pages:
     - 'Building and Running': 'dev-tasks/build-run.md'
     - 'Deploying': 'dev-tasks/deploy.md'
     - 'Future Enhancements': 'dev-tasks/future-enhancements.md'
+### ---------- Configuration Properties ---------- ###
 # Use Material theme
 # - installation notes:  https://github.com/squidfunk/mkdocs-material
-theme: material
+theme:
+ name: material
+ favicon: 'snodas-tools-favicon.png'
 # Do not include the repo because it shows an irritating edit icon on every page
 #repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (Developer Manual) 
 site_author: Open Water Foundation
-site_favicon: snodas-tools-favicon.png
+site_url: ''
+use_directory_urls: false
 #copyright: TBD
 # Use extra CSS to customize styles, based on theme
 extra_css:
