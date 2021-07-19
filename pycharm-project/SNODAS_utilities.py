@@ -63,11 +63,15 @@ if sys.platform == 'linux' or sys.platform == 'linux2' or sys.platform == 'cygwi
     LINUX_OS = True
 else:
     LINUX_OS = False
+
 # This used to import ConfigParser, but it has been renamed configparser for PEP 8 compliance.
 CONFIG = configparser.ConfigParser()
-
-
-CONFIG_FILE = "../test-CDSS/config/SNODAS-Tools-Config.ini"
+# Check for a testing VM folder structure.
+if Path('../test-CDSS/config/SNODAS-Tools-Config.ini').exists():
+    CONFIG_FILE = '../test-CDSS/config/SNODAS-Tools-Config.ini'
+# If it doesn't exist, assume a production VM folder structure.
+else:
+    CONFIG_FILE = '../config/SNODAS-Tools-Config.ini'
 CONFIG.read(CONFIG_FILE)
 
 # Create and configures logging file
@@ -1391,6 +1395,14 @@ def z_stat_and_export(file: str, v_file: str, csv_by_basin: Path, csv_by_date: P
                     csv_writer = csv.DictWriter(csv_file, delimiter=",", fieldnames=fieldnames)
                     for row in array_basin:
                         csv_writer.writerow(row)
+                # Read and sort every line but the header.
+                with open(results_basin, 'r') as full_csv_file:
+                    csv_file_contents = list(full_csv_file)
+                    csv_file_contents[1:] = sorted(csv_file_contents[1:])
+                # Write the sorted list to the file.
+                with open(results_basin, 'w') as sorted_csv_file:
+                    for item in csv_file_contents:
+                        sorted_csv_file.write('{}'.format(item))
 
             # Close edits and save changes to the shapefile.
             vector_layer.commitChanges()
@@ -1649,8 +1661,8 @@ def push_to_gcp() -> None:
     """Runs shell script to push the newly-updated files to a GCP bucket. The specifics are configured within the
     batch file, gcp_shell_script. """
 
-    script_location = "/var/opt/snodas-tools/aws"
-    gcp_shell_script = "/var/opt/snodas-tools/aws/copyAllToGCPBucket.sh"
+    script_location = "/var/opt/snodas-tools"
+    gcp_shell_script = "/var/opt/snodas-tools/copyAllToGCPBucket.sh"
 
     print('push_to_gcp: Pushing files to Google Cloud Platform bucket given shell script ({}) specifics'
           .format(gcp_shell_script))

@@ -13,6 +13,7 @@
 
 # Check to see which os is running
 # Import necessary modules
+import argparse
 import SNODAS_utilities
 import configparser
 import glob
@@ -33,9 +34,14 @@ if sys.platform == 'linux' or sys.platform == 'linux2' or sys.platform == 'cygwi
     LINUX_OS = True
 else:
     LINUX_OS = False
-CONFIG = configparser.ConfigParser()
 
-CONFIG_FILE = '../test-CDSS/config/SNODAS-Tools-Config.ini'
+CONFIG = configparser.ConfigParser()
+# Check for a testing VM folder structure.
+if Path('../test-CDSS/config/SNODAS-Tools-Config.ini').exists():
+    CONFIG_FILE = '../test-CDSS/config/SNODAS-Tools-Config.ini'
+# If it doesn't exist, assume a production VM folder structure.
+else:
+    CONFIG_FILE = '../config/SNODAS-Tools-Config.ini'
 CONFIG.read(CONFIG_FILE)
 
 
@@ -122,28 +128,22 @@ RUN_HIST_TSTOOL: str = config_map('OutputLayers')['process_historical_tstool_gra
 
 SAVE_ALL_SNODAS_PARAMS: str = config_map('SNODASParameters')['save_all_parameters']
 
-# SHARED_PATH = SHARED_ROOT_DIR + SHARED_PROCESSED_DATA_DIR
-# SHARED_PATHS = [
-#     SHARED_PATH + DOWNLOAD_FOLDER,
-#     SHARED_PATH + SET_FORMAT_FOLDER,
-#     SHARED_PATH + CLIP_FOLDER,
-#     SHARED_PATH + CREATE_SNOW_COVER_FOLDER,
-#     SHARED_PATH + CALCULATE_STATS_FOLDER + OUTPUT_STATS_BY_BASIN_FOLDER,
-#     SHARED_PATH + CALCULATE_STATS_FOLDER + OUTPUT_STATS_BY_DATE_FOLDER
-# ]
 
+def arg_parse() -> None:
+    """ Parse command line arguments. Currently implemented options are:\n
 
-# def mv_to_shared_dir(output_dirs: list) -> None:
-#     """ To be run after each day is finished to push  """
-#
-#     for i, directory in enumerate(output_dirs):
-#         os.chdir(directory)
-#         print(SHARED_PATHS[i])
-#         with subprocess.Popen(['mv * ' + SHARED_PATHS[i]], shell=True) as _:
-#             pass
+     -h, --help: Displays help information for the program.\n
+     --version: Displays SNODAS Tools version."""
+
+    parser = argparse.ArgumentParser(prog='SNODAS Tools', description='SNODAS Tools.')
+
+    parser.add_argument('--version', action='version', version='%(prog)s 2.0.0')
+    parser.parse_args()
 
 
 if __name__ == '__main__':
+
+    arg_parse()
     # Initialize QGIS resources: more info at
     # http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html. This block of code allows for the
     # script to utilize QGIS functionality.

@@ -10,3 +10,13 @@
 
 # Log files
 *.log
+
+# All TSTool made PNG graph files.
+test-CDSS/processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/*.png
+
+# All processed SnowpackStatisticsByBasin CSV files.
+test-CDSS/processedData/5_CalculateStatistics/SnowpackStatisticsByBasin/*.csv
+
+# All files in the 
+test-CDSS/processedData/5_CalculateStatistics/SnowpackStatisticsByDate/*
+!test-CDSS/processedData/5_CalculateStatistics/SnowpackStatisticsByDate/README.md

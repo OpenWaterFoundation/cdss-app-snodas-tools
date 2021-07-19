@@ -34,6 +34,7 @@ nav:
     - 'QGIS': 'deployed-env/qgis.md'
     - 'Python': 'deployed-env/python.md'
     - 'TSTool': 'deployed-env/tstool.md'
+    - 'Install Additional Software': 'deployed-env/install-additional-software.md'
     - 'Running SNODAS Tools': 'deployed-env/install-and-run-snodas-tools.md'
     - 'Troubleshooting': 'deployed-env/troubleshooting.md'
 - 'Software Design':

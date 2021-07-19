@@ -40,11 +40,11 @@ Consequently, the deployed environment must include software necessary to run th
 However, the deployed environment does not need to have development environment software installed.
 In some cases the software is used in both the deployed and development environment.
 
-## Computer Systems to Publish Results
+## Computer Systems to Publish Results ##
 
 The following sections describe how to configure other system components to receive the SNODAS tools output products.
 
-## Google Cloud Storage for Static Website Data Product Archive
+## Google Cloud Storage for Static Website Data Product Archive ##
 
 The VM that performs the calculations will have a local copy of input and output files.
 A subset of these files will need to be pushed to a Google Cloud Storage bucket...only the files of interest to Colorado data users,
@@ -70,14 +70,14 @@ using an Amazon Web Services profile for CDSS-SNODAS that is restricted to only 
 
 **TODO smalers 2016-12-04 need to explain in more detail and flesh out when a working prototype is implemented.**
 
-### CDSS Map Viewer
+### CDSS Map Viewer ###
 
 The daily SNODAS Tools output map layers will need to be made available to one of the Map Viewers implemented by the CWCB.
 
 **TODO smalers 2016-12-04 Need to work out final details with CWCB/DWR/OIT on how to publish to Map Viewer.
 How will files generated on the VM be pushed to DWR/OIT staff to load into a Map Viewer?**
 
-### Colorado Information Marketplace 
+### Colorado Information Marketplace ###
 
 The Colorado Information Marketplace (CIM), [data.colorado.gov](http://data.colorado.gov) uses the Socrata data portal software,
 and can be used to publish daily tabular datasets produced by the SNODAS Tools.

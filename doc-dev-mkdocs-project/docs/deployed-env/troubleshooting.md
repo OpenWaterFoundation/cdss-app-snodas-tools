@@ -1,14 +1,6 @@
-# Deployed Environment / Troubleshooting
+# Deployed Environment / Troubleshooting #
 
-This documentation includes the following sections:
-
-* [Automated Download Fails](#automated-download-fails)
-* [User Input Error Messages in the Console](#user-input-error-messages-in-the-console)
-* [Interrupting the Script Mid-Process](#interrupting-the-script-mid-process)
-* [Enabling Optional SWE Statistics](#enabling-optional-swe-statistics)
-* [Upgrading the VM Operating System](#operating-the-vm-operating-system)
-
-## Automated Download Fails
+## Automated Download Fails ##
 
 There are times where the automated daily download will fail. Some scenarios that would cause
 this are:
@@ -22,23 +14,53 @@ and processed using the ```SNODAS_DailyInteractive.py``` Python script
 To run the ```SNODAS_DailyInteractive.py``` script, refer to the step-by-step instructions in the 
 [Processing Workflow](../software-design/overview#processing-workflow) section. 
 
-## User Input Error Messages in the Console
+## Enabling Optional SWE Statistics ##
 
-If you are experiencing error messages when typing your input into the console during the ```SNODASDaily_Interactive.py```script, the reason could be any of the following: 
+The SNODAS Tools always calculate and export the [default SWE statistics](../software-design/overview.md#overview). The 
+[optional SWE statistics](../software-design/overview.md#overview), however, are defaulted to be ignored by
+the SNODAS Tools. If desired by the user, the optional statistics can be enabled to be calculated and exported to the csv files alongside 
+the default SWE statistics. The desired optional statistics can be configured in the [configuration file](../software-design/file-structure.md#the-sections-and-options-of-the-configuration-file)
+under **section** ```OptionalStatistics```. 
 
-- **If you are entering a date**:   
-	* The date could be in the improper format. You should enter all dates in the mm/dd/yy format. For example, if you are interested in February 6th of 2005 then you will enter ```02/06/05```. 		
-	* The date could be out of appropriate range. Remember that the SNODAS data is only available on or after September 28th, 2003. If you try to enter a date before then, you will receive an error message. The SNODAS data is
-	only available up until today’s date. If you try to enter a date in the future, you will receive an error message. 
-	* If you are interested in a range of dates, then your end date must be after your starting date. Make sure that you are entering a date later than the entered starting date. Otherwise, you will receive an error. 
-	* Make sure that you do not add a space before or after the entered date. After typing in the year, press enter without adding any extra spacing. These extra spaces could cause the script to produce an error. <br><br>
-- I**f you are entering text:**  
-	* Make sure that you are typing one of the options that the prompt has asked you to type. If you enter text other than the preset options, you will receive an error. 
-	* Make sure that you do not add a space before or after the entered text. After the last character of your input, press enter without adding any extra spacing. These extra spaces could cause the script to produce an error. <br><br>
-- **If you accidentally choose an option in a prompt that is not the option you wanted:**  
-	* If this occurs, there is no way for you to go back to the last question and fix the error. Instead you must shut down the running script and restart a new script. You will be prompted with the first question again. Go through the prompts as usual with the inputs that you want. 
+The SNODAS Tools export the statistics into two types of csv files, ```byDate``` and ```byBasin```. In both csv files, the statistic name is written 
+to the first row, or the header row, as shown below. 
 
-## Interrupting the Script Mid-Process
+![csvExample](troubleshooting-images/csvExample.png)
+
+When an optional statistic is enabled in the configuration file, a new column is added to each of the csv files. For this reason, it is 
+mandatory that the configuration of the optional SWE statistics is set *before* the script is first run. If the configuration of the optional
+SWE statistics is changed *after* the first run of the SNODAS Tools (meaning that the csv files have already been created and there
+is already data within the csv files), an error will occur within the 
+[```byBasin``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin). 
+
+For example, if the SNODAS Tools originally run with the default settings then the header row of the csv files will 
+include the following 7 columns:
+
+||Column Name|Column Description|
+|-|---------|--------------|
+|1|Date_YYYYMMDD|the date|
+|2|LOCAL_ID|the unique local basin ID|
+|3|SNODAS_SWE_Mean_in|the SWE mean (inches)|
+|4|SNODAS_SWE_Mean_mm|the SWE mean (millimeters)|
+|5|Effective_Area|the basin area|
+|6|Snow_Cover_percent|the areal snow cover|
+|7|SWE_volume_acft|the volume of water stored within the snowpack|
+|8|one_week_SWE_volume_change_acft|the week change in water volume stored within the snowpack| 
+
+It is important to understand that a *new* 
+[```byDate``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbydate) is created every time a *new* date of SNODAS 
+data is processed with the SNODAS Tools. However, a new 
+[```byBasin``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin) *is not* created every time a *new*
+date of SNODAS data is processed. Instead, the statistics from the new day are *appended* to the original ```byBasin```
+csv file. This is why the error occurs within the ```byBasin``` csv file if new statistics are introduced or disabled
+after the header row of the ```byBasin``` csv file has already been previously established. 
+ 
+If the user wants to enable or disable optional statistics after the SNODAS Tools have been run, then the 
+byBasin csv files must be deleted from the 
+[```processedData\5_CalculateStatistics\StatisticsbyBasin``` folder](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin) 
+and all dates of interest must be reprocessed by the SNODAS Tools.
+
+## Interrupting the Script Mid-Process ##
 
 It is important that once a script is running that it continues until completion without interruption. Interruption can mean one of two actions. First, it could mean that the script is manually terminated. Secondly, 
 it could mean that the ```SNODASDaily_Interactive.py``` script is running at the same time as the ```SNODASDaily_Automated.py``` script. Both actions will result in a corrupted basin boundary shapefile. 
@@ -88,51 +110,14 @@ This will manually delete the selected fields.
 
 Make sure to rerun the script for the days of SNODAS data that were affected by the script interruption to ensure statistical results are correct. 
 
-## Enabling Optional SWE Statistics
+## Running SNODAS Tools Produces Error ##
 
-The SNODAS Tools always calculate and export the [default SWE statistics](../software-design/overview.md#overview). The 
-[optional SWE statistics](../software-design/overview.md#overview), however, are defaulted to be ignored by
-the SNODAS Tools. If desired by the user, the optional statistics can be enabled to be calculated and exported to the csv files alongside 
-the default SWE statistics. The desired optional statistics can be configured in the [configuration file](../software-design/file-structure.md#the-sections-and-options-of-the-configuration-file)
-under **section** ```OptionalStatistics```. 
+SNODAS Tools relies on X-based plugins and software, so an X Window server is
+required before running. If not, and error similar to the following will occur:
 
-The SNODAS Tools export the statistics into two types of csv files, ```byDate``` and ```byBasin```. In both csv files, the statistic name is written 
-to the first row, or the header row, as shown below. 
+![xcb error](troubleshooting-images/xwindow-error.png)
 
-![csvExample](troubleshooting-images/csvExample.png)
-
-When an optional statistic is enabled in the configuration file, a new column is added to each of the csv files. For this reason, it is 
-mandatory that the configuration of the optional SWE statistics is set *before* the script is first run. If the configuration of the optional
-SWE statistics is changed *after* the first run of the SNODAS Tools (meaning that the csv files have already been created and there
-is already data within the csv files), an error will occur within the 
-[```byBasin``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin). 
-
-For example, if the SNODAS Tools originally run with the default settings then the header row of the csv files will 
-include the following 7 columns:
-
-||Column Name|Column Description|
-|-|---------|--------------|
-|1|Date_YYYYMMDD|the date|
-|2|LOCAL_ID|the unique local basin ID|
-|3|SNODAS_SWE_Mean_in|the SWE mean (inches)|
-|4|SNODAS_SWE_Mean_mm|the SWE mean (millimeters)|
-|5|Effective_Area|the basin area|
-|6|Snow_Cover_percent|the areal snow cover|
-|7|SWE_volume_acft|the volume of water stored within the snowpack|
-|8|one_week_SWE_volume_change_acft|the week change in water volume stored within the snowpack| 
-
-It is important to understand that a *new* 
-[```byDate``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbydate) is created every time a *new* date of SNODAS 
-data is processed with the SNODAS Tools. However, a new 
-[```byBasin``` csv file](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin) *is not* created every time a *new*
-date of SNODAS data is processed. Instead, the statistics from the new day are *appended* to the original ```byBasin```
-csv file. This is why the error occurs within the ```byBasin``` csv file if new statistics are introduced or disabled
-after the header row of the ```byBasin``` csv file has already been previously established. 
- 
-If the user wants to enable or disable optional statistics after the SNODAS Tools have been run, then the 
-byBasin csv files must be deleted from the 
-[```processedData\5_CalculateStatistics\StatisticsbyBasin``` folder](../software-design/file-structure.md#processeddata5_calculatestatisticsstatisticsbybasin) 
-and all dates of interest must be reprocessed by the SNODAS Tools.
+**TODO: jpkeahey - Add link to X Window set up.**
 
 ## Upgrading the VM Operating System ##
 
@@ -150,7 +135,7 @@ of Ubuntu the upgrade will try to install to confirm it's either the desired ver
 or the next version needed.
 2. Type `sudo apt update`.
 3. Type `sudo apt upgrade`.
-    * See [Linux Headers Reinstall](#linux-headers-reinstall) for troubleshooting.
+    * See [Linux Headers Reinstall](#linux-headers-reinstall) for more help.
 4. Type `sudo do-release-upgrade`.
 5. Repeat steps 2-4 for each version increase, like the discussed 16.04 -> 18.04 and
 18.04 -> 20.04 mentioned above.
@@ -158,7 +143,7 @@ or the next version needed.
 ### Issues ###
 
 The following are roadblocks and other issues that occurred when attempting the
-upgrade, and their work arounds.
+upgrade, and their solutions.
 
 #### Linux Headers Reinstall ####
 
@@ -173,7 +158,7 @@ the original version used was 16.04, Xenial should have been where packages were
 retrieved from, but bionic was in the file instead. Replacing all instances of bionic
 with xenial, then running `sudo apt update` and `sudo apt upgrade` fixed
 
-#### Miscellaneous Notes ####
+### Miscellaneous Notes ###
 
 The package `google-compute-engine` needed to be removed in order to perform the
 `sudo apt upgrade` on the 16.04 version. It wasn't known if that would break
@@ -181,7 +166,23 @@ anything after the update to 20.04, but there doesn't seem to be. There is anoth
 installed package called `google-compute-engine-oslogin` which seems to be the newer
 renamed package for the Google Compute Engine.
 
-One of the errors the `sudo apt update` command claimed a package was not installed
-that needed to be. It's name was slightly different then the linux-headers package;
-instead of ending in gcp, gcp was towards the beginning of the package name.
-Installing said package seemed to help along the update process as well.
+The `sudo apt update` command claimed a package was not installed that needed to
+be. It's name was slightly different then the linux-headers package; instead of
+ending in gcp, gcp was towards the beginning of the package name. Installing said
+package seemed to help along the update process as well.
+
+## User Input Error Messages in the Console ##
+
+If you are experiencing error messages when typing your input into the console during the ```SNODASDaily_Interactive.py```script, the reason could be any of the following: 
+
+- **If you are entering a date**:   
+	* The date could be in the improper format. You should enter all dates in the mm/dd/yy format. For example, if you are interested in February 6th of 2005 then you will enter ```02/06/05```. 		
+	* The date could be out of appropriate range. Remember that the SNODAS data is only available on or after September 28th, 2003. If you try to enter a date before then, you will receive an error message. The SNODAS data is
+	only available up until today’s date. If you try to enter a date in the future, you will receive an error message. 
+	* If you are interested in a range of dates, then your end date must be after your starting date. Make sure that you are entering a date later than the entered starting date. Otherwise, you will receive an error. 
+	* Make sure that you do not add a space before or after the entered date. After typing in the year, press enter without adding any extra spacing. These extra spaces could cause the script to produce an error. <br><br>
+- **If you are entering text:**  
+	* Make sure that you are typing one of the options that the prompt has asked you to type. If you enter text other than the preset options, you will receive an error. 
+	* Make sure that you do not add a space before or after the entered text. After the last character of your input, press enter without adding any extra spacing. These extra spaces could cause the script to produce an error. <br><br>
+- **If you accidentally choose an option in a prompt that is not the option you wanted:**  
+	* If this occurs, there is no way for you to go back to the last question and fix the error. Instead you must shut down the running script and restart a new script. You will be prompted with the first question again. Go through the prompts as usual with the inputs that you want.
