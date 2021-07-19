@@ -12,6 +12,7 @@
 
 # Import necessary modules.
 import SNODAS_utilities
+import argparse
 import configparser
 import logging
 import os
@@ -35,8 +36,14 @@ else:
     LINUX_OS = False
 # Read the config file to assign variables. Reference the following for code details:
 # https://wiki.python.org/moin/ConfigParserExamples
+
 CONFIG = configparser.ConfigParser()
-CONFIG_FILE = '../test-CDSS/config/SNODAS-Tools-Config.ini'
+# Check for a testing VM folder structure.
+if Path('../test-CDSS/config/SNODAS-Tools-Config.ini').exists():
+    CONFIG_FILE = '../test-CDSS/config/SNODAS-Tools-Config.ini'
+# If it doesn't exist, assume a production VM folder structure.
+else:
+    CONFIG_FILE = '../config/SNODAS-Tools-Config.ini'
 CONFIG.read(CONFIG_FILE)
 
 
@@ -115,7 +122,7 @@ OUTPUT_CRS_EPSG: str = config_map('Projections')['output_proj_epsg']
 
 SHP_ZIP: str = config_map('OutputLayers')['shp_zip']
 DEL_SHP_ORIG: str = config_map('OutputLayers')['shp_delete_originals']
-UPLOAD_TO_S3: str = config_map('OutputLayers')['upload_to_S3']
+UPLOAD_TO_S3: str = config_map('OutputLayers')['upload_to_s3']
 UPLOAD_TO_GCP: str = config_map('OutputLayers')['gcp_upload']
 RUN_DAILY_TSTOOL: str = config_map('OutputLayers')['process_daily_tstool_graphs']
 RUN_HIST_TSTOOL: str = config_map('OutputLayers')['process_historical_tstool_graphs']
@@ -123,8 +130,21 @@ RUN_HIST_TSTOOL: str = config_map('OutputLayers')['process_historical_tstool_gra
 SAVE_ALL_SNODAS_PARAMS: str = config_map('SNODASParameters')['save_all_parameters']
 
 
+def arg_parse() -> None:
+    """ Parse command line arguments. Currently implemented options are:\n
+
+     -h, --help: Displays help information for the program.\n
+     --version: Displays SNODAS Tools version."""
+
+    parser = argparse.ArgumentParser(prog='SNODAS Tools', description='SNODAS Tools.')
+
+    parser.add_argument('--version', action='version', version='%(prog)s 2.0.0')
+    parser.parse_args()
+
+
 if __name__ == '__main__':
 
+    arg_parse()
     # Define static folder and extent shapefile
     static_path: Path = Path(SNODAS_ROOT) / STATIC_FOLDER
     extent_shapefile: Path = static_path / 'studyAreaExtent_prj.shp'

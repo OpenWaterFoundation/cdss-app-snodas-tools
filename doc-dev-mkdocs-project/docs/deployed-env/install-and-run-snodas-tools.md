@@ -1,13 +1,13 @@
-# Deployed Environment / Install and Run SNODAS Tools
+# Deployed Environment / Install and Run SNODAS Tools #
 
 The next few sections describe how to install the production/deployed tarball file
 onto the Google Cloud Platform (GCP) VM instance, followed by how to run SNODAS
 Tools, and any other pertinent information about the software.
 
-## Installing SNODAS Tools on the GCP VM Instance ##
+## Installing SNODAS Tools on the GCP VM instance ##
 
-Steps for creating the tarball, installing on the VM and extracting from the tar file
-are as follows:
+Steps for creating the tarball on the development VM, installing the tar on the
+deployed VM, and extracting from the tar file are as follows:
 
 1. From the development VM's repository top-level file (`cdss-app-snodas-tools`),
 `cd` into `build-util/`.
@@ -45,6 +45,13 @@ as is all folders and files in the `snodas-tools-1/` directory. This
 contains the older QGIS and Python version 2 code, but was used as
 a template for the installation of the newer version 3 code.
 
-## Running SNODAS Tools
+## Running SNODAS Tools ##
 
-**TODO need to describe how to run operationally, scheduled process and also manual re-run.  Refer to other documentation if appropriate.**
+**TODO: jpkeahey - Insert link to XWindows set up. This is needed to be done before
+any of the SNODAS Tools scripts are run, or else there will be a QT xcb plugin error.**
+
+### Running a range of dates ###
+
+To run SNODAS Tools over a range of dates, perform the following:
+
+1. Log into the GCP VM
