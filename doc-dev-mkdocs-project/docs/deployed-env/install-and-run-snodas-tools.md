@@ -36,22 +36,53 @@ have sudo privileges to finish the installation.
 7. Move the tar into the SNODAS version 2.* top-level file by typing
 `sudo mv cdss-tools-VERSION.tar.gz /var/opt/snodas-tools/`.
 8. Type `sudo tar -xzvf cdss-tools-VERSION.tar.gz`
+    * Optionally remove the compressed tar file by typing `sudo rm cdss-tools-VERSION.tar.gz`
+9. Change the ownership and group of all the untarred files and folders by running
+`sudo chown -R snodas:snodas *`.
 
 ## Automating SNODAS Tools using CRON ##
 
-A cron table is used to automate running a bash script that runs
-the `SNODASDaily_Automated.py` script. The crontab is owned by root,
-as is all folders and files in the `snodas-tools-1/` directory. This
-contains the older QGIS and Python version 2 code, but was used as
-a template for the installation of the newer version 3 code.
+A cron table is used to automate running a bash script that runs the `SNODASDaily_Automated.py`
+script. The crontab is owned by root, as is all folders and files in the `snodas-tools-1/`
+directory. This contains the older QGIS and Python version 2 code, but was used
+as a template for the installation of the newer version 3 code.
 
 ## Running SNODAS Tools ##
 
-**TODO: jpkeahey - Insert link to XWindows set up. This is needed to be done before
-any of the SNODAS Tools scripts are run, or else there will be a QT xcb plugin error.**
+TSTool uses Java Swing components for its user interface, and Swing uses the
+[X Window system](https://en.wikipedia.org/wiki/X_Window_System) (X-Windows) when
+run on a Linux computer. X-Windows allows a program to be run on one computer and
+display on a different computer. To display on a Windows computer, the computer
+must be running an X-Windows server. Even though it won't be used, it is still
+necessary to set up an X Window server on an OS that supports graphics.
 
-### Running a range of dates ###
+If X Window has previously been set up, only steps 2 and 3 are necessary. Otherwise,
+the steps to running SNODAS Tools on the GCP VM are:
 
-To run SNODAS Tools over a range of dates, perform the following:
+1. Confirm an X server is running on another, graphics-implemented computer and
+connect it to the GCP VM. More details can be found at [Setting Up an X Server](#setting-up-an-x-server).
+2. SSH into the GCP VM: `ssh -Y user@IP_ADDRESS`.
+    * Testing with any basic `x` programs can be done, e.g. trying to run `xclock`.
+3. Change directories to the SNODAS Tools top-level folder and run either
+`python3 SNODASDaily_Interactive.py` or `python3 SNODASDaily_Automated.py`.
 
-1. Log into the GCP VM
+See [X Window Troubleshooting](troubleshooting#x-window) for help.
+
+## Setting Up an X Server ##
+
+The following instructions used Cygwin on Windows 10 Pro. **Maybe add link to more
+X Window documentation that covers Git Bash, etc.**
+
+1. Confirm the X Window server and xhost packages are installed for Cygwin. Run
+the Cygwin installer `.exe` file again, or visit the [cygwin.com install](https://cygwin.com/install.html)
+web page and run the setup file from there. More information can be found on the
+[Cygwin/X documentation](https://x.cygwin.com/docs/ug/setup.html) page.
+> **NOTE: ** The packages `xterm`, `xeyes`, or `xclock` can also be downloaded
+for testing purposes.
+2. In a separate Cygwin terminal, start the X Window server by running `startxwin -- -listen tcp`.
+3. In another Cygwin terminal, set the `DISPLAY` environment variable to use
+the Windows display by running `export DISPLAY=localhost:0.0`.
+    * Confirmation that the server is running can be tested by starting `xclock`, `xeyes`, etc.
+    on the terminal.
+4. Add the GCP VM to the xhost access control list: `+IP_ADDRESS`, where `IP_ADDRESS`
+is the VM's external IP Address.

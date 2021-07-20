@@ -186,3 +186,6 @@ If you are experiencing error messages when typing your input into the console d
 	* Make sure that you do not add a space before or after the entered text. After the last character of your input, press enter without adding any extra spacing. These extra spaces could cause the script to produce an error. <br><br>
 - **If you accidentally choose an option in a prompt that is not the option you wanted:**  
 	* If this occurs, there is no way for you to go back to the last question and fix the error. Instead you must shut down the running script and restart a new script. You will be prompted with the first question again. Go through the prompts as usual with the inputs that you want.
+
+## X Window ##
+

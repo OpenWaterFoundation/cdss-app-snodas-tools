@@ -16,14 +16,14 @@ echo "Copying  SNODAS products to the Google Cloud Platform static bucket: ${goo
 echo ""
 
 if [ "${useNewFolder}" = "true" ]; then
-    # Snowpack statistics by basin are relative small so always sync all
+    # Snowpack statistics by basin are relative small so always sync all.
     sudo gsutil -m rsync -r ../processedData/5_CalculateStatistics/SnowpackStatisticsByBasin "${googleBucket}"/data/SnowpackStatisticsByBasin/
-    # Snowpack graphs by basin are relative small so always sync all
+    # Snowpack graphs by basin are relative small so always sync all.
     sudo gsutil -m rsync -r ../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin "${googleBucket}"/data/SnowpackGraphsByBasin/
-    # Sync static files listed as resources on the Data tab on the website
-    sudo gsutil -m rsync -r ../staticData/WatershedConnectivity "${googleBucket}"/data/StaticData/
-    # Sync the snowpack statistics by date
+    # Snowpack statistics by date.
     sudo gsutil -m rsync -r ../processedData/5_CalculateStatistics/SnowpackStatisticsByDate "${googleBucket}"/data/SnowpackStatisticsByDate/
+    # All static data files.
+    sudo gsutil -m rsync -r ../staticData "${googleBucket}"/data/StaticData/
 else
     #
     # gsutil library command reference: https://cloud.google.com/storage/docs/gsutil/commands/rsync
