@@ -15,7 +15,7 @@ deployed VM, and extracting from the tar file are as follows:
     * If the error message `-bash: ./create-installer-tar.bash: Permission denied`
     displays, update the file permissions by typing
     `chmod +x create-installer-tar.bash`.
-    * Can confirm tarball was created by typing `cd builds` and `ls` to see
+    * Can verify tarball was created by typing `cd builds` and `ls` to see
     `cdss-tools-VERSION.tar.gz` where VERSION is the version number of SNODAS Tools.
 3. Copy the tarball onto the host OS so it can be uploaded to the GCP cloud terminal.
 The OWF development structure has a shared folder to an external drive, connected
@@ -56,15 +56,25 @@ display on a different computer. To display on a Windows computer, the computer
 must be running an X-Windows server. Even though it won't be used, it is still
 necessary to set up an X Window server on an OS that supports graphics.
 
-If X Window has previously been set up, only steps 2 and 3 are necessary. Otherwise,
-the steps to running SNODAS Tools on the GCP VM are:
+If X Window has previously been set up, only steps 2 and 3 are necessary. The steps
+to running SNODAS Tools on the GCP VM are:
 
 1. Confirm an X server is running on another, graphics-implemented computer and
 connect it to the GCP VM. More details can be found at [Setting Up an X Server](#setting-up-an-x-server).
 2. SSH into the GCP VM: `ssh -Y user@IP_ADDRESS`.
-    * Testing with any basic `x` programs can be done, e.g. trying to run `xclock`.
+  * Testing with any basic `x` programs can be done, e.g. trying to run `xclock`.
 3. Change directories to the SNODAS Tools top-level folder and run either
-`python3 SNODASDaily_Interactive.py` or `python3 SNODASDaily_Automated.py`.
+```bash
+python3 SNODASDaily_Interactive.py
+```
+
+for selecting a single or range of dates, or
+
+```bash
+python3 SNODASDaily_Automated.py
+```
+
+for updating the dates to the most recent day.
 
 See [X Window Troubleshooting](troubleshooting#x-window) for help.
 
@@ -82,7 +92,7 @@ for testing purposes.
 2. In a separate Cygwin terminal, start the X Window server by running `startxwin -- -listen tcp`.
 3. In another Cygwin terminal, set the `DISPLAY` environment variable to use
 the Windows display by running `export DISPLAY=localhost:0.0`.
-    * Confirmation that the server is running can be tested by starting `xclock`, `xeyes`, etc.
-    on the terminal.
+  * Confirmation that the server is running can be tested by starting `xclock`, `xeyes`, etc.
+  on the terminal.
 4. Add the GCP VM to the xhost access control list: `+IP_ADDRESS`, where `IP_ADDRESS`
 is the VM's external IP Address.

@@ -41,7 +41,8 @@ from PyQt5.QtCore import QVariant
 from qgis.analysis import (
     QgsRasterCalculator,
     QgsRasterCalculatorEntry,
-    QgsZonalStatistics)
+    QgsZonalStatistics
+)
 from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransformContext,
@@ -1658,21 +1659,21 @@ def push_to_aws() -> None:
 
 
 def push_to_gcp() -> None:
-    """Runs shell script to push the newly-updated files to a GCP bucket. The specifics are configured within the
+    """Runs shell script to push the newly updated files to a GCP bucket. The specifics are configured within the
     batch file, gcp_shell_script. """
 
     script_location = "/var/opt/snodas-tools"
-    gcp_shell_script = "/var/opt/snodas-tools/copyAllToGCPBucket.sh"
+    gcp_shell_script = "/var/opt/snodas-tools/cloud/copyAllToGCPBucket.bash"
 
     print('push_to_gcp: Pushing files to Google Cloud Platform bucket given shell script ({}) specifics'
-          .format(gcp_shell_script))
+        .format(gcp_shell_script))
     logger.info('push_to_gcp: Pushing files to Google Cloud Platform bucket given details from {}.'
-                .format(gcp_shell_script))
+        .format(gcp_shell_script))
 
     # Call shell script, gcp_shell_script, to push files up to GCP.
     os.chdir(script_location)
     try:
-        with subprocess.Popen(['sudo', 'bash', gcp_shell_script]) as _:
+        with subprocess.Popen(['bash', gcp_shell_script]) as _:
             pass
     except OSError as bad_file:
         error_message = 'push_to_gcp: Error pushing to GCP: {}\nConfirm the path to the GCP bash script is correct.'\
