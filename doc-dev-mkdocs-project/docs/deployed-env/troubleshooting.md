@@ -12,7 +12,24 @@ this are:
 If this occurs, the missed date of SNODAS data can be downloaded 
 and processed using the ```SNODAS_DailyInteractive.py``` Python script
 To run the ```SNODAS_DailyInteractive.py``` script, refer to the step-by-step instructions in the 
-[Processing Workflow](../software-design/overview#processing-workflow) section. 
+[Processing Workflow](../software-design/overview#processing-workflow) section.
+
+## CRON ##
+
+SNODAS Tools is run twice a day, everyday by utilizing the GCP VM's `snodas` user
+account's crontab.
+The Python 2 and QGIS 2 used `sudo` to run the correct script, so relied on root.
+Since the created `snodas` account is now being used, all uses of `sudo` have been
+removed. This caused some unforeseen issues on the deployed system.
+
+Since cron is now being ran as a user (even though they have sudo privileges), the
+cron file itself is being run by the cron daemon in a sub-shell. It won't be able
+to see the DISPLAY environment variable like sudo can, so before the path to the
+cron-run script is performed, set the the variable.
+
+```
+export DISPLAY=<full-display-name> && /path/to/script.bash
+```
 
 ## Enabling Optional SWE Statistics ##
 

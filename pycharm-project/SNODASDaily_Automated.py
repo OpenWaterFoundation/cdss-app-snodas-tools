@@ -179,10 +179,13 @@ if __name__ == '__main__':
     # Initialize QGIS resources to utilize QGIS functionality.
     # More information at: http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/intro.html.
     if LINUX_OS:
-        qgs = QgsApplication([], False, None)
-        qgs.setPrefixPath('/usr', True)
+        # qgs = QgsApplication([], False, None)
+        # qgs.setPrefixPath('/usr', True)
+        # qgs.initQgis()
+        # sys.path.append('/usr/share/qgis/python/plugins')
+        QgsApplication.setPrefixPath('/usr', True)
+        qgs = QgsApplication([], False)
         qgs.initQgis()
-        sys.path.append('/usr/share/qgis/python/plugins')
     else:
         # Make the object in both cases for now.
         qgs = QgsApplication([], False, None)
@@ -274,7 +277,7 @@ if __name__ == '__main__':
 
             else:
                 # Untar today's data
-                for file in SNODAS_utilities.list_dir(set_format_path, '*.tar'):
+                for file in SNODAS_utilities.list_dir(download_path, '*.tar'):
                     if date in str(file):
                         download_time_start = time.time()
                         SNODAS_utilities.untar_snodas_file(file, download_path, set_format_path)
@@ -356,7 +359,6 @@ if __name__ == '__main__':
                             SNODAS_utilities.assign_snodas_projection(file, clip_path)
                     clip_time_end = time.time()
                     elapsed_clip = clip_time_end - clip_time_start
-                    print('elapsed_clip time: {:.3f} seconds'.format(elapsed_clip))
 
                     snowCover_time_start = time.time()
                     # Create today's snow cover binary raster
@@ -365,7 +367,7 @@ if __name__ == '__main__':
                             SNODAS_utilities.snow_coverage(file, clip_path, snowCover_path)
                     snowCover_time_end = time.time()
                     elapsed_snowCover = snowCover_time_end - snowCover_time_start
-                    # print('elapsed_snowCover time: {:.3f} seconds'.format(elapsed_snowCover))
+                    print('elapsed_snowCover time: {:.3f} seconds'.format(elapsed_snowCover))
 
                     manipulateCSV_time_start = time.time()
                     # Create .csv files of byBasin and byDate outputs
@@ -390,6 +392,7 @@ if __name__ == '__main__':
                                                                date_dateTimeFormat, returnedList[0], OUTPUT_CRS_EPSG)
                     zStats_time_end = time.time()
                     elapsed_zStats = zStats_time_end - zStats_time_start
+                    print('elapsed_z_stats time: {:.3f} seconds'.format(elapsed_snowCover))
 
                     # If desired, zip files of output shapefile (both today's data and latestDate file)
                     if SHP_ZIP.upper() == 'TRUE':
@@ -461,7 +464,7 @@ if __name__ == '__main__':
         if file.is_file() and file.suffix == '.tmp':
             file.unlink()
 
-    logger.info('\nSNODASDailyDownload.py: Completed.')
+    logger.info('SNODASDailyDownload.py: Completed.')
     logger.info('Elapsed time: {} hours, {} minutes and {} seconds'
                 .format(elapsed_hours, elapsed_minutes, elapsed_seconds))
     print('Elapsed time: {} hours, {} minutes and {} seconds'.format(elapsed_hours, elapsed_minutes, elapsed_seconds))

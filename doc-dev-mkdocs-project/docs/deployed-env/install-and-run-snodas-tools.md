@@ -90,9 +90,9 @@ web page and run the setup file from there. More information can be found on the
 > **NOTE: ** The packages `xterm`, `xeyes`, or `xclock` can also be downloaded
 for testing purposes.
 2. In a separate Cygwin terminal, start the X Window server by running `startxwin -- -listen tcp`.
-3. In another Cygwin terminal, set the `DISPLAY` environment variable to use
-the Windows display by running `export DISPLAY=localhost:0.0`.
+3. In the Cygwin terminal that will be used to ssh into the GCP VM, set the `DISPLAY`
+environment variable to use the Windows display by running `export DISPLAY=localhost:0.0`.
   * Confirmation that the server is running can be tested by starting `xclock`, `xeyes`, etc.
   on the terminal.
-4. Add the GCP VM to the xhost access control list: `+IP_ADDRESS`, where `IP_ADDRESS`
+4. Add the GCP VM to the xhost access control list: `xhost +IP_ADDRESS`, where `IP_ADDRESS`
 is the VM's external IP Address.
