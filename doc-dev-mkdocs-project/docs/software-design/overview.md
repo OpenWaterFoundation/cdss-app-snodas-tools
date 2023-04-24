@@ -1,84 +1,87 @@
 # Table of Contents
 
-The following topics are discussed in this section:<br>
+The following topics are discussed in this section:
 
-* [Overview](#overview)
-* [SNODAS Tools Scripts](#snodas-tools-scripts)
-* [SNODAS Tools Configuration](#snodas-tools-configuration)
-* [Processing Workflow](#processing-workflow)
-	+ [Download SNODAS Data](#download-snodas-data)
-	+ [Convert SNODAS Data Formats](#convert-snodas-data-formats)
-	+ [Clip and Project SNODAS National Grids to Study Area](#clip-and-project-snodas-national-grids-to-study-area)
-	+ [Create the Binary Snow Cover Raster](#create-the-binary-snow-cover-raster)
-	+ [Calculate and Export Zonal Statistics](#calculate-and-export-zonal-statistics)
-	+ [Generate Time Series Products](#generate-time-series-products)
-	+ [Publish Results](#publish-results)
-* [Tool Utilities and Functions](#tool-utilities-and-functions)
-	+ [Download SNODAS Data](#1-download-snodas-data)
-	+ [Convert Data Formats](#2-convert-data-formats)
-	+ [Clip and Project SNODAS National Grids to Study Area](#3-clip-and-project-snodas-national-grids-to-study-area)
-	+ [Create the Binary Snow Cover Raster](#4-create-the-binary-snow-cover-raster)
-	+ [Calculate and Export Zonal Statistics](#5-calculate-and-export-zonal-statistics)
+*   [Overview](#overview)
+*   [SNODAS Tools Scripts](#snodas-tools-scripts)
+*   [SNODAS Tools Configuration](#snodas-tools-configuration)
+*   [Processing Workflow](#processing-workflow)
+    +   [Download SNODAS Data](#download-snodas-data)
+    +   [Convert SNODAS Data Formats](#convert-snodas-data-formats)
+    +   [Clip and Project SNODAS National Grids to Study Area](#clip-and-project-snodas-national-grids-to-study-area)
+    +   [Create the Binary Snow Cover Raster](#create-the-binary-snow-cover-raster)
+    +   [Calculate and Export Zonal Statistics](#calculate-and-export-zonal-statistics)
+    +   [Generate Time Series Products](#generate-time-series-products)
+    +   [Publish Results](#publish-results)
+*   [Tool Utilities and Functions](#tool-utilities-and-functions)
+    +   [Download SNODAS Data](#1-download-snodas-data)
+    +   [Convert Data Formats](#2-convert-data-formats)
+    +   [Clip and Project SNODAS National Grids to Study Area](#3-clip-and-project-snodas-national-grids-to-study-area)
+    +   [Create the Binary Snow Cover Raster](#4-create-the-binary-snow-cover-raster)
+    +   [Calculate and Export Zonal Statistics](#5-calculate-and-export-zonal-statistics)
 
+--------------------
 
 ## Overview
 
 The SNODAS Tools design meets the following requirements:
 
-* Download historical and current daily SNODAS grids from the [NSIDC FTP site](ftp://sidads.colorado.edu/).
-* Clip daily SNODAS Snow Water Equivalent grids to the study area, the extent of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input). 
-* Intersect basin polygons of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input) with the clipped daily SNODAS grid to calculate daily 
-basin snowpack zonal statistics. The default and optional snowpack statistics are explained below.
+*   Download historical and current daily SNODAS grids from the [NSIDC FTP site](ftp://sidads.colorado.edu/).
+*   Clip daily SNODAS Snow Water Equivalent grids to the study area,
+    the extent of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input). 
+*   Intersect basin polygons of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input)
+    with the clipped daily SNODAS grid to calculate daily 
+    basin snowpack zonal statistics. The default and optional snowpack statistics are explained below.
 
-	 |Default Statistics|Units|Description|
-	 |----------|-----|---|
-	 |Mean Snow Water Equivalent (SWE)|inches, millimeters|Mean liquid water equivalent of the snowpack across each basin, measured in depth.|
-	 |Effective Area|acre|Basin land area. Calculated from SNODAS grid: no-data cells, representing large bodies of water, are excluded.|
-	 |Percent Area of Snow Cover|unitless|Percent of effective area in each basin covered by some value of snow.|
-	 |Total SWE Volume|acre feet|The liquid water equivalent stored in the entire basin snowpack, measured in volume. Calculated by multiplying the mean SWE by the effective area.|
-	 |One Week Change in Total SWE Volume|acre feet|The change of total snow volume in the past week. Calculated by subtracting last week's (T-7days) total snow volume value from the current date's total snow volume value. The value is positive if the snow volume has increased and negative if the snow volume has decreased.|
-	 
-	 |Additional Optional Statistics|Units|Description|
-	 |----------|-----|---|
-	 |Minimum Snow Water Equivalent|inches, millimeters|The minimum SWE value of the SNODAS grid for each basin.|
-	 |Maximum Snow Water Equivalent|inches, millimeters|The maximum SWE value of the SNODAS grid for each basin.|
-	 |Standard Deviation of Snow Water Equivalent|inches, millimeters|A measure of SWE variation across each basin.|
-	
-	 
-* Create time series visualizations for each basin to display change of snowpack statistics over time. 
-* Publish the results to State of Colorado platforms to allow web access for water managers.
+    |Default Statistics|Units|Description|
+    |----------|-----|---|
+    |Mean Snow Water Equivalent (SWE)|inches, millimeters|Mean liquid water equivalent of the snowpack across each basin, measured in depth.|
+    |Effective Area|acre|Basin land area. Calculated from SNODAS grid: no-data cells, representing large bodies of water, are excluded.|
+    |Percent Area of Snow Cover|unitless|Percent of effective area in each basin covered by some value of snow.|
+    |Total SWE Volume|acre feet|The liquid water equivalent stored in the entire basin snowpack, measured in volume. Calculated by multiplying the mean SWE by the effective area.|
+    |One Week Change in Total SWE Volume|acre feet|The change of total snow volume in the past week. Calculated by subtracting last week's (T-7days) total snow volume value from the current date's total snow volume value. The value is positive if the snow volume has increased and negative if the snow volume has decreased.|
+     
+    |Additional Optional Statistics|Units|Description|
+    |----------|-----|---|
+    |Minimum Snow Water Equivalent|inches, millimeters|The minimum SWE value of the SNODAS grid for each basin.|
+    |Maximum Snow Water Equivalent|inches, millimeters|The maximum SWE value of the SNODAS grid for each basin.|
+    |Standard Deviation of Snow Water Equivalent|inches, millimeters|A measure of SWE variation across each basin.|
+     
+*   Create time series visualizations for each basin to display change of snowpack statistics over time. 
+*   Publish the results to State of Colorado platforms to allow web access for water managers.
 
 The above process is described in greater depth for SNODAS Tools users in the `SNODAS Tools User Manual`.
 The following diagram illustrates the overall data flow and technologies that are used
-(to view the image full size, use the web browser feature to open the image in a new tab - for example, in Chrome right click and ***Open image in new tab***):
+(to view the image full size, use the web browser feature to open the image in a new tab - for example,
+in Chrome right click and ***Open image in new tab***):
 
 ![SNODAS Tools System Diagram](overview-images/SNODAS-Tools-System-Diagram-v3.png)
 
-## SNODAS Tools Scripts
+## SNODAS Tools Scripts ##
 
 The SNODAS Tools are comprised of three Python scripts.
 
 ||Script File Name|Description|
 |-|---|---|
-|1|SNODASDaily_Automated.py|Calculates the current date's daily snowpack statistics for each basin of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input)|
-|2|SNODASDaily_Interactive.py|Calculates historical daily snowpack statistics for each basin of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input).|
-|3|SNODAS_utilities.py|Contains [all functions](#tool-utilities-and-functions) called within the above two scripts.|
+|1|`SNODASDaily_Automated.py`|Calculates the current date's daily snowpack statistics for each basin of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input)|
+|2|`SNODASDaily_Interactive.py`|Calculates historical daily snowpack statistics for each basin of the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input).|
+|3|`SNODAS_utilities.py`|Contains [all functions](#tool-utilities-and-functions) called within the above two scripts.|
  
-
-## SNODAS Tools Configuration
+## SNODAS Tools Configuration ##
 
 Before running the SNODAS Tools, the input file must be defined and the configuration file settings must be configured. 
 
-### Input File
+### Input File ###
 
-The SNODAS Tools require only one input file, a shapefile representing the watershed basins of interest. Throughout this documentation, the input file is referred to as 
+The SNODAS Tools require only one input file, a shapefile representing the watershed basins of interest.
+Throughout this documentation, the input file is referred to as 
 the [Watershed Basin Shapefile Input](file-structure.md#watershed-basin-shapefile-input). 
 
-Below is an example of the Watershed Basin Shapefile Input for the state of Colorado. The Watershed Basin Shapefile Input is displayed in green and the Colorado state 
+Below is an example of the Watershed Basin Shapefile Input for the state of Colorado.
+The Watershed Basin Shapefile Input is displayed in green and the Colorado state 
 boundary is represented by a black line. 
 
 ![SNODAS Tools System Diagram](overview-images/CO_basin_boundaries.png)
- 
 
 The SNODAS Tools require the input file to follow the specifications below:  
 
@@ -90,67 +93,77 @@ The SNODAS Tools require the input file to follow the specifications below:
 |File Name|No requirements.|
 |Projection|The Watershed Basin Shapefile Input is the zone dataset used to calculate the zonal snowpack statistics. These statistics are dependent on area computations. A specific projection is not required, however, it is recommended that the shapefile is projected into a projection that preserves area to achieve most accurate statistical results.| 
 
+### Configuration File ###
 
-### Configuration File 
-
-The configuration file sets all parameters and options for the SNODAS Tools. Each setting is explained in detail as comments inside the configuration file, 
+The configuration file sets all parameters and options for the SNODAS Tools.
+Each setting is explained in detail as comments inside the configuration file, 
 as well as in the [Configuration File](file-structure.md#snodas_tools92config92) section of the File Structure page. It is important to review
 the [Configuration File documentation](file-structure.md#snodas_tools92config92) before running the SNODAS Tools to ensure that all settings and options are 
 properly set. 
 
+## Processing Workflow ##
 
-## Processing Workflow
-
-The following sections describe the processing workflow that is executed by the scripts of the SNODAS Tools. Note that both the ```SNODASDaily_Automated.py``` 
-and the ```SNODASDaily_Interactive.py``` utilize the same workflow and functions. The image below is a flow 
-diagram displaying the entire SNODAS Tools processing workflow (to view the image full size, use the web browser feature to open the 
-image in a new tab - for example, in Chrome right click and ***Open image in new tab***). Throughout each following section of the processing 
-workflow documentation, the flow diagram is split into individual processing steps and explained in detail. 
+The following sections describe the processing workflow that is executed by the scripts of the SNODAS Tools.
+Note that both the `SNODASDaily_Automated.py`
+and the `SNODASDaily_Interactive.py` utilize the same workflow and functions.
+The image below is a flow diagram displaying the entire SNODAS Tools processing workflow
+(to view the image full size, use the web browser feature to open the image in a new tab - for example,
+in Chrome right click and ***Open image in new tab***).
+Throughout each following section of the processing workflow documentation,
+the flow diagram is split into individual processing steps and explained in detail. 
 
 ![processing workflow overview](overview-images/workflow_overview.png)
 
+### Download SNODAS Data ###
 
-### Download SNODAS Data
-
-Historical SNODAS data is downloaded for the full historical period to allow analysis of period statistics (how the current year
-compares with previous years). SNODAS data is also downloaded each day to create current basin water supply products.
+Historical SNODAS data is downloaded for the full historical period to allow analysis of period statistics
+(how the current year compares with previous years).
+SNODAS data is also downloaded each day to create current basin water supply products.
 
 **SNODASDaily_Automated.py**
 
-The ```SNODASDaily_Automated.py``` script downloads the current date's SNODAS data from the FTP site. Only the current date's data 
-can be downloaded and processed by this script. 
+The `SNODASDaily_Automated.py` script downloads the current date's SNODAS data from the FTP site.
+Only the current date's data can be downloaded and processed by this script. 
 
 **SNODASDaily_Interactive.py**
 
-The ```SNODASDaily_Interactive.py``` script downloads the historical dates, defined by the user, of SNODAS data. When running the 
-```SNODASDaily_Interactive.py``` script, the console will first print: 
+The `SNODASDaily_Interactive.py` script downloads the historical dates, defined by the user, of SNODAS data.
+When running the `SNODASDaily_Interactive.py` script, the console will first print: 
 
-	Are you interested in one date or a range of dates? Type ‘One’ or ‘Range’.
+```
+  Are you interested in one date or a range of dates? Type ‘One’ or ‘Range’.
+```
 
-The user inputs ```One``` if only one historical date is to be processed. The user inputs ```Range``` if multiple historical dates are to be processed. 
+Enter `One` if only one historical date is to be processed.
+Enter `Range` if multiple historical dates are to be processed. 
 
- - If the input is ```One```, the console will print:
+*   If the input is `One`, the following will be printed:
 
-		Which date are you interested in? The date must be of or between 30 September 2003 and   
-		today's date. mm/dd/yy:
-		
-	- The user inputs a date in the correct format and that date of SNODAS data will be downloaded. 
+    ```
+    Which date are you interested in? The date must be of or between 30 September 2003 and today's date. mm/dd/yy:
+    ```
 
- - If the input is ```Range```, the console will print: 
+    +   Enter a date in the correct format and SNODAS data for that date will be downloaded. 
+
+*   If the input is `Range`, the following will be printed: 
  
-		What is the STARTING (earliest) date of data that you are interested in? The date must be of  
-		or between 30 September 2003 and today's date. mm/dd/yy:
-				
-	- The user inputs the first date of a range of historical dates in the correct format. The console will print:
+    ```
+    What is the STARTING (earliest) date of data that you are interested in?
+    The date must be between 09/30/2003 and today's date. mm/dd/yy:
+    ```
 
-			What is the ENDING (most recent) date of data that you are interested in? The date must be  
-			between [date entered from previous prompt] and today's date. mm/dd/yy:
-			
-	- The user inputs the last date of a range of historical dates in the correct format. All SNODAS data from the dates within the range will be 
-	downloaded (in sequential order).
-	
- If errors are occurring after input, reference the [Troubleshooting](../deployed-env/troubleshooting.md#user-input-error-messages-in-the-console) section for guidance. 
-	
+    +   Enter the first date in a historical period in the correct format. The following will be printed:
+
+        ```
+        What is the ENDING (most recent) date of data that you are interested in?
+        The date must be between [date entered from previous prompt] and today's date. mm/dd/yy:
+        ```
+
+    +   Enter the last date of a historical period in the correct format.
+        All SNODAS data from the dates within the range will be downloaded (in sequential order).
+
+If errors occur after input, see the [Troubleshooting](../deployed-env/troubleshooting.md#user-input-error-messages-in-the-console) documentation.
+
 ----------------------------------------------------------------------------------------------------------------------
 The SNODAS Tools are set by default to access the masked SNODAS data rather than the unmasked SNODAS data. The SNODAS tools were originally designed to analyze 
 the historical snowpack statistics of Colorado. The masked data entirely covers the Colorado extent and has the largest repository of historical 

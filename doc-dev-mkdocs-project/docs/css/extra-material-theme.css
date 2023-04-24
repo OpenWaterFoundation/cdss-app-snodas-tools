@@ -1,4 +1,14 @@
-/* Custom styles to override MkDocs defaults and enhance theme */
+/*
+ * Custom styles to override MkDocs defaults and enhance theme.
+ *
+ */
+
+/**
+ * Web accessibility requires underline for links so that colorblind people can see the link.
+ */
+a:link {
+  text-decoration: underline;
+}
 
 /* Unordered list <ul> symbols:
  * - level 2 is hollow circle
@@ -6,9 +16,25 @@
  * - ul default is filled disc (bullet)
  */
 article ul ul {
-	list-style-type:  circle !important;
+  list-style-type:  circle !important;
 }
 
 article ul ul ul {
-	list-style-type:  square !important;
+  list-style-type:  square !important;
+}
+
+/*
+ * Older Material theme used dark grey background with bold white text for table heading.
+ * Newer Material uses white background with bold black text, but the heading does not stand out well.
+ * Instead, set the background to a light gray, which works OK.
+*/
+thead th {
+  background-color: #cccccc;
+}
+
+/*
+ * Align text to be centered.
+ */
+.alignCenter {
+  test-align: center;
 }
