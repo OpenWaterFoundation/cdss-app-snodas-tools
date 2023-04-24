@@ -44,8 +44,19 @@ C:\Users\user\                         Developer's home folder for Windows.
                                        - QGIS 2.x
                                        - Python 2
                                        - Developed on Windows and deployed to GCP Ubuntu 16.x
+          pycharm-project-qgis3/       Archive of PyCharm project files based on QGIS 3.x environment,
+                                       which was the original Python 3 version of SNODAS tools.
+                                       - QGIS 3.x
+                                       - Python 3
+                                       - Developed on Linux and deployed to GCP Ubuntu 20.x
           README.md                    This file.
-          test-CDSS/                   Test workflow to process SNODAS data for CDSS.
+          src/                         Latest SNODAS Tools code, used with 'venv' firtual environment.
+          test-CDSS/                   Test workflow to process SNODAS data for CDSS
+                                       (with 'pycharm-project-qgis3/').
+          test-custom/                 Test workflow to process SNODAS data for a custom datase
+                                       (with 'src/' and 'venv/').
+          venv/                        Virtual environment folders used during development
+                                       (files and folders are ignored from the repository).
         cdss-webapp-snodas-tools/      Legacy web application based on HTML/JavaScript.
         owf-app-snodas-ng/             OWF-developed SNODAS UI using Angular.
 ``` 
@@ -117,9 +128,9 @@ If prompted, specify the GitHub account credentials.
 Developer documentation is created with MkDocs, which uses Markdown to create a static HTML website.
 First install necessary Python 3.5 and MkDocs software, if not already installed:
 
-* [install Python](../dev-env/python/).
-* [install `pip`](../dev-env/pip/).
-* [install MkDocs](../dev-env/mkdocs/).
+*   [install Python](../dev-env/python/).
+*   [install `pip`](../dev-env/pip/).
+*   [install MkDocs](../dev-env/mkdocs/).
 
 MkDocs can then be used to run a local web server to view the full documentation.
 Run the following in a Windows Command Shell:

@@ -1,4 +1,5 @@
-The processedData folder will hold all output products produced 
-from SNODASTools. Refer to the SNODASTools User and Developer 
-documentation for the type of output products that will be contained 
-within the sub-folders.
+# processedData #
+
+The `processedData` folder holds all output products produced from SNODAS Tools.
+Refer to the SNODAS Tools User and Developer documentation for a description of the
+output products that are included in the sub-folders.

@@ -1,0 +1,7 @@
+# Properties to control TSTool processing
+
+# Current date - date for which the SNODAS graph products should be generated
+# - controls the water year start
+# - controls the reset year for ensemble overlapping, typically the current water year
+#CurrentDayDate=DateTime("2016-12-31")
+#CurrentDayDate=DateTime("2017-03-20")

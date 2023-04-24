@@ -1,0 +1,4 @@
+# Ignore local Python virtual environments used by PyCharm.
+/*
+!.gitignore
+!README.md

@@ -7,56 +7,56 @@ nav:
 - Home: index.md
 - Release Notes: release-notes/release-notes.md
 - New Developer Setup:
-    - Overview: dev-new/overview.md
+  - Overview: dev-new/overview.md
 - Development Environment:
-    - Overview: dev-env/overview.md
-    - Machine:  dev-env/machine.md
-    - QGIS and Bundled Python: dev-env/qgis.md
-    - TSTool: dev-env/tstool.md
-    - Git: dev-env/git.md
-    - Python (for MkDocs): dev-env/python.md
-    - pip: dev-env/pip.md
-    - MkDocs: dev-env/mkdocs.md
-    - PyCharm: dev-env/pycharm.md
-    - Task Scheduler: dev-env/task-scheduler.md
+  - Overview: dev-env/overview.md
+  - Machine:  dev-env/machine.md
+  - QGIS and Bundled Python: dev-env/qgis.md
+  - TSTool: dev-env/tstool.md
+  - Git: dev-env/git.md
+  - Python (for MkDocs): dev-env/python.md
+  - pip: dev-env/pip.md
+  - MkDocs: dev-env/mkdocs.md
+  - PyCharm: dev-env/pycharm.md
+  - Task Scheduler: dev-env/task-scheduler.md
 - Initial Project Setup:
-    - Overview: project-init/overview.md
-    - Create Development Folder: project-init/dev-folder.md
+  - Overview: project-init/overview.md
+  - Create Development Folder: project-init/dev-folder.md
 #    - Create Script to run PyCharm: project-init/pycharm-script.md
-    - GitHub Git Repository: project-init/github.md
-    - Developer Documentation (MkDocs): project-init/dev-doc.md
-    - User Documentation (MkDocs): project-init/user-doc.md
-    - PyCharm Project: project-init/pycharm-project.md
+  - GitHub Git Repository: project-init/github.md
+  - Developer Documentation (MkDocs): project-init/dev-doc.md
+  - User Documentation (MkDocs): project-init/user-doc.md
+  - PyCharm Project: project-init/pycharm-project.md
 - Deployed Environment:
-    - Overview: deployed-env/overview.md
-    - Machine: deployed-env/machine.md
-    - QGIS: deployed-env/qgis.md
-    - Python: deployed-env/python.md
-    - TSTool: deployed-env/tstool.md
-    - Install Additional Software: deployed-env/install-additional-software.md
-    - Running SNODAS Tools: deployed-env/install-and-run-snodas-tools.md
-    - Troubleshooting: deployed-env/troubleshooting.md
+  - Overview: deployed-env/overview.md
+  - Machine: deployed-env/machine.md
+  - QGIS: deployed-env/qgis.md
+  - Python: deployed-env/python.md
+  - TSTool: deployed-env/tstool.md
+  - Install Additional Software: deployed-env/install-additional-software.md
+  - Running SNODAS Tools: deployed-env/install-and-run-snodas-tools.md
+  - Troubleshooting: deployed-env/troubleshooting.md
 - Software Design:
-    - Overview: software-design/overview.md
-    - File Structure: software-design/file-structure.md
-    - Configuration File: software-design/configuration.md
-    - Key Processing Steps: software-design/key-processing-steps.md
+  - Overview: software-design/overview.md
+  - File Structure: software-design/file-structure.md
+  - Configuration File: software-design/configuration.md
+  - Key Processing Steps: software-design/key-processing-steps.md
 - Development Tasks:
-    - Overview: dev-tasks/overview.md
-    - Previous Tool Version: dev-tasks/previous-tool.md
-    - Software Design: dev-tasks/software-design.md
-    - Git Workflow: dev-tasks/git.md
-    - Documenting: dev-tasks/doc.md
-    - Building and Running: dev-tasks/build-run.md
-    - Google Cloud Platform: dev-tasks/gcp.md
-    - Deploying: dev-tasks/deploy.md
-    - Future Enhancements: dev-tasks/future-enhancements.md
+  - Overview: dev-tasks/overview.md
+  - Previous Tool Version: dev-tasks/previous-tool.md
+  - Software Design: dev-tasks/software-design.md
+  - Git Workflow: dev-tasks/git.md
+  - Documenting: dev-tasks/doc.md
+  - Building and Running: dev-tasks/build-run.md
+  - Google Cloud Platform: dev-tasks/gcp.md
+  - Deploying: dev-tasks/deploy.md
+  - Future Enhancements: dev-tasks/future-enhancements.md
 ### ---------- Configuration Properties ---------- ###
 # Use Material theme
 # - installation notes:  https://github.com/squidfunk/mkdocs-material
 theme:
- name: material
- favicon: snodas-tools-favicon.png
+  name: material
+  favicon: 'images/NewCOLogo32x32.gif'
 # Do not include the repo because it shows an irritating edit icon on every page
 #repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (Developer Manual) 
@@ -65,4 +65,4 @@ use_directory_urls: false
 #copyright: TBD
 # Use extra CSS to customize styles, based on theme.
 extra_css:
-    - css/extra-material-theme.css
+  - css/extra-material-theme.css
