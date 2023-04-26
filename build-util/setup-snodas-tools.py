@@ -321,11 +321,11 @@ def expand_config_property(config_property_dict: dict, property_value: str ) -> 
         for property_name in config_property_dict:
             dict_property_value = config_property_dict[property_name]
             if not dict_property_value:
-                continue;
+                continue
             else:
                 # Make sure that the value is a string.
-                dict_property_value = str(dict_property_value);
-            expanded_property_value = expanded_property_value.replace("${" + property_name + "}", dict_property_value);
+                dict_property_value = str(dict_property_value)
+            expanded_property_value = expanded_property_value.replace("${" + property_name + "}", dict_property_value)
     return expanded_property_value
 
 
@@ -362,7 +362,7 @@ def get_config_property(config_file_path: Path, section_req: str, property_name_
             pos = line_trimmed.find("=")
             if pos < 0:
                 # No equals. Ignore and read the next line.
-                continue;
+                continue
             property_name = line_trimmed[0:pos].strip()
             property_value = line_trimmed[pos + 1:].strip()
             logging.debug("  {} = {}".format(property_name, property_value))
@@ -370,7 +370,7 @@ def get_config_property(config_file_path: Path, section_req: str, property_name_
             if property_value.startswith("'") or property_value.startswith('"'):
                 property_value = property_value[1:]
             if property_value.endswith("'") or property_value.endswith('"'):
-                property_value = property_value[0:len(propery_value) - 1]
+                property_value = property_value[0:len(property_value) - 1]
 
             # Expand the property value:
             # - first expand only using the sections properties, which don't include the section prefix
