@@ -11,6 +11,12 @@
 # Log files
 *.log
 
+# Ignore user-specific files in PyCharm environment:
+# - based on experience, it is easy enough to set up a PyCharm dev environment
+#   so don't hand off any PyCharm files in the repository
+.idea/
+__pycache__/
+
 # All TSTool made PNG graph files.
 test-CDSS/processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/*.png
 

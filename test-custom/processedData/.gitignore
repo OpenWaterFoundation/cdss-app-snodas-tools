@@ -1,0 +1,3 @@
+# Ignore all processedData files in the repo since dynamically created.
+/*
+!.gitignore
