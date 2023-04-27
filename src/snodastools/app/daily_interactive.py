@@ -145,7 +145,13 @@ def arg_parse() -> None:
 
     # Assigns the command file to args.commands:
     # --root snodas-tools-root-folder
-    parser.add_argument("--snodas", help="Specify SNODAS Tools implementation root folder.")
+    parser.add_argument("--snodas",
+                        help="Specify SNODAS Tools implementation root folder, under which is the 'config/' folder.")
+
+    # Assigns the startign step to args.startstep:
+    # --startstep step
+    parser.add_argument("--startstep",
+                        help="Step to start processing (download, setup, clip, snowcover, stats, tsproducts).")
 
     # Parse the command line.
     args, unknown_args = parser.parse_known_args()

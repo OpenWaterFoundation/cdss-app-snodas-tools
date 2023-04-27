@@ -1,6 +1,6 @@
 """
 This module contains the functions utilized by the SNODAS tools (daily_automated.py and daily_interactive.py).
-Both scripts process zonal statistics of SNODAS raster datasets for the input vector shapefile (basin boundaries).
+Both scripts process zonal statistics for SNODAS raster datasets for the input vector shapefile (basin boundaries).
 The SNODAS Tools were originally developed to calculate zonal statistics for Colorado hydrologic basin boundaries.
 Both automated and interactive scripts call the same functions defined in this module.
 
@@ -185,7 +185,12 @@ def download_snodas(download_dir: Path, single_date: date) -> list:
     #   folder_path = /DATASETS/NOAA/G02158/masked/
     #   null_value = -9999
 
+    # TODO smalers 2023-04-25 need to implement retries to handle TimeoutError.
+    retries = 10
+    retry_wait_seconds = 5
+
     ftp.cwd(SNODAS_FTP_FOLDER)
+
 
     # For example: /DATASETS/NOAA/G02158/masked/
     os.chdir(download_dir)
@@ -1457,19 +1462,20 @@ def z_stat_and_export(tif_file_path: Path, boundaries_file_path: Path,
                       clip_folder: Path, snow_cover_folder: Path,
                       today_date: date, timestamp: str, output_crs: str) -> None:
     """
-    Calculate zonal statistics of basin boundary shapefile and the current SNODAS file.
+    Calculate zonal statistics for basin boundary shapefile and the current SNODAS file.
     The zonal stats export to both the byDate and the byBasin csv files.
     A daily shapefile and geoJSON is also exported.
     tif_file_path: daily raster .tif SNODAS file that is to be processed in the zonal statistics tool
         (should have previously been clipped and projected)
     boundaries_file_path: the basin boundary shapefile (used as the zone dataset for the zonal statistics calculations)
-    csv_by_date_folder: full pathname to the folder containing results by date (.csv file). Shapefile and GeoJSON saved here.
+    csv_by_date_folder: full pathname to the folder containing results by date (.csv file).
+        Shapefile and GeoJSON saved here.
     csv_by_basin_folder: full pathname to the folder containing results by basin (.csv file)
     clip_folder: full pathname to the folder containing all daily clipped, projected .tif SNODAS rasters
     snow_cover_folder: full pathname to the folder containing all binary snow coverage rasters
     today_date: date of processed SNODAS data
     timestamp: the download timestamp in datetime format (returned in download_snodas function)
-    output_crs: the desired projection of the output shapefile and geoJSON (configured in configuration file),
+    output_crs: the desired projection of the output shapefile and GeoJSON (configured in configuration file),
         for example "EPSG:4326"
     """
 
@@ -1861,18 +1867,27 @@ def z_stat_and_export(tif_file_path: Path, boundaries_file_path: Path,
             vector_layer.updateFields()
             vector_layer.commitChanges()
 
-            # Export geojson and shapefile. (layer, full output pathname, file encoding, destination reference system,
-            # output file type, layer options (GeoJSON): number of decimal places used in GeoJSON geometry).
-            # crs_transform = QgsCoordinateTransformContext()
-            # options = QgsVectorFileWriter.SaveVectorOptions()
-            # QgsVectorFileWriter.writeAsVectorFormatV2(layer=vector_layer, fileName=geojson_name_full,
-            #                                           transformContext=crs_transform, options=options)
+            # Write the GeoJSON file.
+            # - IGNORE `Unexpected Argument` error for layerOptions. This value is appropriate and functions properly.
+            # - irritatingly, must request the GeoJSON 2 format using RFC7946=YES
+            layer_options = [
+                'COORDINATE_PRECISION={}'.format(GEOJSON_PRECISION),
+                'RFC7946=YES',
+                'WRITE_NAME=NO'
+            ]
+            QgsVectorFileWriter.writeAsVectorFormat(layer=vector_layer,
+                                                    fileName=str(geojson_name_full),
+                                                    fileEncoding="utf-8",
+                                                    destCRS=QgsCoordinateReferenceSystem(output_crs),
+                                                    driverName="GeoJSON",
+                                                    layerOptions=layer_options)
 
-            QgsVectorFileWriter.writeAsVectorFormat(vector_layer, str(geojson_name_full), "utf-8",
-                                                    QgsCoordinateReferenceSystem(output_crs), "GeoJSON",
-                                                    layerOptions=['COORDINATE_PRECISION=%s' % GEOJSON_PRECISION])
-            QgsVectorFileWriter.writeAsVectorFormat(vector_layer, str(shapefile_name_full), "utf-8",
-                                                    QgsCoordinateReferenceSystem(output_crs), "ESRI Shapefile")
+            # Write the shapefile.
+            QgsVectorFileWriter.writeAsVectorFormat(layer=vector_layer,
+                                                    fileName=str(shapefile_name_full),
+                                                    fileEncoding="utf-8",
+                                                    destCRS=QgsCoordinateReferenceSystem(output_crs),
+                                                    driverName="ESRI Shapefile")
 
             # Change fieldnames of output GeoJSON file. Envelop GeoJSON file as a QGS object vector layer.
             # new_name = geojson_name.replace(".geojson", "_intermediate.geojson")
@@ -1919,11 +1934,20 @@ def z_stat_and_export(tif_file_path: Path, boundaries_file_path: Path,
                 else:
                     logger.warning('Layer commit failed.')
 
-            # Export geojson. (layer, full output pathname, file encoding, destination reference system,
-            # output file type, layer options (GeoJSON): number of decimal places used in GeoJSON geometry).
-            QgsVectorFileWriter.writeAsVectorFormat(vector_file_geojson, str(geojson_name_full), "utf-8",
-                                                    QgsCoordinateReferenceSystem(output_crs), "GeoJSON",
-                                                    layerOptions=['COORDINATE_PRECISION={}'.format(GEOJSON_PRECISION)])
+            # Write the GeoJSON file.
+            # - IGNORE `Unexpected Argument` error for layerOptions. This value is appropriate and functions properly.
+            # - irritatingly, must request the GeoJSON 2 format
+            layer_options = [
+                'COORDINATE_PRECISION={}'.format(GEOJSON_PRECISION),
+                'RFC7946=YES',
+                'WRITE_NAME=NO'
+            ]
+            QgsVectorFileWriter.writeAsVectorFormat(layer=vector_file_geojson,
+                                                    fileName=str(geojson_name_full),
+                                                    fileEncoding="utf-8",
+                                                    destCRS=QgsCoordinateReferenceSystem(output_crs),
+                                                    driverName="GeoJSON",
+                                                    layerOptions=layer_options)
 
             # Rename attribute fields of GeoJSON.
             if os_util.is_linux_os():
@@ -2014,7 +2038,7 @@ def z_stat_and_export(tif_file_path: Path, boundaries_file_path: Path,
             os.chdir(curr_dir)
 
             logger.info('  Saved zonal statistics to {} for: {}'.format(csv_by_basin_folder, tif_file_path))
-            print("Zonal statistics of {} are complete. \n".format(date_name), file=sys.stderr)
+            print("Zonal statistics for {} are complete. \n".format(date_name), file=sys.stderr)
 
         else:
             logger.info('  Zonal statistics were not processed because file is not a .tif:')

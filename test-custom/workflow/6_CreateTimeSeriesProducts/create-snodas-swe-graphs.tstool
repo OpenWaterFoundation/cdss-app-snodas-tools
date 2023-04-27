@@ -1,4 +1,5 @@
-StartLog(LogFile="create-snodas-swe-graphs.TSTool.log")
+CreateFolder(Folder="results",IfFolderExists="Ignore")
+StartLog(LogFile="results/create-snodas-swe-graphs.tstool.log")
 # This command file processes each basin's full historical record using (for example):
 #   processedData/5_CalculateStatistics/SnowpackStatisticsByBasin/SnowpackStatisticsByBasin_LOCAL_ID.csv
 # Each of the "ByBasin" files contains the full period of daily statistics for the basin,
@@ -17,12 +18,14 @@ StartLog(LogFile="create-snodas-swe-graphs.TSTool.log")
 # - everything else uses the configuration file properties
 #
 ReadPropertiesFromFile(InputFile="..\..\config\SNODAS-Tools-Config.ini",FileFormat="INI",IncludeProperties="Folders.*")
+SetProperty(PropertyName="SnowpackGraphsByBasinTspFolder",PropertyType="String",PropertyValue="results/SnowpackGraphsByBasin-tsp")
+CreateFolder(Folder="${SnowpackGraphsByBasinTspFolder}",IfFolderExists="Ignore")
 #
 # Step 1b - read the list of basins from the Excel file into a TSTool table:
 # - this provides core data for later steps
 # - also create a node network that allows select of the upstream basins
 #
-ReadTableFromExcel(TableID="WaterSupplyBasins",InputFile="${static_data_folder}/WatershedConnectivity/Watershed_Connectivity.xlsx",Worksheet="Connectivity",ExcelColumnNames="FirstRowInRange",ColumnExcludeFilters="LOCAL_ID:",ExcelDoubleColumns="AREA_SQKM",ExcelTextColumns="LOCAL_ID,LOCAL_NAME,DOWNSTREAM_LOCAL_ID,TOTAL_ID,TOTAL_NAME,POLY_SOURC,GAGE_ID,UPSTREAM BASIN 1,UPSTREAM BASIN 2,UPSTREAM BASIN 3,UPSTREAM BASIN 4,UPSTREAM BASIN 5",RowCountProperty="WaterSupplyBasinCount")
+ReadTableFromExcel(TableID="WaterSupplyBasins",InputFile="${Folders.static_data_folder}/WatershedConnectivity/WatershedConnectivity-v1.xlsx",Worksheet="Connectivity",ExcelColumnNames="FirstRowInRange",ColumnExcludeFilters="LOCAL_ID:",ExcelDoubleColumns="AREA_SQKM",ExcelTextColumns="LOCAL_ID,LOCAL_NAME,DOWNSTREAM_LOCAL_ID,TOTAL_ID,TOTAL_NAME,POLY_SOURC,GAGE_ID,UPSTREAM BASIN 1,UPSTREAM BASIN 2,UPSTREAM BASIN 3,UPSTREAM BASIN 4,UPSTREAM BASIN 5",RowCountProperty="WaterSupplyBasinCount")
 CreateNetworkFromTable(NetworkID="WaterSupplyBasins",NetworkName="Colorado Water Supply Basins",DefaultDownstreamNodeID="OutOfState",TableID="WaterSupplyBasins",NodeIDColumn="LOCAL_ID",NodeNameColumn="LOCAL_NAME",DownstreamNodeIDColumn="DOWNSTREAM_LOCAL_ID")
 #===============================================================================
 # Step 2 - general setup:
@@ -87,7 +90,7 @@ For(Name="For_Basin_LOCAL_ID",IteratorProperty="Basin_LOCAL_ID",TableID="WaterSu
     # First read the statistics table for the basin:
     # - Each day in historical period is represented, through last day processed
     # - Use LOCAL_ID as the unique identifier for basins
-    ReadTableFromDelimitedFile(TableID="${BasinID}_Statistics",InputFile="${processed_data_folder}/5_CalculateStatistics/SnowpackStatisticsByBasin/SnowpackStatisticsByBasin_${BasinID}.csv",HeaderLines="1",DateTimeColumns="Date_YYYYMMDD,Updated_Timestamp",DoubleColumns="SNODAS_SWE_Mean_in,SNODAS_SWE_Mean_mm,SNODAS_EffectiveArea_sqmi,SNODAS_SWE_Volume_acft,SNODAS_SWE_Volume_1WeekChange_acft,SNODAS_SnowCover_percent",TextColumns="LOCAL_ID")
+    ReadTableFromDelimitedFile(TableID="${BasinID}_Statistics",InputFile="${Folders.processed_data_folder}/5_CalculateStatistics/SnowpackStatisticsByBasin/SnowpackStatisticsByBasin_${BasinID}.csv",HeaderLines="1",DateTimeColumns="Date_YYYYMMDD,Updated_Timestamp",DoubleColumns="SNODAS_SWE_Mean_in,SNODAS_SWE_Mean_mm,SNODAS_EffectiveArea_sqmi,SNODAS_SWE_Volume_acft,SNODAS_SWE_Volume_1WeekChange_acft,SNODAS_SnowCover_percent",TextColumns="LOCAL_ID")
     #
     # Convert the table to time series - process the SNODAS SWE first.
     TableToTimeSeries(TableID="${BasinID}_Statistics",DateTimeColumn="Date_YYYYMMDD",DateTimeFormat="%Y%m%d",LocationID="${BasinID}",ValueColumn="SNODAS_SWE_mean_in",DataSource="SNODAS",DataType="SWE",Interval="Day",Units="in",Alias="%L-SNODAS-SWE-Day")
@@ -99,8 +102,8 @@ For(Name="For_Basin_LOCAL_ID",IteratorProperty="Basin_LOCAL_ID",TableID="WaterSu
     SetProperty(PropertyName="FirstWaterYear",PropertyType="Integer",PropertyValue="${FirstWaterYearString}")
     SetPropertyFromEnsemble(EnsembleID="${BasinID}-SNODAS-SWE-Ensemble",PropertyName="LastWaterYearString",PropertyValue="${tsensemble:LastSequenceID}")
     SetProperty(PropertyName="LastWaterYear",PropertyType="Integer",PropertyValue="${LastWaterYearString}")
-    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-swe-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE.tsp",ListInResults="False")
-    ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE.tsp",RunMode="GUIAndBatch",View="False",OutputFile="${processed_data_folder}/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE.png")
+    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-swe-graph-template.tsp",OutputFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SWE.tsp",ListInResults="False")
+    ProcessTSProduct(TSProductFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SWE.tsp",RunMode="GUIAndBatch",View="False",OutputFile="${Folders.processed_data_folder}/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE.png")
     # Free the time series so each basin and graph type is processed independently without complex data management.
     Free(IfNotFound="Ignore")
     #---- End SWE (depth).
@@ -132,8 +135,8 @@ For(Name="For_Basin_LOCAL_ID",IteratorProperty="Basin_LOCAL_ID",TableID="WaterSu
     EndIf(Name="OnOrAfterMarch1")
     #
     # Now process the graph product.
-    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-swe-volume-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume.tsp",ListInResults="False")
-    ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume.tsp",RunMode="GUIAndBatch",View="False",OutputFile="${processed_data_folder}/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume.png")
+    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-swe-volume-graph-template.tsp",OutputFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SWE-Volume.tsp",ListInResults="False")
+    ProcessTSProduct(TSProductFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SWE-Volume.tsp",RunMode="GUIAndBatch",View="False",OutputFile="${Folders.processed_data_folder}/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume.png")
     # Use the following for testing - time series will be in memory.
     # Exit()
     #---- End SWE Volume.
@@ -153,8 +156,8 @@ For(Name="For_Basin_LOCAL_ID",IteratorProperty="Basin_LOCAL_ID",TableID="WaterSu
     NewTable(TableID="WaterYearCumulativeMaxTable",Columns="WaterYear,String;Max,double")
     CalculateTimeSeriesStatistic(TSList="EnsembleID",EnsembleID="${BasinID}-SNODAS-SWE-Volume-Cumulative-Ensemble",Statistic="Max",TableID="WaterYearCumulativeMaxTable",TableTSIDColumn="WaterYear",TableTSIDFormat="%z",TableStatisticColumn="Max",StatisticValueProperty="SNODAS_SWE_Volume_Cumulative_Max_${BasinID}")
     CopyTable(TableID="WaterYearCumulativeMaxTable",NewTableID="CumulativeMaxTable",IncludeColumns="Max")
-    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-swe-volume-gain-cumulative-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.tsp",ListInResults="False")
-    ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.png")
+    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-swe-volume-gain-cumulative-graph-template.tsp",OutputFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.tsp",ListInResults="False")
+    ProcessTSProduct(TSProductFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume-Gain-Cumulative.png")
     FreeTable(TableID="WaterYearCumulativeMaxTable")
     FreeTable(TableID="CumulativeMaxTable")
     # Free the time series so each basin and graph type is processed independently without complex data management.
@@ -166,8 +169,8 @@ For(Name="For_Basin_LOCAL_ID",IteratorProperty="Basin_LOCAL_ID",TableID="WaterSu
     TableToTimeSeries(TableID="${BasinID}_Statistics",DateTimeColumn="Date_YYYYMMDD",DateTimeFormat="%Y%m%d",LocationID="${BasinID}",ValueColumn="SNODAS_SWE_Volume_1WeekChange_acft",DataSource="SNODAS",DataType="SWE-Volume-1WeekChange",Interval="Day",Units="acft",Alias="%L-SNODAS-SWE-Volume-1WeekChange-Day")
     # Convert the time series to annual traces in an ensemble with Oct 1 being the start of the water year.
     CreateEnsembleFromOneTimeSeries(TSID="${BasinID}-SNODAS-SWE-Volume-1WeekChange-Day",EnsembleID="${BasinID}-SNODAS-SWE-Volume-1WeekChange-Ensemble",EnsembleName="${BasinID}-SNODAS-SWE-Volume-1WeekChange-Ensemble",Alias="${BasinID}-SNODAS-SWE-Volume-1WeekChange-Day-%z",TraceLength="1Year",ReferenceDate="${CurrentWaterYearStartDate}",OutputYearType="Water",ShiftDataHow="ShiftToReference")
-    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-swe-volume-1weekchange-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-1WeekChange.tsp",ListInResults="False")
-    ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SWE-Volume-1WeekChange.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume-1WeekChange.png")
+    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-swe-volume-1weekchange-graph-template.tsp",OutputFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SWE-Volume-1WeekChange.tsp",ListInResults="False")
+    ProcessTSProduct(TSProductFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SWE-Volume-1WeekChange.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SWE-Volume-1WeekChange.png")
     # Free the time series so each basin and graph type is processed independently without complex data management.
     Free(IfNotFound="Ignore")
     #---- End SWE Volume 1-week change.
@@ -176,8 +179,8 @@ For(Name="For_Basin_LOCAL_ID",IteratorProperty="Basin_LOCAL_ID",TableID="WaterSu
     TableToTimeSeries(TableID="${BasinID}_Statistics",DateTimeColumn="Date_YYYYMMDD",DateTimeFormat="%Y%m%d",LocationID="${BasinID}",ValueColumn="SNODAS_SnowCover_percent",DataSource="SNODAS",DataType="SnowCover",Interval="Day",Units="percent",Alias="%L-SNODAS-SnowCover-Day")
     # Convert the time series to annual traces in an ensemble with Oct 1 being the start of the water year.
     CreateEnsembleFromOneTimeSeries(TSID="${BasinID}-SNODAS-SnowCover-Day",EnsembleID="${BasinID}-SNODAS-SnowCover-Ensemble",EnsembleName="${BasinID}-SNODAS-SnowCover-Ensemble",Alias="${BasinID}-SNODAS-SnowCover-Day-%z",TraceLength="1Year",ReferenceDate="${CurrentWaterYearStartDate}",OutputYearType="Water",ShiftDataHow="ShiftToReference")
-    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-snowcover-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SnowCover.tsp",ListInResults="False")
-    ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-SNODAS-SnowCover.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SnowCover.png")
+    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-snowcover-graph-template.tsp",OutputFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SnowCover.tsp",ListInResults="False")
+    ProcessTSProduct(TSProductFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-SNODAS-SnowCover.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-SNODAS-SnowCover.png")
     # Free the time series so each basin and graph type is processed independently without complex data management.
     Free(IfNotFound="Ignore")
     #---- End snow cover percentage.
@@ -232,8 +235,8 @@ For(Name="For_Basin_LOCAL_ID_UpstreamTotal",IteratorProperty="Basin_LOCAL_ID",Ta
     WriteTableToDelimitedFile(TableID="${BasinID}_SWE_Volume_UpstreamTotal",OutputFile="../../processedData/5_CalculateStatistics/SnowpackStatisticsByBasin/SnowpackStatisticsByBasin_UpstreamTotal_${BasinID}.csv",WriteHeaderComments="False")
     FreeTable(TableID="${BasinID}_SWE_Volume_UpstreamTotal")
     # Process the graph product.
-    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-upstreamtotal-swe-volume-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume.tsp",ListInResults="False")
-    ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume.png")
+    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-upstreamtotal-swe-volume-graph-template.tsp",OutputFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume.tsp",ListInResults="False")
+    ProcessTSProduct(TSProductFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume.png")
     # OK to free the ensemble time series but can leave as is too for troubleshooting.
     # Free(TSList=EnsembleID,EnsembleID="${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Ensemble",IfNotFound=Warn,FreeEnsembleIfEmpty=True)
 EndFor(Name="For_Basin_LOCAL_ID_UpstreamTotal")
@@ -269,8 +272,8 @@ For(Name="For_Basin_LOCAL_ID_UpstreamTotal_Cumulative",IteratorProperty="Basin_L
     NewTable(TableID="WaterYearCumulativeMaxTable",Columns="WaterYear,String;Max,double")
     CalculateTimeSeriesStatistic(TSList="EnsembleID",EnsembleID="${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Cumulative-Ensemble",Statistic="Max",TableID="WaterYearCumulativeMaxTable",TableTSIDColumn="WaterYear",TableTSIDFormat="%z",TableStatisticColumn="Max",StatisticValueProperty="SNODAS_SWE_Volume_Cumulative_Max_${BasinID}")
     CopyTable(TableID="WaterYearCumulativeMaxTable",NewTableID="CumulativeMaxTable",IncludeColumns="Max")
-    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-upstreamtotal-swe-volume-gain-cumulative-graph-template.tsp",OutputFile="SnowpackGraphsByBasin-tsp/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Gain-Cumulative.tsp",ListInResults="False")
-    ProcessTSProduct(TSProductFile="SnowpackGraphsByBasin-tsp/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Gain-Cumulative.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Gain-Cumulative.png")
+    ExpandTemplateFile(InputFile="graph-templates/snodas-localid-upstreamtotal-swe-volume-gain-cumulative-graph-template.tsp",OutputFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Gain-Cumulative.tsp",ListInResults="False")
+    ProcessTSProduct(TSProductFile="${SnowpackGraphsByBasinTspFolder}/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Gain-Cumulative.tsp",RunMode="GUIAndBatch",View="False",OutputFile="../../processedData/6_CreateTimeSeriesProducts/SnowpackGraphsByBasin/${BasinID}-UpstreamTotal-SNODAS-SWE-Volume-Gain-Cumulative.png")
     # Free temporary tables.
     FreeTable(TableID="WaterYearCumulativeMaxTable")
     FreeTable(TableID="CumulativeMaxTable")
