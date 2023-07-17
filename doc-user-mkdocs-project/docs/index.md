@@ -6,6 +6,11 @@ The SNODAS Tools generate water supply data products from SNODAS data
 to provide data products to State agency and other agency water managers.
 The tools are intended to be run daily by technical staff at the Colorado Water Conservation Board, or other State entity.
 
+This documentation has been updated for SNODAS Tools 2.1.0 to add the
+[Appendix - Use Case for Custom Configuration](appendix-use-case-custom-config/use-case-custom-config.md) documentation
+but otherwise the documentation is mostly the initial version.
+See the [Release Notes](appendix-release-notes/release-notes.md).
+
 ## Project Background
 
 The SNODAS Tools software is developed by the [Open Water Foundation](http://openwaterfoundation.org)

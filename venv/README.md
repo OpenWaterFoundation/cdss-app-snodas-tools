@@ -1,4 +1,4 @@
-# venv/ #
+# venv #
 
 This folder contains Python virtual environments used by PyCharm to develop the SNODAS Tools software.
 The virtual environments are initialized from a QGIS Python version and are named similar to the following,

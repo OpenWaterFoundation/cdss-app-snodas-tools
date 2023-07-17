@@ -1,4 +1,4 @@
-# test-custom
+# test-custom #
 
 *   [Introduction](#introduction)
 *   [Development Environment](#development-environment])
@@ -65,16 +65,4 @@ Once development and testing are complete, the software will be packaged for the
 This custom configuration was initialized in the deployed (also called production) environment as follows.
 In this case, the custom configuration is intended to be run within a deployed environment, not the development environment.
 
-### Deployed Environment Software ###
-
-The following software must be installed in the production environment.
-
-1.  QGIS:
-    *   See the [Open Water Foundation / Learn QGIS](https://learn.openwaterfoundation.org/owf-learn-qgis/install-qgis/install-qgis/) documentation.
-    *   For this example, install QGIS 3.22.16 stand-alone on Windows 11.
-        Consequently, QGIS will be installed in `C:\Program Files\QGIS 3.22.16`.
-2.  TSTool:
-    *   Install the latest TSTool from the [OpenCDSS TSTool downloads page](https://opencdss.state.co.us/tstool/).
-        Consequently, TSTool will be installed in `C:\CDSS\TSTool-14.8.0` or similar.
-
-### Initialize the Deployed Environment ###
+See [CDSS SNODAS Tools / Appendix - Use Case for Custom Configuration](https://software.openwaterfoundation.org/cdss-snodas-tools/latest/doc-user/appendix-use-case-custom-config/use-case-custom-config.html).
