@@ -310,10 +310,12 @@ if __name__ == '__main__':
     elif not config_file_path.exists():
         print("SNODAS Tools configuration file does not exist:", file=sys.stderr)
         print("  {}".format(config_file_path), file=sys.stderr)
+        print("  May need to run with: --snodas snodas-root-folder", file=sys.stderr)
         exit(1)
     elif not config_file_path.is_file():
         print("SNODAS Tools configuration path is not a file:", file=sys.stderr)
         print("  {}".format(config_file_path), file=sys.stderr)
+        print("  May need to run with: --snodas snodas-root-folder", file=sys.stderr)
         exit(1)
 
     # Program name to use for logging.
@@ -401,7 +403,7 @@ if __name__ == '__main__':
         # Ask the user to re-enter downloading data type - one date or range of dates.
         single_or_range = input('\n' + prompt +
                                 ' The input is not recognized. Process one date or a range '
-                                'of dates ("one" or "range" or "q" to quite)? ')
+                                'of dates ("one" or "range" or "q" to quit)? ')
         if single_or_range == 'q' or single_or_range == 'Q':
             exit(0)
 

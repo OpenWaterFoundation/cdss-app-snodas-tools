@@ -57,15 +57,30 @@ def find_config_file ( command_line_snodas_root: Path or None) -> Path or None:
         # - check for existence in the calling code so that a user-friendly message can be displayed
         print("Command line specified SNODAS root:")
         print("  {}".format(command_line_snodas_root))
-        if command_line_snodas_root.startswith(".."):
-            print("  Specified path is relative so append to the current folder:")
+        if command_line_snodas_root.startswith("."):
+            # SNODAS root was specified with path relative to the starting folder.
             config_file_path = current_folder / command_line_snodas_root / "config" / "SNODAS-Tools-Config.ini"
-            print("    {}".format(config_file_path))
+            print("  Specified path is relative so append to the current folder.  Config file path:")
+        else:
+            # SNODAS root was specified with an abslute path.
+            print("  Specified path is absolute.  Config file path:")
+            config_file_path = Path(command_line_snodas_root) / "config" / "SNODAS-Tools-Config.ini"
+        print("    {}".format(config_file_path))
         return Path(config_file_path)
 
-    # Running in the root folder.
+    # Running in the root folder (config will be a sub-folder).
     config_file_path = Path(current_folder) / "config/SNODAS-Tools-Config.ini"
     print("Checking for configuration file as if running in the SNODAS tools root folder:")
+    print("  {}".format(config_file_path))
+    if config_file_path.exists():
+        return config_file_path
+    else:
+        print("  Configuration file was not found.")
+
+    # Running in the production scripts folder (*venv/ folder same level as config/).
+    #    config_file_path = Path('{}/../../config/SNODAS-Tools-Config.ini'.format(current_folder))
+    config_file_path = Path(current_folder) / "../../config/SNODAS-Tools-Config.ini"
+    print("Checking for configuration file as if running in the SNODAS Tools 'scripts' folder:")
     print("  {}".format(config_file_path))
     if config_file_path.exists():
         return config_file_path

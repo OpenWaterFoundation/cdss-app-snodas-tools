@@ -20,6 +20,8 @@ StartLog(LogFile="results/create-snodas-swe-graphs.tstool.log")
 ReadPropertiesFromFile(InputFile="..\..\config\SNODAS-Tools-Config.ini",FileFormat="INI",IncludeProperties="Folders.*")
 SetProperty(PropertyName="SnowpackGraphsByBasinTspFolder",PropertyType="String",PropertyValue="results/SnowpackGraphsByBasin-tsp")
 CreateFolder(Folder="${SnowpackGraphsByBasinTspFolder}",IfFolderExists="Ignore")
+SetProperty(PropertyName="SnowpackGraphsByBasinFolder",PropertyType="String",PropertyValue="..\..\processedData\6_CreateTimeSeriesProducts\SnowpackGraphsByBasin")
+CreateFolder(Folder="${SnowpackGraphsByBasinFolder}",CreateParentFolders="True",IfFolderExists="Ignore")
 #
 # Step 1b - read the list of basins from the Excel file into a TSTool table:
 # - this provides core data for later steps

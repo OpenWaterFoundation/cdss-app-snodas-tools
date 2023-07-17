@@ -16,11 +16,13 @@ nav:
   - 'Overview': products/overview.md
   - 'CDSS SNODAS Tools Web Application': products/webApp.md
   - 'Products and Downloads': products/products.md
+- 'Appendix - Release Notes': appendix-release-notes/release-notes.md
+- 'Appendix - Use Case for Custom Configuration': appendix-use-case-custom-config/use-case-custom-config.md
 # Use Material theme
 # - installation notes:  https://github.com/squidfunk/mkdocs-material
 theme:
  name: material
- favicon: snodas-tools-favicon.png
+ favicon: images/NewCOLogo32x32.gif
 # Do not include the repo because it shows an irritating edit icon on every page
 #repo_url: https://github.com/OpenWaterFoundation/cdss-app-snodas-tools
 site_description: SNODAS Tools (User Manual) 
